@@ -1,0 +1,7 @@
+{
+  "name": "low-code-platform",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}
