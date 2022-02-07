@@ -2,11 +2,15 @@ import React, { useEffect, useMemo, useRef } from 'react'
 import classnames from 'classnames'
 import * as monaco from 'monaco-editor'
 import useUpdateEffect from '@/hooks/useUpdateEffect'
+import usePersistFn from '@/hooks/usePersistFn'
+import { noop } from '@/utils'
+import { editDiff, formatDiff } from './utils'
 import './env'
 import './index.less'
 
 export interface DiffMonacoEditorProps
   extends monaco.editor.IStandaloneEditorConstructionOptions {
+  formatOnSave?: boolean
   originalValue?: string
   defaultValue?: string
   overrideServices?: monaco.editor.IEditorOverrideServices
@@ -27,19 +31,24 @@ export const DiffMonacoEditor: React.FC<DiffMonacoEditorProps> = (props) => {
   const {
     className,
     style,
-    onChange,
+    onChange = noop,
     onMounted,
     onUnmounted,
-    language,
+    language = 'javascript',
+    formatOnSave = false,
     originalValue = '',
     defaultValue,
     value = defaultValue || '',
     overrideServices,
     ...args
   } = props
+  const onPersistChange = usePersistFn(onChange)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const editorRef = useRef<monaco.editor.IStandaloneDiffEditor | null>(null)
   const safeChangeRef = useRef(false)
+  const formatOnSaveRef = useRef(formatOnSave)
+  formatOnSaveRef.current = formatOnSave
+
   const editorClassName = useMemo(
     () => classnames('monaco-editor-container', className),
     [className]
@@ -57,68 +66,66 @@ export const DiffMonacoEditor: React.FC<DiffMonacoEditorProps> = (props) => {
       const editor = editorRef.current
       const originalModel = monaco.editor.createModel(originalValue, language)
       const modifiedModel = monaco.editor.createModel(value, language)
+      const disposable = modifiedModel.onDidChangeContent((e) => {
+        if (!safeChangeRef.current) {
+          onPersistChange?.(modifiedModel.getValue(), e)
+        }
+      })
       editor.setModel({
         original: originalModel,
         modified: modifiedModel
       })
+      const modifiedEditor = editor.getModifiedEditor()
+      modifiedEditor.addCommand(
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+        () => {
+          if (!formatOnSaveRef.current) {
+            return
+          }
+          formatDiff(editor, {
+            onBefore() {
+              safeChangeRef.current = true
+            },
+            onAfter() {
+              safeChangeRef.current = false
+            }
+          })
+        }
+      )
       onMounted?.(editor, monaco)
-    }
-    return () => {
-      const editor = editorRef.current
-      if (editor) {
-        onUnmounted?.(editor)
-        const { original, modified } = editor.getModel() || {}
-        if (original) {
-          original.dispose()
+      return () => {
+        const editor = editorRef.current
+        if (editor) {
+          onUnmounted?.(editor)
+          const { original, modified } = editor.getModel() || {}
+          if (original) {
+            original.dispose()
+          }
+          if (modified) {
+            modified.dispose()
+          }
+          editor.dispose()
+          disposable.dispose()
         }
-        if (modified) {
-          modified.dispose()
-        }
-        editor.dispose()
       }
     }
   }, [])
 
-  // value onChange
-  useEffect(() => {
-    const editor = editorRef.current
-    if (editor) {
-      const { modified } = editor.getModel() || {}
-      const disposable = modified?.onDidChangeContent((e) => {
-        if (!safeChangeRef.current) {
-          onChange?.(modified.getValue(), e)
-        }
-      })
-      return () => {
-        disposable?.dispose()
-      }
-    }
-  }, [onChange])
-
   useUpdateEffect(() => {
     const editor = editorRef.current
     if (editor) {
-      const { modified, original } = editor.getModel() || {}
-      if (original && originalValue !== original.getValue()) {
-        original.setValue(originalValue)
-      }
-      if (modified && value !== modified.getValue()) {
-        safeChangeRef.current = true
-        const modifiedEditor = editor.getModifiedEditor()
-        modifiedEditor.pushUndoStop()
-        modified?.pushEditOperations(
-          [],
-          [
-            {
-              range: modified.getFullModelRange(),
-              text: value
-            }
-          ],
-          () => null
-        )
-        modifiedEditor.pushUndoStop()
-        safeChangeRef.current = false
-      }
+      editDiff(
+        editor,
+        { modifiedValue: value, originalValue },
+        {
+          onModifiedBefore() {
+            safeChangeRef.current = true
+          },
+          onModifiedAfter() {
+            safeChangeRef.current = false
+          }
+        }
+      )
     }
   }, [value, originalValue])
 
