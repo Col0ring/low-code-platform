@@ -1,6 +1,12 @@
 import * as monaco from 'monaco-editor'
 import prettier from 'prettier/standalone'
 import babelParser from 'prettier/parser-babel'
+import {
+  DiffEditOptions,
+  DiffEditResources,
+  EditOptions,
+  FormatOptions
+} from './type'
 
 const prettierPlugins = [babelParser]
 
@@ -40,11 +46,6 @@ export function computePosition(
     char++
   }
   return { lineNumber: line, column: col }
-}
-
-export interface FormatOptions {
-  onBefore?: () => void
-  onAfter?: (formatted: string) => void
 }
 
 export function format(
@@ -89,11 +90,6 @@ export function format(
   editor.setPosition(computePosition(formatted, cursorOffset))
   editor.pushUndoStop()
   onAfter?.(formatted)
-}
-
-export interface EditOptions {
-  onBefore?: () => void
-  onAfter?: () => void
 }
 
 export function edit(
@@ -168,17 +164,6 @@ export function formatDiff(
   }
 }
 
-export interface DiffEditResources {
-  originalValue: string
-  modifiedValue: string
-}
-
-export interface DiffEditOptions {
-  onOriginalBefore?: () => void
-  onOriginalAfter?: () => void
-  onModifiedBefore?: () => void
-  onModifiedAfter?: () => void
-}
 export function editDiff(
   editor: monaco.editor.IStandaloneDiffEditor,
   resources: DiffEditResources,

@@ -5,9 +5,9 @@ import useUpdateEffect from '@/hooks/useUpdateEffect'
 import usePersistFn from '@/hooks/usePersistFn'
 import { noop } from '@/utils'
 import { editDiff, formatDiff } from './utils'
+import { Monaco } from './type'
 import './env'
 import './index.less'
-
 export interface DiffMonacoEditorProps
   extends monaco.editor.IStandaloneEditorConstructionOptions {
   formatOnSave?: boolean
@@ -22,7 +22,7 @@ export interface DiffMonacoEditorProps
   ) => void
   onMounted?: (
     editor: monaco.editor.IStandaloneDiffEditor,
-    monacoEditor: typeof monaco
+    monaco: Monaco
   ) => void
   onUnmounted?: (editor: monaco.editor.IStandaloneDiffEditor) => void
 }
@@ -53,6 +53,7 @@ export const DiffMonacoEditor: React.FC<DiffMonacoEditorProps> = (props) => {
     () => classnames('monaco-editor-container', className),
     [className]
   )
+
   useEffect(() => {
     const container = containerRef.current
     if (container) {

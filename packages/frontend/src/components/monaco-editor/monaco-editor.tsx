@@ -5,6 +5,7 @@ import useUpdateEffect from '@/hooks/useUpdateEffect'
 import usePersistFn from '@/hooks/usePersistFn'
 import { noop } from '@/utils'
 import { edit, format } from './utils'
+import { Monaco } from './type'
 import './env'
 import './index.less'
 
@@ -21,7 +22,7 @@ export interface MonacoEditorProps
   ) => void
   onMounted?: (
     editor: monaco.editor.IStandaloneCodeEditor,
-    monacoEditor: typeof monaco
+    monaco: Monaco
   ) => void
   onUnmounted?: (editor: monaco.editor.IStandaloneCodeEditor) => void
 }
