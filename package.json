@@ -1,7 +1,22 @@
 {
   "name": "low-code-platform",
   "private": true,
+  "scripts": {
+    "prepare": "husky install",
+    "pre-commit:lint-staged": "lint-staged",
+    "commit-msg:commitlint": "commitlint --config commitlint.config.js -e $HUSKY_GIT_PARAMS",
+    "lint": "yarn workspaces run lint",
+    "commit": "cz"
+  },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "devDependencies": {
+    "@commitlint/cli": "^16.1.0",
+    "@commitlint/config-angular": "^16.0.0",
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.3"
+  }
 }

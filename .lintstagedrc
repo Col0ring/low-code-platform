@@ -1,0 +1,11 @@
+{
+  "*.{js,jsx,ts,tsx}": [
+    "yarn workspaces run lint:eslint"
+  ],
+  "*.{css,scss,less}": [
+    "yarn workspaces run lint:stylelint"
+  ],
+  "*.{js,jsx,ts,tsx,css,scss,less,html,md,json}": [
+    "yarn workspaces run lint:prettier"
+  ]
+}
