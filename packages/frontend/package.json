@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "yarn run lint:eslint && yarn run lint:stylelint && yarn run lint:prettier",
+    "lint": "npm-run-all lint:* --parallel",
     "lint:prettier": "prettier --write --no-error-on-unmatched-pattern **/*.{ts,tsx,js,jsx,json,yml,yaml,md}",
     "lint:eslint": "eslint --fix -c .eslintrc.js --ext .ts,.tsx,.js,.jsx .",
     "lint:stylelint": "stylelint --fix --config stylelint.config.js **/*.{less,css,scss}"

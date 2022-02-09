@@ -1,11 +1,17 @@
 {
-  "*.{js,jsx,ts,tsx}": [
-    "yarn workspaces run lint:eslint"
+  "packages/frontend/**/*.{js,jsx,ts,tsx}": [
+    "yarn workspace @low-code/frontend run lint:eslint"
   ],
-  "*.{css,scss,less}": [
-    "yarn workspaces run lint:stylelint"
+  "packages/frontend/**/*.{css,less,scss}": [
+    "yarn workspace @low-code/frontend run lint:stylelint"
   ],
-  "*.{js,jsx,ts,tsx,css,scss,less,html,md,json}": [
-    "yarn workspaces run lint:prettier"
+  "packages/frontend/**/*.{js,jsx,ts,tsx,css,scss,less,html,md,json}": [
+    "yarn workspace @low-code/frontend run lint:prettier"
+  ],
+  "packages/backend/**/*.{js,jsx,ts,tsx}": [
+    "yarn workspace @low-code/backend run lint:eslint"
+  ],
+  "packages/backend/**/*.{js,jsx,ts,tsx,css,scss,less,html,md,json}": [
+    "yarn workspace @low-code/backend run lint:prettier"
   ]
 }

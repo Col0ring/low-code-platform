@@ -10,6 +10,7 @@ function useUpdateEffect(
       return effect()
     }
     firstMounted.current = true
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 }
 

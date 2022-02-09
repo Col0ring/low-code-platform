@@ -2,7 +2,7 @@ import React from 'react'
 import './index.less'
 
 const Editor: React.FC = () => {
-  return <div className="visual-editor"></div>
+  return <div className="visual-editor" />
 }
 
 export default Editor

@@ -33,10 +33,5 @@ module.exports = {
     ],
   },
   // stylelint 支持直接配置忽略文件
-  ignoreFiles: [
-    'node_modules/**/*',
-    'dist/**/*',
-    'dist-ssr/**/*',
-    'src/**/*.{tsx,ts,jsx,js}',
-  ],
+  ignoreFiles: ['node_modules/**/*', 'dist/**/*', 'src/**/*.{tsx,ts,jsx,js}'],
 }

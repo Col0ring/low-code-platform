@@ -12,7 +12,7 @@
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
     "start:debug": "cross-env NODE_ENV=development nest start --debug --watch",
     "start:prod": "cross-env NODE_ENV=production node dist/main",
-    "lint": "yarn run lint:eslint && yarn run lint:prettier",
+    "lint": "npm-run-all lint:* --parallel",
     "lint:eslint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "lint:prettier": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "test": "jest",

@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useMemo, useRef } from 'react'
 import classnames from 'classnames'
 import * as monaco from 'monaco-editor'
 import useUpdateEffect from '@/hooks/useUpdateEffect'
 import usePersistFn from '@/hooks/usePersistFn'
+import useMount from '@/hooks/useMount'
 import { noop } from '@/utils'
 import { editDiff, formatDiff } from './utils'
 import { Monaco } from './type'
@@ -54,13 +55,13 @@ export const DiffMonacoEditor: React.FC<DiffMonacoEditorProps> = (props) => {
     [className]
   )
 
-  useEffect(() => {
+  useMount(() => {
     const container = containerRef.current
     if (container) {
       editorRef.current = monaco.editor.createDiffEditor(
         container,
         {
-          ...args
+          ...args,
         },
         overrideServices
       )
@@ -74,7 +75,7 @@ export const DiffMonacoEditor: React.FC<DiffMonacoEditorProps> = (props) => {
       })
       editor.setModel({
         original: originalModel,
-        modified: modifiedModel
+        modified: modifiedModel,
       })
       const modifiedEditor = editor.getModifiedEditor()
       modifiedEditor.addCommand(
@@ -89,13 +90,12 @@ export const DiffMonacoEditor: React.FC<DiffMonacoEditorProps> = (props) => {
             },
             onAfter() {
               safeChangeRef.current = false
-            }
+            },
           })
         }
       )
       onMounted?.(editor, monaco)
       return () => {
-        const editor = editorRef.current
         if (editor) {
           onUnmounted?.(editor)
           const { original, modified } = editor.getModel() || {}
@@ -110,7 +110,7 @@ export const DiffMonacoEditor: React.FC<DiffMonacoEditorProps> = (props) => {
         }
       }
     }
-  }, [])
+  })
 
   useUpdateEffect(() => {
     const editor = editorRef.current
@@ -124,7 +124,7 @@ export const DiffMonacoEditor: React.FC<DiffMonacoEditorProps> = (props) => {
           },
           onModifiedAfter() {
             safeChangeRef.current = false
-          }
+          },
         }
       )
     }
@@ -143,7 +143,7 @@ export const DiffMonacoEditor: React.FC<DiffMonacoEditorProps> = (props) => {
     const editor = editorRef.current
     if (editor) {
       editor.updateOptions({
-        ...args
+        ...args,
       })
     }
   }, Object.values(args))
@@ -152,7 +152,7 @@ export const DiffMonacoEditor: React.FC<DiffMonacoEditorProps> = (props) => {
 }
 
 DiffMonacoEditor.defaultProps = {
-  language: 'javascript'
+  language: 'javascript',
 }
 
 export default DiffMonacoEditor

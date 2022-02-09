@@ -1,11 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
+import { AppRouter, AppRoutes } from './router'
 import './index.less'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <AppRouter>
+      <AppRoutes />
+    </AppRouter>
   </React.StrictMode>,
   document.getElementById('root')
 )

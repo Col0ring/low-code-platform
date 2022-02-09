@@ -57,7 +57,7 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
         container,
         {
           value,
-          ...args
+          ...args,
         },
         overrideServices
       )
@@ -78,7 +78,7 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
           onAfter(formatted) {
             safeChangeRef.current = false
             onPersistChange(formatted)
-          }
+          },
         })
       })
       onMounted?.(editor, monaco)
@@ -103,7 +103,7 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
         },
         onAfter() {
           safeChangeRef.current = false
-        }
+        },
       })
     }
   }, [value])
@@ -112,7 +112,7 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
     const editor = editorRef.current
     if (editor) {
       editor.updateOptions({
-        ...args
+        ...args,
       })
     }
   }, Object.values(args))
@@ -121,7 +121,7 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
 }
 
 MonacoEditor.defaultProps = {
-  language: 'javascript'
+  language: 'javascript',
 }
 
 export default MonacoEditor

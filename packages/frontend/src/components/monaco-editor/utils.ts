@@ -5,7 +5,7 @@ import {
   DiffEditOptions,
   DiffEditResources,
   EditOptions,
-  FormatOptions
+  FormatOptions,
 } from './type'
 
 const prettierPlugins = [babelParser]
@@ -62,7 +62,7 @@ export function format(
   const { cursorOffset, formatted } = prettier.formatWithCursor(value, {
     parser: 'babel',
     plugins: prettierPlugins,
-    cursorOffset: computeOffset(value, position)
+    cursorOffset: computeOffset(value, position),
   })
 
   if (formatted === value) {
@@ -74,16 +74,16 @@ export function format(
     {
       range: model.getFullModelRange(),
       text: '',
-      forceMoveMarkers: true
-    }
+      forceMoveMarkers: true,
+    },
   ])
 
   editor.executeEdits('prettier', [
     {
       range: new monaco.Range(0, 0, 0, 0),
       text: formatted,
-      forceMoveMarkers: true
-    }
+      forceMoveMarkers: true,
+    },
   ])
 
   editor.setSelection(new monaco.Range(0, 0, 0, 0))
@@ -108,8 +108,8 @@ export function edit(
       {
         range: model.getFullModelRange(),
         text: value,
-        forceMoveMarkers: true
-      }
+        forceMoveMarkers: true,
+      },
     ])
     editor.focus()
     editor.pushUndoStop()
@@ -136,7 +136,7 @@ export function formatDiff(
   const { cursorOffset, formatted } = prettier.formatWithCursor(value, {
     parser: 'babel',
     plugins: prettierPlugins,
-    cursorOffset: computeOffset(value, position)
+    cursorOffset: computeOffset(value, position),
   })
   if (formatted !== value) {
     onBefore?.()
@@ -145,16 +145,16 @@ export function formatDiff(
       {
         range: modified.getFullModelRange(),
         text: '',
-        forceMoveMarkers: true
-      }
+        forceMoveMarkers: true,
+      },
     ])
 
     modifiedEditor.executeEdits('prettier', [
       {
         range: new monaco.Range(0, 0, 0, 0),
         text: formatted,
-        forceMoveMarkers: true
-      }
+        forceMoveMarkers: true,
+      },
     ])
 
     modifiedEditor.setSelection(new monaco.Range(0, 0, 0, 0))
@@ -174,7 +174,7 @@ export function editDiff(
     onOriginalBefore,
     onOriginalAfter,
     onModifiedBefore,
-    onModifiedAfter
+    onModifiedAfter,
   } = options || {}
   const { modified, original } = editor.getModel() || {}
   if (original && originalValue !== original.getValue()) {
@@ -189,8 +189,8 @@ export function editDiff(
       {
         range: modified.getFullModelRange(),
         text: modifiedValue,
-        forceMoveMarkers: true
-      }
+        forceMoveMarkers: true,
+      },
     ])
     modifiedEditor.focus()
     modifiedEditor.pushUndoStop()
