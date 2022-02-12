@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
 import { AppService } from './app.service'
 import { AuthService } from './auth/auth.service'
 import { JwtAuthGuard } from './auth/jwt-auth.guard'
@@ -22,5 +22,11 @@ export class AppController {
   @Post('auth/login')
   async login(@User() user: any) {
     return this.authService.login(user)
+  }
+
+  @Post()
+  getCpu(@Body() body: any) {
+    console.log(body)
+    return 'ok'
   }
 }

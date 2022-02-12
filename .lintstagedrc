@@ -3,7 +3,7 @@
     "yarn workspace @low-code/frontend run lint:eslint"
   ],
   "packages/frontend/**/*.{css,less,scss}": [
-    "yarn workspace @low-code/frontend run lint:stylelint"
+    "yarn workspace @low-code/frontend run lint:stylelint-lint-staged"
   ],
   "packages/frontend/**/*.{js,jsx,ts,tsx,css,scss,less,html,md,json}": [
     "yarn workspace @low-code/frontend run lint:prettier"

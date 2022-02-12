@@ -1,12 +1,16 @@
-import React from 'react'
-import { MonacoEditor } from '@/components/monaco-editor'
+import React, { useEffect } from 'react'
+import { counterActions, useAppDispatch, useAppSelector } from '@/store'
 
 const EditPage: React.FC = () => {
-  return (
-    <div>
-      <MonacoEditor theme="vs-dark" style={{ height: '100vh' }} />
-    </div>
-  )
+  const dispatch = useAppDispatch()
+  const count = useAppSelector(({ counter }) => counter.value)
+  useEffect(() => {
+    dispatch(counterActions.increment())
+  }, [dispatch])
+  useEffect(() => {
+    console.log(count)
+  }, [count])
+  return <div>test</div>
 }
 
 export default EditPage

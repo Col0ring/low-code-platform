@@ -10,7 +10,8 @@
     "lint": "npm-run-all lint:* --parallel",
     "lint:prettier": "prettier --write --no-error-on-unmatched-pattern **/*.{ts,tsx,js,jsx,json,yml,yaml,md}",
     "lint:eslint": "eslint --fix -c .eslintrc.js --ext .ts,.tsx,.js,.jsx .",
-    "lint:stylelint": "stylelint --fix --config stylelint.config.js **/*.{less,css,scss}"
+    "lint:stylelint": "stylelint --fix --config stylelint.config.js **/*.{less,css,scss}",
+    "lint:stylelint-lint-staged": "stylelint --fix --config stylelint.base.config.js **/*.{less,css,scss}"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.7.2",

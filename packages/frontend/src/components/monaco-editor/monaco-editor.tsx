@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useMemo, useRef } from 'react'
 import classnames from 'classnames'
 import * as monaco from 'monaco-editor'
 import useUpdateEffect from '@/hooks/useUpdateEffect'
 import usePersistFn from '@/hooks/usePersistFn'
+import useMount from '@/hooks/useMount'
 import { noop } from '@/utils'
 import { edit, format } from './utils'
 import { Monaco } from './type'
@@ -50,7 +51,7 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
     () => classnames('monaco-editor-container', className),
     [className]
   )
-  useEffect(() => {
+  useMount(() => {
     const container = containerRef.current
     if (container) {
       editorRef.current = monaco.editor.create(
@@ -92,7 +93,7 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
         disposable.dispose()
       }
     }
-  }, [])
+  })
 
   useUpdateEffect(() => {
     const editor = editorRef.current
