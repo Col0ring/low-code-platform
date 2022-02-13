@@ -5,7 +5,10 @@ import { StrategyType } from './constants'
 import { AuthConfig, authConfig } from './auth.config'
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, StrategyType.Jwt) {
+export class RefreshTokenJwtStrategy extends PassportStrategy(
+  Strategy,
+  StrategyType.RefreshTokenJwt
+) {
   constructor(
     @Inject(authConfig.KEY)
     authConfigService: AuthConfig
@@ -13,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, StrategyType.Jwt) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: authConfigService.jwtSecret,
+      secretOrKey: authConfigService.refreshTokenJwtSecret,
     })
   }
 

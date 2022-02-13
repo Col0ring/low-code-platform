@@ -1,8 +1,9 @@
-export const jwtConstants = {
-  secret: 'secretKey',
+export enum DecoratorMetadata {
+  Public = 'isPublic',
 }
 
-export const strategyConstants = {
-  jwt: 'jwt',
-  local: 'local',
+export enum StrategyType {
+  RefreshTokenJwt = 'refreshTokenJwt',
+  Jwt = 'jwt',
+  Local = 'local',
 }
