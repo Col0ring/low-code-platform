@@ -12,6 +12,12 @@ function resolve(relativePath: string) {
 export default defineConfig({
   server: {
     port: 9527,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
   },
   resolve: {
     alias: {

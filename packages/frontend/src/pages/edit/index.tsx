@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react'
-import { counterActions, useAppDispatch, useAppSelector } from '@/store'
+import { useGetUserInfoQuery } from '@/store/services/auth'
+import { useLazyGetUserListQuery } from '@/store/services/user'
 
 const EditPage: React.FC = () => {
-  const dispatch = useAppDispatch()
-  const count = useAppSelector(({ counter }) => counter.value)
+  useGetUserInfoQuery()
+  const [trigger, { data }] = useLazyGetUserListQuery()
   useEffect(() => {
-    dispatch(counterActions.increment())
-  }, [dispatch])
-  useEffect(() => {
-    console.log(count)
-  }, [count])
-  return <div>test</div>
+    setTimeout(() => {
+      void trigger()
+    }, 1000)
+  }, [trigger])
+
+  return <div>{data?.data}-test</div>
 }
 
 export default EditPage

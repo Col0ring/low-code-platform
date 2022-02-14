@@ -1,3 +1,5 @@
+export * from './local-storage'
+
 export function noop() {
   // do nothing
 }

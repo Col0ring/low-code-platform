@@ -20,16 +20,16 @@ import { DatabaseModule } from './database/database.module'
       envFilePath: __DEV__ ? '.dev.env' : '.prod.env',
       load: [databaseConfig, authConfig],
     }),
-    DatabaseModule,
+    // DatabaseModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
     // global guard
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard,
+    // },
   ],
 })
 export class AppModule {}

@@ -1,45 +1,14 @@
-import { createEntityAdapter } from '@reduxjs/toolkit'
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-interface Pokemon {
-  name: string
-}
+import { createServiceApi } from './create-service-api'
 
-const messagesAdapter = createEntityAdapter<string[]>()
-export const pokemonApi = createApi({
-  reducerPath: 'pokemonApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://pokeapi.co/api/v2/' }),
-  // 声明标签类型
-  tagTypes: ['Pokemon'],
+export const userApi = createServiceApi({
+  reducerPath: 'userApi',
+  tagTypes: ['user'],
   endpoints: (builder) => ({
-    // 定义查询
-    getPokemonByName: builder.query<Pokemon, string>({
-      query: (name) => `pokemon/${name}`,
-      // 查询接口提供的标签
-      providesTags: (pokemon) => [{ type: 'Pokemon', id: pokemon?.name }],
-    }),
-    // 定义突变
-    updatePokemonByName: builder.mutation<Pokemon, Partial<Pokemon>>({
-      query(data) {
-        const { name, ...body } = data
-        return {
-          url: `post/${name}`,
-          method: 'post',
-          body,
-        }
-      },
-      // async onQueryStarted(arg, { dispatch }) {
-      //   const res = dispatch(
-      //     pokemonApi.util.updateQueryData('getPokemonByName', {}, () => {})
-      //   )
-      // },
-      // 更新会使提供了这些标签的查询失效...
-      invalidatesTags: (result, error, arg) => [
-        { type: 'Pokemon', id: arg.name },
-      ],
+    getUserList: builder.query<any, void>({
+      query: () => '/auth/getUserList',
+      providesTags: ['user'],
     }),
   }),
 })
 
-const { useGetPokemonByNameQuery } = pokemonApi
-type Push<T extends readonly any[]> = T extends any[] ? T : never
-type C = Push<readonly [1, 2]>
+export const { useGetUserListQuery, useLazyGetUserListQuery } = userApi
