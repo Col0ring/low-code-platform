@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { getExcludeSelect } from '../database/database.util'
 import { Repository } from 'typeorm'
 import { User } from './user.entity'
 
@@ -27,11 +28,13 @@ export class UsersService {
       where: {
         phone,
       },
-      select: ['password'],
+      select: getExcludeSelect(this.usersRepository),
     })
   }
 
   updateOneById(id: number, partialEntity: Partial<User>) {
-    return this.usersRepository.update(id, partialEntity)
+    return this.usersRepository.update(id, {
+      ...partialEntity,
+    })
   }
 }

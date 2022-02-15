@@ -4,6 +4,7 @@ import { createAction } from '@reduxjs/toolkit'
 export interface ResponseError {
   message: string
   status: number
+  noThrowError?: boolean
 }
 
 // rtk

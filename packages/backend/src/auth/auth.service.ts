@@ -1,4 +1,9 @@
-import { UnauthorizedException, Inject, Injectable } from '@nestjs/common'
+import {
+  UnauthorizedException,
+  Inject,
+  Injectable,
+  BadRequestException,
+} from '@nestjs/common'
 import bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt'
 import { UsersService } from '../users/users.service'
@@ -46,22 +51,31 @@ export class AuthService {
     }
     const tokens = this.generateTokens(id)
     await this.usersService.updateOneById(id, {
-      refreshToken,
-    })
-    return tokens
-  }
-
-  async register(dto: RegisterDto) {
-    const user = await this.usersService.insertUser(dto)
-    const tokens = this.generateTokens(user.id)
-    await this.usersService.updateOneById(user.id, {
       refreshToken: tokens.refreshToken,
     })
     return tokens
   }
 
-  login(id: number) {
-    return this.generateTokens(id)
+  async register(dto: RegisterDto) {
+    try {
+      const user = await this.usersService.insertUser(dto)
+      const tokens = this.generateTokens(user.id)
+      await this.usersService.updateOneById(user.id, {
+        refreshToken: tokens.refreshToken,
+      })
+      return tokens
+    } catch (error) {
+      throw new BadRequestException('the phone has been registered')
+    }
+  }
+
+  async login(id: number) {
+    const tokens = this.generateTokens(id)
+    await this.usersService.updateOneById(id, {
+      refreshToken: tokens.refreshToken,
+    })
+
+    return tokens
   }
 
   async logout(id: number) {

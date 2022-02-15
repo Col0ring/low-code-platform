@@ -4,8 +4,29 @@ import { authActions } from '../slices/auth'
 
 export const authApi = createServiceApi({
   reducerPath: 'authApi',
-  tagTypes: ['auth'],
+  tagTypes: ['Auth'],
   endpoints: (builder) => ({
+    register: builder.mutation<
+      TokenPayload,
+      { phone: string; username: string; password: string }
+    >({
+      query(data) {
+        return {
+          url: '/auth/register',
+          method: 'post',
+          body: data,
+        }
+      },
+      async onQueryStarted(_, { queryFulfilled, dispatch }) {
+        try {
+          const { data } = await queryFulfilled
+          dispatch(authActions.login(data))
+        } catch (error) {
+          // do nothing
+        }
+      },
+      invalidatesTags: (result) => (result ? ['Auth'] : []),
+    }),
     login: builder.mutation<
       TokenPayload,
       { username: string; password: string }
@@ -18,13 +39,16 @@ export const authApi = createServiceApi({
         }
       },
       async onQueryStarted(_, { queryFulfilled, dispatch }) {
-        // no need error handler
-        const { data } = await queryFulfilled
-        dispatch(authActions.login(data))
+        try {
+          const { data } = await queryFulfilled
+          dispatch(authActions.login(data))
+        } catch (error) {
+          // do nothing
+        }
       },
-      invalidatesTags: ['auth'],
+      invalidatesTags: (result) => (result ? ['Auth'] : []),
     }),
-    refreshToken: builder.mutation<void, string>({
+    refreshToken: builder.mutation<TokenPayload, string>({
       query(refreshToken: string) {
         return {
           url: '/auth/refreshToken',
@@ -34,9 +58,17 @@ export const authApi = createServiceApi({
           },
         }
       },
-      invalidatesTags: ['auth'],
+      async onQueryStarted(_, { queryFulfilled, dispatch }) {
+        try {
+          const { data } = await queryFulfilled
+          dispatch(authActions.login(data))
+        } catch (error) {
+          // do nothing
+        }
+      },
+      invalidatesTags: (result) => (result ? ['Auth'] : []),
     }),
-    logout: builder.mutation({
+    logout: builder.mutation<void, void>({
       query() {
         return {
           url: '/auth/logout',
@@ -51,7 +83,7 @@ export const authApi = createServiceApi({
           // do noting
         }
       },
-      invalidatesTags: ['auth'],
+      invalidatesTags: (result) => (result ? ['Auth'] : []),
     }),
     getUserInfo: builder.query<any, void>({
       query: () => '/auth/getUserInfo',
@@ -63,10 +95,14 @@ export const authApi = createServiceApi({
           // do nothing
         }
       },
-      providesTags: ['auth'],
+      providesTags: ['Auth'],
     }),
   }),
 })
 
-export const { useGetUserInfoQuery, useLoginMutation, useLogoutMutation } =
-  authApi
+export const {
+  useGetUserInfoQuery,
+  useRegisterMutation,
+  useLoginMutation,
+  useLogoutMutation,
+} = authApi

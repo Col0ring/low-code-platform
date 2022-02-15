@@ -11,7 +11,7 @@ import {
 import { QueryReturnValue } from '@reduxjs/toolkit/dist/query/baseQueryTypes'
 import { MaybePromise } from '@reduxjs/toolkit/dist/query/tsHelpers'
 import { authActions } from '../slices/auth'
-import { TokenPayload } from '../type'
+import { ResponseError, TokenPayload } from '../type'
 import { HttpStatus } from './constants'
 import { RootState } from '..'
 import { authApi } from './auth'
@@ -27,7 +27,9 @@ const baseServiceQuery = fetchBaseQuery({
   prepareHeaders(headers, { getState }) {
     const { auth } = getState() as RootState
     if (auth && auth.token) {
-      headers.set('authorization', `Bearer ${auth.token}`)
+      if (!headers.has('authorization')) {
+        headers.set('authorization', `Bearer ${auth.token}`)
+      }
     }
     return headers
   },
@@ -53,6 +55,8 @@ const baseServiceQueryWithReAuth = retry(
       // 不在这里打印 message 给用户，因为重新请求可能会发送多次，应该创建 rtkQueryErrorLogger 中间件处理
       if (error.status === HttpStatus.Unauthorized) {
         if (isRefreshTokenRequest) {
+          // eslint-disable-next-line @typescript-eslint/no-extra-semi
+          ;(error.data as ResponseError).noThrowError = true
           retry.fail(error)
         } else {
           const { auth } = api.getState() as RootState
@@ -86,7 +90,7 @@ const baseServiceQueryWithReAuth = retry(
               // retry the initial query
               result = await baseServiceQuery(args, api, extraOptions)
             } else {
-              api.dispatch(authActions.logout())
+              // api.dispatch(authActions.logout())
               retry.fail(error)
             }
           } else {
