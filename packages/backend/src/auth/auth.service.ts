@@ -36,9 +36,11 @@ export class AuthService {
 
   async validateUser(phone: string, password: string) {
     const user = await this.usersService.findOneByPhoneWithPassword(phone)
-    const { password: userPassword, ...result } = user
-    if (user && bcrypt.compareSync(password, userPassword)) {
-      return result
+    if (user) {
+      const { password: userPassword, ...result } = user
+      if (bcrypt.compareSync(password, userPassword)) {
+        return result
+      }
     }
     return null
   }

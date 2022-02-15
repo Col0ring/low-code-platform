@@ -6,7 +6,7 @@ export const rtkQueryErrorLogger: Middleware = () => (next) => (action) => {
   if (isRejectedWithValue(action)) {
     const error = action.payload as FetchBaseQueryError
     const errorData = error.data as ResponseError
-    if (!errorData.noThrowError) {
+    if (!errorData.notThrowError) {
       void message.error(errorData.message || 'Server Error')
     }
   }

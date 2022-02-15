@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common'
+import { __DEV__ } from '../constants'
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -16,6 +17,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus()
       message = exception.message
+    }
+    if (__DEV__) {
+      if (exception instanceof Error) {
+        message = exception.message
+      }
     }
 
     response.status(status).json({

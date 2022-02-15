@@ -43,6 +43,7 @@ function getIsRefreshTokenRequest(args: string | FetchArgs) {
 
 const baseServiceQueryWithReAuth = retry(
   async (args: string | FetchArgs, api, extraOptions) => {
+    // 如果是 refreshToken 的请求，不要等待
     const isRefreshTokenRequest = getIsRefreshTokenRequest(args)
     if (!isRefreshTokenRequest) {
       await isRefreshingToken
@@ -56,11 +57,13 @@ const baseServiceQueryWithReAuth = retry(
       if (error.status === HttpStatus.Unauthorized) {
         if (isRefreshTokenRequest) {
           // eslint-disable-next-line @typescript-eslint/no-extra-semi
-          ;(error.data as ResponseError).noThrowError = true
+          ;(error.data as ResponseError).notThrowError = true
           retry.fail(error)
         } else {
           const { auth } = api.getState() as RootState
-          if (!isRefreshingToken) {
+
+          let refreshResult = await isRefreshingToken
+          if (!refreshResult) {
             isRefreshingToken = new Promise((resolve) => {
               api
                 .dispatch(
@@ -80,7 +83,7 @@ const baseServiceQueryWithReAuth = retry(
                 })
             })
             // try to get a new token
-            const refreshResult = await isRefreshingToken
+            refreshResult = await isRefreshingToken
             isRefreshingToken = null
             if (refreshResult?.data) {
               // store the new token
@@ -90,12 +93,11 @@ const baseServiceQueryWithReAuth = retry(
               // retry the initial query
               result = await baseServiceQuery(args, api, extraOptions)
             } else {
-              // api.dispatch(authActions.logout())
+              api.dispatch(authActions.logout())
               retry.fail(error)
             }
           } else {
             // 几个已经在请求中的请求报 401
-            const refreshResult = await isRefreshingToken
             if (refreshResult?.data) {
               result = await baseServiceQuery(args, api, extraOptions)
             } else {
