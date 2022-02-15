@@ -1,36 +1,45 @@
-import {
-  Controller,
-  ForbiddenException,
-  Get,
-  Header,
-  Post,
-  Request,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
+import { User } from '../decorators/user.decorator'
+import { AuthService } from './auth.service'
+import { RegisterDto } from './dto/register.dto'
+import { JwtAuthGuard } from './jwt-auth.guard'
+import { LocalAuthGuard } from './local-auth.guard'
+import { RefreshTokenJwtAuthGuard } from './refresh-token-jwt-auth.guard'
+import { JwtUser, LocalUser, RefreshTokenJwtUser } from './type'
 
 @Controller('auth')
 export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
+  @Post('/register')
+  register(@Body() dto: RegisterDto) {
+    return this.authService.register(dto)
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @Post('/login')
+  login(@User() user: LocalUser) {
+    return this.authService.login(user.id)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/logout')
+  async logout(@User() user: JwtUser) {
+    await this.authService.logout(user.id)
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('/getUserInfo')
-  getUserInfo(@Request() req: any) {
-    if (req.headers.authorization) {
-      return {}
-    } else {
-      throw new UnauthorizedException()
-    }
+  getUserInfo() {
+    return {}
   }
+
+  @UseGuards(RefreshTokenJwtAuthGuard)
   @Post('/refreshToken')
-  refreshToken() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve({
-          token: '1123',
-          refreshToken: '123',
-        })
-        // reject(new UnauthorizedException('Ret'))
-        // throw new ForbiddenException()
-      }, 5000)
-    })
+  refreshTokens(@User() user: RefreshTokenJwtUser) {
+    return this.authService.refreshTokens(user.id, user.refreshToken)
   }
+
   @Get('/getUserList')
   getUserList() {
     return {

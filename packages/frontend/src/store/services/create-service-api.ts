@@ -16,7 +16,7 @@ import { HttpStatus } from './constants'
 import { RootState } from '..'
 import { authApi } from './auth'
 
-let isRefreshToken: Promise<
+let isRefreshingToken: Promise<
   MaybePromise<
     QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>
   >
@@ -33,27 +33,31 @@ const baseServiceQuery = fetchBaseQuery({
   },
 })
 
-function isRefreshTokenError(meta?: FetchBaseQueryMeta) {
-  return meta ? meta.request.url.includes('/auth/refreshToken') : false
+function getIsRefreshTokenRequest(args: string | FetchArgs) {
+  return typeof args === 'string'
+    ? args.includes('/auth/refreshToken')
+    : args.url.includes('/auth/refreshToken')
 }
 
 const baseServiceQueryWithReAuth = retry(
   async (args: string | FetchArgs, api, extraOptions) => {
-    // await refresh token, refresh token 请求也会到这里，但是此时 isRefreshToken 还没有被赋值
-    await isRefreshToken
+    const isRefreshTokenRequest = getIsRefreshTokenRequest(args)
+    if (!isRefreshTokenRequest) {
+      await isRefreshingToken
+    }
 
     let result = await baseServiceQuery(args, api, extraOptions)
-    const { error, meta } = result
+    const { error } = result
 
     if (error) {
       // 不在这里打印 message 给用户，因为重新请求可能会发送多次，应该创建 rtkQueryErrorLogger 中间件处理
       if (error.status === HttpStatus.Unauthorized) {
-        if (isRefreshTokenError(meta)) {
+        if (isRefreshTokenRequest) {
           retry.fail(error)
         } else {
           const { auth } = api.getState() as RootState
-          if (!isRefreshToken) {
-            isRefreshToken = new Promise((resolve) => {
+          if (!isRefreshingToken) {
+            isRefreshingToken = new Promise((resolve) => {
               api
                 .dispatch(
                   authApi.endpoints.refreshToken.initiate(auth.refreshToken)
@@ -72,8 +76,8 @@ const baseServiceQueryWithReAuth = retry(
                 })
             })
             // try to get a new token
-            const refreshResult = await isRefreshToken
-            isRefreshToken = null
+            const refreshResult = await isRefreshingToken
+            isRefreshingToken = null
             if (refreshResult?.data) {
               // store the new token
               api.dispatch(
@@ -87,7 +91,7 @@ const baseServiceQueryWithReAuth = retry(
             }
           } else {
             // 几个已经在请求中的请求报 401
-            const refreshResult = await isRefreshToken
+            const refreshResult = await isRefreshingToken
             if (refreshResult?.data) {
               result = await baseServiceQuery(args, api, extraOptions)
             } else {

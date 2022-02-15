@@ -3,7 +3,9 @@ import { AuthGuard } from '@nestjs/passport'
 import { StrategyType } from './constants'
 
 @Injectable()
-export class RefreshTokenJwtAuthGuard extends AuthGuard(StrategyType.Jwt) {
+export class RefreshTokenJwtAuthGuard extends AuthGuard(
+  StrategyType.RefreshTokenJwt
+) {
   override handleRequest(err: any, user: any, info: any) {
     if (err || !user) {
       throw err || new UnauthorizedException(info?.message)

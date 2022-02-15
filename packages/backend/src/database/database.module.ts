@@ -11,8 +11,9 @@ const TypeOrmDataBaseModule = TypeOrmModule.forRootAsync({
       port: databaseConfigService.port,
       username: databaseConfigService.username,
       password: databaseConfigService.password,
-      // auth load
-      entities: [path.resolve(__dirname, '../**/*.entity{.ts,.js}')],
+      database: databaseConfigService.database,
+      // auto load
+      entities: [__dirname + '../../**/*.entity{.ts,.js}'],
       synchronize: true,
     }
   },

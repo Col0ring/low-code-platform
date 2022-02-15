@@ -1,7 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { UnauthorizedException, Inject, Injectable } from '@nestjs/common'
+import bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt'
-import { User, UsersService } from '../users/users.service'
+import { UsersService } from '../users/users.service'
 import { authConfig, AuthConfig } from './auth.config'
+import { TokenPayload, Tokens } from './type'
+import { RegisterDto } from './dto/register.dto'
 
 @Injectable()
 export class AuthService {
@@ -12,22 +15,58 @@ export class AuthService {
     private readonly authConfigService: AuthConfig
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(username)
-    if (user && user.password === pass) {
-      const { password, ...result } = user
+  private generateTokens(id: number): Tokens {
+    const payload: TokenPayload = { sub: id }
+    return {
+      token: this.jwtService.sign(payload, {
+        expiresIn: this.authConfigService.jwtExpressIn,
+        secret: this.authConfigService.jwtSecret,
+      }),
+      refreshToken: this.jwtService.sign(payload, {
+        expiresIn: this.authConfigService.refreshTokenJwtExpressIn,
+        secret: this.authConfigService.refreshTokenJwtSecret,
+      }),
+    }
+  }
+
+  async validateUser(phone: string, password: string) {
+    const user = await this.usersService.findOneByPhoneWithPassword(phone)
+    const { password: userPassword, ...result } = user
+    if (user && bcrypt.compareSync(password, userPassword)) {
       return result
     }
     return null
   }
 
-  async login(user: User) {
-    const payload = { username: user.username, sub: user.userId }
-    return {
-      access_token: this.jwtService.sign(payload, {
-        expiresIn: this.authConfigService.jwtExpressIn,
-        secret: this.authConfigService.jwtSecret,
-      }),
+  async refreshTokens(id: number, refreshToken: string): Promise<Tokens> {
+    const user = await this.usersService.findOneById(id)
+
+    if (!user || refreshToken !== user.refreshToken) {
+      throw new UnauthorizedException()
     }
+    const tokens = this.generateTokens(id)
+    await this.usersService.updateOneById(id, {
+      refreshToken,
+    })
+    return tokens
+  }
+
+  async register(dto: RegisterDto) {
+    const user = await this.usersService.insertUser(dto)
+    const tokens = this.generateTokens(user.id)
+    await this.usersService.updateOneById(user.id, {
+      refreshToken: tokens.refreshToken,
+    })
+    return tokens
+  }
+
+  login(id: number) {
+    return this.generateTokens(id)
+  }
+
+  async logout(id: number) {
+    await this.usersService.updateOneById(id, {
+      refreshToken: null,
+    })
   }
 }
