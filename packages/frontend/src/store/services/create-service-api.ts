@@ -9,7 +9,6 @@ import {
   retry,
 } from '@reduxjs/toolkit/query/react'
 import { QueryReturnValue } from '@reduxjs/toolkit/dist/query/baseQueryTypes'
-import { MaybePromise } from '@reduxjs/toolkit/dist/query/tsHelpers'
 import { authActions } from '../slices/auth'
 import { ResponseError, TokenPayload } from '../type'
 import { HttpStatus } from './constants'
@@ -17,10 +16,15 @@ import { RootState } from '..'
 import { authApi } from './auth'
 
 let isRefreshingToken: Promise<
-  MaybePromise<
-    QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>
-  >
+  QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>
 > | null = null
+
+export interface ServiceFetchArgs extends FetchArgs {
+  meta?: {
+    notThrowError?: boolean
+    isRefreshTokenRequest?: boolean
+  }
+}
 
 const baseServiceQuery = fetchBaseQuery({
   baseUrl: '/api',
@@ -35,14 +39,12 @@ const baseServiceQuery = fetchBaseQuery({
   },
 })
 
-function getIsRefreshTokenRequest(args: string | FetchArgs) {
-  return typeof args === 'string'
-    ? args.includes('/auth/refreshToken')
-    : args.url.includes('/auth/refreshToken')
+function getIsRefreshTokenRequest(args: string | ServiceFetchArgs) {
+  return typeof args === 'string' ? false : !!args.meta?.isRefreshTokenRequest
 }
 
 const baseServiceQueryWithReAuth = retry(
-  async (args: string | FetchArgs, api, extraOptions) => {
+  async (args: string | ServiceFetchArgs, api, extraOptions) => {
     // 如果是 refreshToken 的请求，不要等待
     const isRefreshTokenRequest = getIsRefreshTokenRequest(args)
     if (!isRefreshTokenRequest) {
@@ -53,15 +55,19 @@ const baseServiceQueryWithReAuth = retry(
     const { error } = result
 
     if (error) {
-      // 不在这里打印 message 给用户，因为重新请求可能会发送多次，应该创建 rtkQueryErrorLogger 中间件处理
-      if (error.status === HttpStatus.Unauthorized) {
-        if (isRefreshTokenRequest) {
+      if (typeof args !== 'string') {
+        if (args.meta?.notThrowError) {
           // eslint-disable-next-line @typescript-eslint/no-extra-semi
           ;(error.data as ResponseError).notThrowError = true
+        }
+      }
+      // 不在这里打印 message 给用户，因为重新请求可能会发送多次，应该创建 rtkQueryErrorLogger 中间件处理
+      if (error.status === HttpStatus.Unauthorized) {
+        const { auth } = api.getState() as RootState
+        if (isRefreshTokenRequest) {
           retry.fail(error)
         } else {
-          const { auth } = api.getState() as RootState
-
+          // 上面的 await 是为了等待 refresh token 完毕，这里是为了获取值
           let refreshResult = await isRefreshingToken
           if (!refreshResult) {
             isRefreshingToken = new Promise((resolve) => {

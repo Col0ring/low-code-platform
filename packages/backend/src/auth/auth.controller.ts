@@ -1,6 +1,8 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
 import { User } from '../decorators/user.decorator'
 import { AuthService } from './auth.service'
+import { Role } from './constants'
+import { Auth } from './decorators'
 import { RegisterDto } from './dto/register.dto'
 import { JwtAuthGuard } from './jwt-auth.guard'
 import { LocalAuthGuard } from './local-auth.guard'
@@ -19,7 +21,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('/login')
   login(@User() user: LocalUser) {
-    return this.authService.login(user.id)
+    return this.authService.login(user)
   }
 
   @UseGuards(JwtAuthGuard)
@@ -28,10 +30,12 @@ export class AuthController {
     await this.authService.logout(user.id)
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Auth(Role.User)
   @Get('/getUserInfo')
   getUserInfo() {
-    return {}
+    return {
+      roles: ['admin'],
+    }
   }
 
   @UseGuards(RefreshTokenJwtAuthGuard)

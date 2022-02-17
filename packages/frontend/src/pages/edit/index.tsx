@@ -1,25 +1,39 @@
-import React, { useEffect } from 'react'
-import { Button, Form, Input } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { Button, Form, Input, Space } from 'antd'
 import {
-  useGetUserInfoQuery,
   useLoginMutation,
   useLogoutMutation,
   useRegisterMutation,
 } from '@/store/services/auth'
-import { useLazyGetUserListQuery } from '@/store/services/user'
+import {
+  useGetUserListQuery,
+  useLazyGetUserListQuery,
+} from '@/store/services/user'
+import { Link } from 'react-router-dom'
 
 const EditPage: React.FC = () => {
-  useGetUserInfoQuery()
-  const [trigger, { data }] = useLazyGetUserListQuery()
+  const [page, setPage] = useState(0)
+  const { data, isFetching, isLoading } = useGetUserListQuery(page)
+  const [trigger] = useLazyGetUserListQuery()
+
   const [login] = useLoginMutation()
   const [logout] = useLogoutMutation()
   const [register] = useRegisterMutation()
   const [form] = Form.useForm()
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     setPage((prev) => {
+  //       if (prev > 6) {
+  //         return prev - 1
+  //       }
+
+  //       return prev + 1
+  //     })
+  //   }, 1000)
+  // }, [])
   useEffect(() => {
-    setTimeout(() => {
-      void trigger()
-    }, 1000)
-  }, [trigger])
+    void trigger(page, true)
+  }, [page, trigger])
 
   return (
     <div>
@@ -37,6 +51,7 @@ const EditPage: React.FC = () => {
       <Button
         onClick={() => {
           const values = form.getFieldsValue()
+          console.log(values)
           void login(values)
         }}
       >
@@ -58,6 +73,15 @@ const EditPage: React.FC = () => {
       >
         登出
       </Button>
+      <div>
+        <Space>
+          <Link to="/auth">auth</Link>
+
+          <Link to="/dashboard">dashboard</Link>
+          <Link to="/public">public</Link>
+          <Link to="/login">login</Link>
+        </Space>
+      </div>
     </div>
   )
 }

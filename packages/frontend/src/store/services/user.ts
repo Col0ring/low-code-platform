@@ -2,11 +2,11 @@ import { createServiceApi } from './create-service-api'
 
 export const userApi = createServiceApi({
   reducerPath: 'userApi',
-  tagTypes: ['user'],
+  tagTypes: ['User'],
   endpoints: (builder) => ({
-    getUserList: builder.query<any, void>({
-      query: () => '/auth/getUserList',
-      providesTags: ['user'],
+    getUserList: builder.query<any, number>({
+      query: (page) => `/auth/getUserList?page=${page}`,
+      providesTags: ['User'],
     }),
   }),
 })

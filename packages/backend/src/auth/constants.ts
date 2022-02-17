@@ -1,9 +1,14 @@
 export enum DecoratorMetadata {
-  Public = 'isPublic',
+  Roles = 'roles',
 }
 
 export enum StrategyType {
   RefreshTokenJwt = 'refreshTokenJwt',
   Jwt = 'jwt',
   Local = 'local',
+}
+
+export enum Role {
+  User = 'user',
+  Admin = 'admin',
 }

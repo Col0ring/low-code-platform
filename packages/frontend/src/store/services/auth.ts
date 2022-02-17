@@ -1,5 +1,5 @@
 import { createServiceApi } from './create-service-api'
-import { TokenPayload } from '../type'
+import { TokenPayload, User } from '../type'
 import { authActions } from '../slices/auth'
 
 export const authApi = createServiceApi({
@@ -25,7 +25,6 @@ export const authApi = createServiceApi({
           // do nothing
         }
       },
-      invalidatesTags: (result) => (result ? ['Auth'] : []),
     }),
     login: builder.mutation<
       TokenPayload,
@@ -46,13 +45,16 @@ export const authApi = createServiceApi({
           // do nothing
         }
       },
-      invalidatesTags: (result) => (result ? ['Auth'] : []),
     }),
     refreshToken: builder.mutation<TokenPayload, string>({
       query(refreshToken: string) {
         return {
           url: '/auth/refreshToken',
           method: 'post',
+          meta: {
+            notThrowError: true,
+            isRefreshTokenRequest: true,
+          },
           headers: {
             authorization: `Bearer ${refreshToken}`,
           },
@@ -83,10 +85,14 @@ export const authApi = createServiceApi({
           // do noting
         }
       },
-      invalidatesTags: (result) => (result ? ['Auth'] : []),
     }),
-    getUserInfo: builder.query<any, void>({
-      query: () => '/auth/getUserInfo',
+    getUserInfo: builder.query<User, boolean | undefined>({
+      query: (notThrowError = true) => ({
+        url: '/auth/getUserInfo',
+        meta: {
+          notThrowError,
+        },
+      }),
       async onQueryStarted(_, { queryFulfilled, dispatch }) {
         try {
           const { data } = await queryFulfilled

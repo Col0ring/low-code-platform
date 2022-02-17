@@ -22,6 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, StrategyType.Jwt) {
   validate(payload: TokenPayload): JwtUser {
     return {
       id: payload.sub,
+      roles: payload.roles,
     }
   }
 }

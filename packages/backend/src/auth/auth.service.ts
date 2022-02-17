@@ -8,9 +8,11 @@ import bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt'
 import { UsersService } from '../users/users.service'
 import { authConfig, AuthConfig } from './auth.config'
-import { TokenPayload, Tokens } from './type'
+import { LocalUser, TokenPayload, Tokens } from './type'
 import { RegisterDto } from './dto/register.dto'
+import { Role } from './constants'
 
+const fakeRoles = [Role.User]
 @Injectable()
 export class AuthService {
   constructor(
@@ -20,8 +22,7 @@ export class AuthService {
     private readonly authConfigService: AuthConfig
   ) {}
 
-  private generateTokens(id: number): Tokens {
-    const payload: TokenPayload = { sub: id }
+  private generateTokens(payload: TokenPayload): Tokens {
     return {
       token: this.jwtService.sign(payload, {
         expiresIn: this.authConfigService.jwtExpressIn,
@@ -51,7 +52,10 @@ export class AuthService {
     if (!user || refreshToken !== user.refreshToken) {
       throw new UnauthorizedException()
     }
-    const tokens = this.generateTokens(id)
+    const tokens = this.generateTokens({
+      sub: user.id,
+      roles: fakeRoles,
+    })
     await this.usersService.updateOneById(id, {
       refreshToken: tokens.refreshToken,
     })
@@ -61,7 +65,10 @@ export class AuthService {
   async register(dto: RegisterDto) {
     try {
       const user = await this.usersService.insertUser(dto)
-      const tokens = this.generateTokens(user.id)
+      const tokens = this.generateTokens({
+        sub: user.id,
+        roles: fakeRoles,
+      })
       await this.usersService.updateOneById(user.id, {
         refreshToken: tokens.refreshToken,
       })
@@ -71,9 +78,12 @@ export class AuthService {
     }
   }
 
-  async login(id: number) {
-    const tokens = this.generateTokens(id)
-    await this.usersService.updateOneById(id, {
+  async login(user: LocalUser) {
+    const tokens = this.generateTokens({
+      sub: user.id,
+      roles: fakeRoles,
+    })
+    await this.usersService.updateOneById(user.id, {
       refreshToken: tokens.refreshToken,
     })
 

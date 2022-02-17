@@ -1,32 +1,19 @@
-import { Spin } from 'antd'
 import React from 'react'
 import LazyLoad from '@/components/lazy-load'
+import RouteLoading, { RouteLoadingProps } from './route-loading'
 
-export interface LazyRouteProps {
-  render: () => Promise<{
-    default: React.FC<{}>
-  }>
-  loadingFullScreen?: boolean
+export interface LazyRouteProps extends RouteLoadingProps {
+  component: React.LazyExoticComponent<React.ComponentType<any>>
 }
 
-export const LazyRoute: React.FC<LazyRouteProps> = (props) => {
-  const { render, loadingFullScreen } = props
+const LazyRoute: React.FC<LazyRouteProps> = (props) => {
+  const { component, loadingFullScreen } = props
+
   return (
-    <LazyLoad
-      fallback={
-        <Spin
-          spinning
-          style={{
-            width: '100%',
-            height: loadingFullScreen ? '100vh' : '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        />
-      }
-    >
-      {React.createElement(React.lazy(render))}
+    <LazyLoad fallback={<RouteLoading loadingFullScreen={loadingFullScreen} />}>
+      {React.createElement(component)}
     </LazyLoad>
   )
 }
+
+export default LazyRoute
