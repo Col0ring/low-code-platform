@@ -5,6 +5,8 @@ import { Role } from '@/store'
 import EditorPage from '@/pages/editor'
 import AuthRoute from './auth-route'
 import LazyRoute from './lazy-route'
+import ForbiddenPage from '@/pages/403'
+import NotFoundPage from '@/pages/404'
 
 export const accessRoutes: RouteObject[] = []
 
@@ -29,7 +31,28 @@ export const routes: RouteObject[] = [
     element: (
       <AuthRoute loading={false} element={<EditPage />} needAuth={false} />
     ),
-    children: accessRoutes,
+    children: [
+      // index 代表和父 path 相同的 path
+      {
+        path: '/public/',
+        element: <ForbiddenPage />,
+      },
+      {
+        // path: '*',
+        index: true,
+        element: <NotFoundPage />,
+      },
+
+      {
+        element: <EditPage />,
+        children: [
+          {
+            path: '2',
+            element: <NotFoundPage />,
+          },
+        ],
+      },
+    ],
   },
   {
     path: '/dashboard',
@@ -38,7 +61,7 @@ export const routes: RouteObject[] = [
         element={<EditPage />}
         needAuth
         loadingFullScreen
-        roles={[Role.Admin]}
+        roles={[Role.User]}
       />
     ),
     children: accessRoutes,
@@ -59,5 +82,13 @@ export const routes: RouteObject[] = [
       />
     ),
     children: accessRoutes,
+  },
+  {
+    path: '/403',
+    element: <ForbiddenPage />,
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />,
   },
 ]

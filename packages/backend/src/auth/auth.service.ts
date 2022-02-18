@@ -47,7 +47,7 @@ export class AuthService {
   }
 
   async refreshTokens(id: number, refreshToken: string): Promise<Tokens> {
-    const user = await this.usersService.findOneById(id)
+    const user = await this.usersService.findOneByIdWithRefreshToken(id)
 
     if (!user || refreshToken !== user.refreshToken) {
       throw new UnauthorizedException()
@@ -94,5 +94,12 @@ export class AuthService {
     await this.usersService.updateOneById(id, {
       refreshToken: null,
     })
+  }
+
+  async getUserInfo(id: number) {
+    return {
+      ...(await this.usersService.findOneById(id)),
+      roles: fakeRoles,
+    }
   }
 }

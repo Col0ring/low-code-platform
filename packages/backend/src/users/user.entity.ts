@@ -30,6 +30,7 @@ export class User {
 
   @Column({
     default: null,
+    select: false,
     nullable: true,
   })
   refreshToken: string

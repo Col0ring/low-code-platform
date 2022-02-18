@@ -6,10 +6,12 @@ import { Role, useAppSelector } from '@/store'
 import { useGetUserInfoQuery } from '@/store/services/auth'
 import { matchRoles } from './utils'
 import RouteLoading, { RouteLoadingProps } from './route-loading'
+import ForbiddenPage from '@/pages/403'
 
 export interface AuthProps {
   roles?: Role | Role[]
   needAuth: true
+  navigateWhenForbidden?: true
 }
 export interface PublicProps {
   needAuth: false
@@ -24,14 +26,16 @@ export type AuthRouteProps = RouteLoadingProps & {
 
 interface InternalProps
   extends Omit<AuthRouteProps, 'needAuth'>,
-    Omit<AuthProps, 'needAuth'>,
+    Omit<AuthProps, 'needAuth' | 'navigateWhenForbidden'>,
     Omit<PublicProps, 'needAuth'> {
   needAuth: boolean
+  navigateWhenForbidden: boolean
 }
 
 const AuthRoute: React.FC<AuthRouteProps> = (props) => {
   const {
     element,
+    navigateWhenForbidden,
     loading: originLoading,
     roles: routeRoles = [],
     loadingFullScreen,
@@ -45,10 +49,7 @@ const AuthRoute: React.FC<AuthRouteProps> = (props) => {
   const auth = useAppSelector((state) => state.auth)
 
   const { isLoading, data } = useGetUserInfoQuery(
-    auth.user ? skipToken : !needAuth,
-    {
-      refetchOnFocus: false,
-    }
+    auth.user ? skipToken : !needAuth
   )
   const user = data || auth.user
 
@@ -61,8 +62,14 @@ const AuthRoute: React.FC<AuthRouteProps> = (props) => {
   }
 
   if (needAuth) {
-    if (user && matchRoles(user.roles, ensureArray(routeRoles))) {
-      return <>{element}</>
+    if (user) {
+      if (matchRoles(user.roles, ensureArray(routeRoles))) {
+        return <>{element}</>
+      }
+      if (navigateWhenForbidden) {
+        return <Navigate replace to="/403" />
+      }
+      return <ForbiddenPage />
     }
     return <Navigate replace to={redirect} />
   }

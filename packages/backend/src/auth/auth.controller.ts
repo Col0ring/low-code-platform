@@ -32,10 +32,8 @@ export class AuthController {
 
   @Auth(Role.User)
   @Get('/getUserInfo')
-  getUserInfo() {
-    return {
-      roles: ['admin'],
-    }
+  getUserInfo(@User() user: JwtUser) {
+    return this.authService.getUserInfo(user.id)
   }
 
   @UseGuards(RefreshTokenJwtAuthGuard)

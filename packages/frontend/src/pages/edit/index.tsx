@@ -9,7 +9,7 @@ import {
   useGetUserListQuery,
   useLazyGetUserListQuery,
 } from '@/store/services/user'
-import { Link } from 'react-router-dom'
+import { Link, Outlet } from 'react-router-dom'
 
 const EditPage: React.FC = () => {
   const [page, setPage] = useState(0)
@@ -82,6 +82,7 @@ const EditPage: React.FC = () => {
           <Link to="/login">login</Link>
         </Space>
       </div>
+      <Outlet />
     </div>
   )
 }

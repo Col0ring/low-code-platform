@@ -70,24 +70,27 @@ const baseServiceQueryWithReAuth = retry(
           // 上面的 await 是为了等待 refresh token 完毕，这里是为了获取值
           let refreshResult = await isRefreshingToken
           if (!refreshResult) {
-            isRefreshingToken = new Promise((resolve) => {
-              api
-                .dispatch(
-                  authApi.endpoints.refreshToken.initiate(auth.refreshToken)
-                )
-                .then((res) => {
-                  resolve(
-                    res as QueryReturnValue<
-                      unknown,
-                      FetchBaseQueryError,
-                      FetchBaseQueryMeta
-                    >
+            // 当有 refreshToken 时保存本地时发起请求
+            if (auth.refreshToken) {
+              isRefreshingToken = new Promise((resolve) => {
+                api
+                  .dispatch(
+                    authApi.endpoints.refreshToken.initiate(auth.refreshToken)
                   )
-                })
-                .catch((err) => {
-                  resolve(err)
-                })
-            })
+                  .then((res) => {
+                    resolve(
+                      res as QueryReturnValue<
+                        unknown,
+                        FetchBaseQueryError,
+                        FetchBaseQueryMeta
+                      >
+                    )
+                  })
+                  .catch((err) => {
+                    resolve(err)
+                  })
+              })
+            }
             // try to get a new token
             refreshResult = await isRefreshingToken
             isRefreshingToken = null
@@ -112,6 +115,7 @@ const baseServiceQueryWithReAuth = retry(
           }
         }
       } else if (
+        error.status === HttpStatus.Forbidden ||
         error.status === HttpStatus.BadRequest ||
         error.status === HttpStatus.NotFound
       ) {
