@@ -1,25 +1,25 @@
 import React from 'react'
 import { RouteObject } from 'react-router-dom'
-import EditPage from '@/pages/edit'
-import { Role } from '@/store'
-import EditorPage from '@/pages/editor'
+import EditPage from '@/features/editor/pages/edit'
+import { Role } from '@/features/auth/constants'
 import AuthRoute from './auth-route'
 import LazyRoute from './lazy-route'
-import ForbiddenPage from '@/pages/403'
-import NotFoundPage from '@/pages/404'
+import ForbiddenPage from './pages/403'
+import NotFoundPage from './pages/404'
+import LoginPage from '@/features/auth/pages/login'
 
 export const accessRoutes: RouteObject[] = []
 
 export const routes: RouteObject[] = [
   {
     path: '/',
-    element: <EditorPage />,
+    element: <EditPage />,
   },
   {
     path: '/login',
     element: (
       <AuthRoute
-        element={<EditPage />}
+        element={<LoginPage />}
         loadingFullScreen
         needAuth={false}
         notLogin
@@ -34,12 +34,12 @@ export const routes: RouteObject[] = [
     children: [
       // index 代表和父 path 相同的 path
       {
-        path: '/public/',
+        path: '',
         element: <ForbiddenPage />,
       },
       {
         // path: '*',
-        index: true,
+        // index: true,
         element: <NotFoundPage />,
       },
 
@@ -58,7 +58,11 @@ export const routes: RouteObject[] = [
     path: '/dashboard',
     element: (
       <AuthRoute
-        element={<EditPage />}
+        element={
+          <LazyRoute
+            component={React.lazy(() => import('@/features/editor/pages/edit'))}
+          />
+        }
         needAuth
         loadingFullScreen
         roles={[Role.User]}
@@ -72,13 +76,8 @@ export const routes: RouteObject[] = [
       <AuthRoute
         needAuth
         loadingFullScreen
-        element={
-          <LazyRoute
-            component={React.lazy(() => import('@/pages/edit'))}
-            loadingFullScreen
-          />
-        }
-        roles={[Role.Admin]}
+        element={<EditPage />}
+        roles={[Role.User]}
       />
     ),
     children: accessRoutes,

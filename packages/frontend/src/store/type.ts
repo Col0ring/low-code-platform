@@ -1,25 +1,17 @@
-import { createAction } from '@reduxjs/toolkit'
-import { Role } from './constants'
+import { SerializedError } from '@reduxjs/toolkit'
+import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query/react'
 
-// query
 export interface ResponseError {
   message: string
   status: number
   notThrowError?: boolean
 }
 
-// rtk
-export interface User {
-  id: number
-  phone: string
-  username: string
-  roles: Role[]
+export interface ResultData<T = any> {
+  data: T
+}
+export interface ResultError {
+  error: FetchBaseQueryError | SerializedError
 }
 
-export type PayloadFromAction<A extends ReturnType<typeof createAction>> =
-  ReturnType<A>['payload']
-
-export interface TokenPayload {
-  token: string
-  refreshToken: string
-}
+export type ResponseResult<T = any> = ResultData<T> | ResultError

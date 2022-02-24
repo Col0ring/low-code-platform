@@ -1,4 +1,6 @@
 export * from './local-storage'
+export * from './env'
+export * from './store'
 
 export function noop() {
   // do nothing

@@ -4,20 +4,21 @@ import {
   EndpointDefinitions,
   FetchArgs,
   fetchBaseQuery,
-  FetchBaseQueryError,
-  FetchBaseQueryMeta,
   retry,
 } from '@reduxjs/toolkit/query/react'
-import { QueryReturnValue } from '@reduxjs/toolkit/dist/query/baseQueryTypes'
-import { authActions } from '../slices/auth'
-import { ResponseError, TokenPayload } from '../type'
+import { authActions } from '@/features/auth/auth.slice'
+import { TokenPayload } from '@/features/auth/type'
+import { isResolved } from '@/utils'
+import { RootState } from '.'
+import { ResponseResult, ResponseError } from './type'
 import { HttpStatus } from './constants'
-import { RootState } from '..'
-import { authApi } from './auth'
 
-let isRefreshingToken: Promise<
-  QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>
-> | null = null
+// lazy load
+const lazyAuthApi = import('@/features/auth/auth.service').then(
+  ({ authApi }) => authApi
+)
+
+let isRefreshingToken: Promise<ResponseResult<TokenPayload>> | null = null
 
 export interface ServiceFetchArgs extends FetchArgs {
   meta?: {
@@ -73,32 +74,30 @@ const baseServiceQueryWithReAuth = retry(
             // 当有 refreshToken 时保存本地时发起请求
             if (auth.refreshToken) {
               isRefreshingToken = new Promise((resolve) => {
-                api
-                  .dispatch(
-                    authApi.endpoints.refreshToken.initiate(auth.refreshToken)
-                  )
-                  .then((res) => {
-                    resolve(
-                      res as QueryReturnValue<
-                        unknown,
-                        FetchBaseQueryError,
-                        FetchBaseQueryMeta
-                      >
-                    )
+                lazyAuthApi
+                  .then((authApi) => {
+                    api
+                      .dispatch(
+                        authApi.endpoints.refreshToken.initiate(
+                          auth.refreshToken
+                        )
+                      )
+                      .then((res) => {
+                        resolve(res)
+                      })
+                      .catch((err) => {
+                        resolve(err)
+                      })
                   })
-                  .catch((err) => {
-                    resolve(err)
-                  })
+                  .catch((err) => resolve(err))
               })
             }
             // try to get a new token
             refreshResult = await isRefreshingToken
             isRefreshingToken = null
-            if (refreshResult?.data) {
+            if (refreshResult && isResolved(refreshResult)) {
               // store the new token
-              api.dispatch(
-                authActions.login(refreshResult.data as TokenPayload)
-              )
+              api.dispatch(authActions.login(refreshResult.data))
               // retry the initial query
               result = await baseServiceQuery(args, api, extraOptions)
             } else {
@@ -107,7 +106,7 @@ const baseServiceQueryWithReAuth = retry(
             }
           } else {
             // 几个已经在请求中的请求报 401
-            if (refreshResult?.data) {
+            if (refreshResult && isResolved(refreshResult)) {
               result = await baseServiceQuery(args, api, extraOptions)
             } else {
               retry.fail(error)

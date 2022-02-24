@@ -1,12 +1,16 @@
 import React from 'react'
-import { Navigate } from 'react-router-dom'
-import { ensureArray } from '@/utils'
+import { Navigate, useLocation } from 'react-router-dom'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
-import { Role, useAppSelector } from '@/store'
-import { useGetUserInfoQuery } from '@/store/services/auth'
-import { matchRoles } from './utils'
+import { ensureArray } from '@/utils'
+import { useAppSelector } from '@/store'
+import { Role } from '@/features/auth/constants'
+import { useGetUserInfoQuery } from '@/features/auth/auth.service'
 import RouteLoading, { RouteLoadingProps } from './route-loading'
-import ForbiddenPage from '@/pages/403'
+import ForbiddenPage from './pages/403'
+
+function matchRoles(roles: string[], routeRoles: string[]) {
+  return roles.some((role) => routeRoles.includes(role))
+}
 
 export interface AuthProps {
   roles?: Role | Role[]
@@ -46,12 +50,16 @@ const AuthRoute: React.FC<AuthRouteProps> = (props) => {
 
   const loading = originLoading ?? true
 
-  const auth = useAppSelector((state) => state.auth)
+  const location = useLocation()
 
+  const auth = useAppSelector((state) => state.auth)
+  // 登出或者没有登录过 hasToken 为 false
+  const hasToken = !!(auth.token || auth.refreshToken)
   const { isLoading, data } = useGetUserInfoQuery(
-    auth.user ? skipToken : !needAuth
+    !hasToken || auth.user ? skipToken : !needAuth
   )
-  const user = data || auth.user
+
+  const user = hasToken ? data : auth.user
 
   if (isLoading && loading) {
     return <RouteLoading loadingFullScreen={loadingFullScreen} />
@@ -60,20 +68,25 @@ const AuthRoute: React.FC<AuthRouteProps> = (props) => {
   if (notLogin && user) {
     return <Navigate replace to={redirect} />
   }
-
   if (needAuth) {
     if (user) {
       if (matchRoles(user.roles, ensureArray(routeRoles))) {
         return <>{element}</>
       }
+
       if (navigateWhenForbidden) {
         return <Navigate replace to="/403" />
       }
       return <ForbiddenPage />
     }
-    return <Navigate replace to={redirect} />
+    return (
+      <Navigate
+        replace
+        state={location.state}
+        to={`${redirect}?redirect=${location.pathname + location.search}`}
+      />
+    )
   }
-
   return <>{element}</>
 }
 export default AuthRoute

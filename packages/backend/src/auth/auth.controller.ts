@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
-import { User } from '../decorators/user.decorator'
+import { User } from './decorators/user.decorator'
 import { AuthService } from './auth.service'
 import { Role } from './constants'
 import { Auth } from './decorators'

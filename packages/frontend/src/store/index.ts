@@ -1,11 +1,11 @@
 import logger from 'redux-logger'
 import { configureStore, Middleware } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/dist/query'
-import { __DEV__ } from '@/utils/env'
+import { __DEV__ } from '@/utils'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
-import { authSlice, authActions } from './slices/auth'
-import { authApi } from './services/auth'
-import { userApi } from './services/user'
+import { authSlice } from '@/features/auth/auth.slice'
+import { authApi } from '@/features/auth/auth.service'
+import { userApi } from '@/features/user/user.service'
 import { rtkQueryErrorLogger } from './rtk-query-error-logger-middleware'
 
 function setupStore() {
@@ -45,6 +45,6 @@ export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
-export { authActions }
-export * from './constants'
 export default store
+export * from './constants'
+export * from './type'

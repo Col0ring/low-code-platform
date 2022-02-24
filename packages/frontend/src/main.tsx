@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { AppRouter, AppRoutes } from './router'
 import AppProvider from './provider'
-import './index.less'
+import '@/styles/index.less'
 
 ReactDOM.render(
   <React.StrictMode>

@@ -1,4 +1,4 @@
-import { createServiceApi } from './create-service-api'
+import { createServiceApi } from '@/utils'
 
 export const userApi = createServiceApi({
   reducerPath: 'userApi',

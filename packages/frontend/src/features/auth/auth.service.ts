@@ -1,6 +1,7 @@
-import { createServiceApi } from './create-service-api'
-import { TokenPayload, User } from '../type'
-import { authActions } from '../slices/auth'
+import { message } from 'antd'
+import { createServiceApi } from '@/utils'
+import { TokenPayload, User } from '@/features/auth/type'
+import { authActions } from '@/features/auth/auth.slice'
 
 export const authApi = createServiceApi({
   reducerPath: 'authApi',
@@ -25,27 +26,57 @@ export const authApi = createServiceApi({
           // do nothing
         }
       },
+      invalidatesTags: (result) => (result ? ['Auth'] : []),
+    }),
+    // TODO
+    getAuthCode: builder.mutation<
+      {
+        authCode: string
+      },
+      string
+    >({
+      queryFn: () => ({
+        data: {
+          authCode: 'xxxx',
+        },
+      }),
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled
+          void message.success({
+            content: `验证码为 ${data.authCode}（忽略大小写）`,
+          })
+        } catch (error) {
+          // do nothing
+        }
+      },
     }),
     login: builder.mutation<
       TokenPayload,
-      { username: string; password: string }
+      { phone: string; passwordOrCode: string; type: 'password' | 'code' }
     >({
-      query(data) {
+      query({ phone, passwordOrCode, type }) {
         return {
-          url: '/auth/login',
+          url: `/auth/login?type=${type}`,
           method: 'post',
-          body: data,
+          body: {
+            phone,
+            passwordOrCode,
+          },
         }
       },
       async onQueryStarted(_, { queryFulfilled, dispatch }) {
         try {
           const { data } = await queryFulfilled
           dispatch(authActions.login(data))
+          void message.success('登录成功')
         } catch (error) {
           // do nothing
         }
       },
+      invalidatesTags: (result) => (result ? ['Auth'] : []),
     }),
+    // for createServiceApi
     refreshToken: builder.mutation<TokenPayload, string>({
       query(refreshToken: string) {
         return {
@@ -81,11 +112,14 @@ export const authApi = createServiceApi({
         try {
           await queryFulfilled
           dispatch(authActions.logout())
+          void message.success('登出成功')
         } catch (error) {
           // do noting
         }
       },
+      invalidatesTags: (_, err) => (!err ? ['Auth'] : []),
     }),
+    // for authRoute
     getUserInfo: builder.query<User, boolean | undefined>({
       query: (notThrowError = true) => ({
         url: '/auth/getUserInfo',
@@ -109,6 +143,7 @@ export const authApi = createServiceApi({
 export const {
   useGetUserInfoQuery,
   useRegisterMutation,
+  useGetAuthCodeMutation,
   useLoginMutation,
   useLogoutMutation,
 } = authApi

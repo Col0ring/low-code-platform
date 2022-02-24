@@ -1,8 +1,7 @@
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { createLocalStorage } from '@/utils'
-import { withPayloadType } from '../utils'
-import { PayloadFromAction, TokenPayload, User } from '../type'
-import { Role } from '../constants'
+import { createLocalStorage, withPayloadType } from '@/utils'
+import { PayloadFromAction, TokenPayload, User } from './type'
+import { Role } from './constants'
 
 const { setTokenStorage, getTokenStorage, removeTokenStorage } =
   createLocalStorage('tokenStorage', {
@@ -28,12 +27,12 @@ const login = createAction('login', withPayloadType<TokenPayload>())
 const setUser = createAction('setUser', withPayloadType<any>())
 const logout = createAction('logout')
 
-const initialState: RouteState = {
+const initialState: () => RouteState = () => ({
   roles: [],
   token: getTokenStorage(),
   refreshToken: getRefreshTokenStorage(),
   user: null,
-}
+})
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -59,7 +58,7 @@ export const authSlice = createSlice({
     [logout.type]() {
       removeTokenStorage()
       removeRefreshTokenStorage()
-      return initialState
+      return initialState()
     },
   },
 })
