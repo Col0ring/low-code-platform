@@ -7,6 +7,8 @@ import LazyRoute from './lazy-route'
 import ForbiddenPage from './pages/403'
 import NotFoundPage from './pages/404'
 import LoginPage from '@/features/auth/pages/login'
+import AuthLayout from '@/features/auth/layouts/auth-layout'
+import RegisterPage from '@/features/auth/pages/register'
 
 export const accessRoutes: RouteObject[] = []
 
@@ -16,15 +18,24 @@ export const routes: RouteObject[] = [
     element: <EditPage />,
   },
   {
-    path: '/login',
     element: (
       <AuthRoute
-        element={<LoginPage />}
+        element={<AuthLayout />}
         loadingFullScreen
         needAuth={false}
         notLogin
       />
     ),
+    children: [
+      {
+        path: '/login',
+        element: <LoginPage />,
+      },
+      {
+        path: '/register',
+        element: <RegisterPage />,
+      },
+    ],
   },
   {
     path: '/public',

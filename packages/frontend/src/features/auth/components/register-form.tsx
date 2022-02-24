@@ -19,7 +19,7 @@ export interface RegisterFormProps {
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
   const [form] = Form.useForm()
-  const handleRegister: FormProps['onFinish'] = (values) => {
+  const onFinish: FormProps['onFinish'] = (values) => {
     onRegister(values)
     form.resetFields()
   }
@@ -29,7 +29,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
       labelCol={{
         span: 5,
       }}
-      onFinish={handleRegister}
+      style={{ padding: '30px 0 20px' }}
+      onFinish={onFinish}
     >
       <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
         <Input
@@ -64,11 +65,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
         label="确认密码"
         rules={[
           ({ getFieldValue }) => ({
-            validator(rule, value) {
+            validator(_, value) {
               if (!value || getFieldValue('password') === value) {
                 return Promise.resolve()
               }
-              return Promise.reject('两次密码不一致')
+              return Promise.reject('两次密码输入不一致')
             },
           }),
         ]}

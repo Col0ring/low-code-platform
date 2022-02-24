@@ -52,7 +52,6 @@ const CodeForm: React.FC<CodeFormProps> = ({
   }, [authTime])
   return (
     <Form
-      className="code-form"
       size="large"
       form={form}
       initialValues={{
@@ -63,6 +62,7 @@ const CodeForm: React.FC<CodeFormProps> = ({
       }}
       onFinish={onFinish}
       onFieldsChange={onFieldsChange}
+      style={{ padding: '30px 0 20px' }}
     >
       <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
         <Input

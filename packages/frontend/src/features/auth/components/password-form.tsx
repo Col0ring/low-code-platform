@@ -15,7 +15,6 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ onLogin, loading }) => {
   return (
     <Form
       size="large"
-      className="password-form"
       labelCol={{
         span: 5,
       }}
@@ -24,6 +23,7 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ onLogin, loading }) => {
         password: '1',
       }}
       onFinish={onFinish}
+      style={{ padding: '30px 0 20px' }}
     >
       <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
         <Input
