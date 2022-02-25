@@ -1,22 +1,16 @@
 import React from 'react'
+import classnames from 'classnames'
 import { Spin } from 'antd'
 export interface RouteLoadingProps {
   loadingFullScreen?: boolean
 }
 const RouteLoading: React.FC<RouteLoadingProps> = (props) => {
   const { loadingFullScreen } = props
-  return (
-    <Spin
-      spinning
-      style={{
-        width: '100%',
-        height: loadingFullScreen ? '100vh' : '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    />
+  const classes = classnames(
+    'w-full flex justify-center items-center',
+    loadingFullScreen ? 'h-screen' : 'h-full'
   )
+  return <Spin spinning className={classes} />
 }
 
 export default RouteLoading

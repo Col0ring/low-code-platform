@@ -40,12 +40,7 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ onLogin, loading }) => {
         />
       </Form.Item>
       <Form.Item>
-        <Button
-          style={{ width: '100%' }}
-          type="primary"
-          htmlType="submit"
-          loading={loading}
-        >
+        <Button block type="primary" htmlType="submit" loading={loading}>
           {loading ? '正在' : ''}登陆
         </Button>
       </Form.Item>
