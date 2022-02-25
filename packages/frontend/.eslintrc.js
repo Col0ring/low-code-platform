@@ -33,6 +33,7 @@ module.exports = {
     'no-console': __DEV__ ? 'off' : 'warn', // 日志打印
     'import/no-named-as-default': 'off',
     'import/no-named-as-default-member': 'off',
+    'import/no-unresolved': ['error', { ignore: ['^virtual:.+'] }],
     // react
     'react/self-closing-comp': 'error',
     // click element muse have keyboard events

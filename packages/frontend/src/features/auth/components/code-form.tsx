@@ -15,7 +15,6 @@ const CodeForm: React.FC<CodeFormProps> = ({
   onAuthCodeButtonClick: onAuthCodeButtonClickProp,
 }) => {
   const [authTime, setAuthTime] = useState(0)
-  const [submitDisabled, setSubmitDisabled] = useState(true)
   const [form] = Form.useForm()
   const onAuthCodeButtonClick = async () => {
     if (authTime) return
@@ -26,17 +25,6 @@ const CodeForm: React.FC<CodeFormProps> = ({
   const onFinish: FormProps['onFinish'] = (values) => {
     const { phone, code } = values
     onLogin(phone, code)
-  }
-
-  const onFieldsChange: FormProps['onFieldsChange'] = (currents) => {
-    const current = currents[0]
-    if (current && current.name.toString() === 'code') {
-      if (current.value.length === 4) {
-        setSubmitDisabled(false)
-      } else {
-        setSubmitDisabled(true)
-      }
-    }
   }
 
   useEffect(() => {
@@ -61,12 +49,11 @@ const CodeForm: React.FC<CodeFormProps> = ({
         span: 5,
       }}
       onFinish={onFinish}
-      onFieldsChange={onFieldsChange}
-      style={{ padding: '30px 0 20px' }}
+      className="pt-7 pb-5"
     >
       <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
         <Input
-          prefix={<span style={{ color: '#aaa' }}>+86</span>}
+          prefix={<span className="text-gray-400">+86</span>}
           placeholder="Phone"
           autoComplete="on"
         />
@@ -90,30 +77,23 @@ const CodeForm: React.FC<CodeFormProps> = ({
               />
             </Form.Item>
           </Col>
-          <Col
-            span={12}
-            style={{ display: 'flex', justifyContent: 'flex-end' }}
-          >
+          <Col span={12} className="flex justify-end">
             <Button
               disabled={authTime > 0}
               block
-              style={{ width: '90%', paddingLeft: 5, paddingRight: 5 }}
+              className="w-9/10 px-1"
               type="primary"
               onClick={onAuthCodeButtonClick}
             >
-              {authTime ? `${authTime}s 后重新获取` : '获取验证码'}
+              <div className="text-cut">
+                {authTime ? `${authTime}s 后重新获取` : '获取验证码'}
+              </div>
             </Button>
           </Col>
         </Row>
       </Form.Item>
       <Form.Item>
-        <Button
-          style={{ width: '100%' }}
-          type="primary"
-          disabled={submitDisabled}
-          htmlType="submit"
-          loading={loading}
-        >
+        <Button block type="primary" htmlType="submit" loading={loading}>
           {loading ? '正在' : ''}登陆
         </Button>
       </Form.Item>

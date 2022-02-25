@@ -40,7 +40,7 @@ const AuthRoute: React.FC<AuthRouteProps> = (props) => {
   const {
     element,
     navigateWhenForbidden,
-    loading: originLoading,
+    loading: loadingProp,
     roles: routeRoles = [],
     loadingFullScreen,
     needAuth,
@@ -48,7 +48,7 @@ const AuthRoute: React.FC<AuthRouteProps> = (props) => {
     redirect = notLogin ? '/dashboard' : '/login',
   } = props as InternalProps
 
-  const loading = originLoading ?? true
+  const loading = loadingProp ?? true
 
   const location = useLocation()
 

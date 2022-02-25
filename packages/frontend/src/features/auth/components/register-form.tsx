@@ -29,7 +29,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
       labelCol={{
         span: 5,
       }}
-      style={{ padding: '30px 0 20px' }}
+      className="pt-7 pb-5"
       onFinish={onFinish}
     >
       <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
@@ -81,12 +81,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
         />
       </Form.Item>
       <Form.Item>
-        <Button
-          style={{ width: '100%' }}
-          type="primary"
-          htmlType="submit"
-          loading={loading}
-        >
+        <Button block type="primary" htmlType="submit" loading={loading}>
           {loading ? '正在' : ''}注册
         </Button>
       </Form.Item>

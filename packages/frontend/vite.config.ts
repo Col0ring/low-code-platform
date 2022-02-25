@@ -3,6 +3,7 @@ import path from 'path'
 import eslintPlugin from 'vite-plugin-eslint'
 import viteStylelint from '@amatlash/vite-plugin-stylelint'
 import react from '@vitejs/plugin-react'
+import windiCSS from 'vite-plugin-windicss'
 
 function resolve(relativePath: string) {
   return path.resolve(__dirname, relativePath)
@@ -33,6 +34,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    windiCSS(),
     eslintPlugin({
       fix: true,
       include: ['./src/**/*.[tj]s?(x)'],

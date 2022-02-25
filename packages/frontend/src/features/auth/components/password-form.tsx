@@ -23,7 +23,7 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ onLogin, loading }) => {
         password: '1',
       }}
       onFinish={onFinish}
-      style={{ padding: '30px 0 20px' }}
+      className="pt-7 pb-5"
     >
       <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
         <Input
