@@ -11,6 +11,7 @@ import AuthLayout from '@/features/auth/layouts/auth-layout'
 import RegisterPage from '@/features/auth/pages/register'
 import DesignLayout from '@/features/design/layouts/design-layout'
 import ForgetPasswordPage from '@/features/auth/pages/forget-password'
+import { Path } from './constants'
 
 export const accessRoutes: RouteObject[] = []
 
@@ -42,15 +43,15 @@ export const routes: RouteObject[] = [
     ),
     children: [
       {
-        path: '/login',
+        path: Path.Login,
         element: <LoginPage />,
       },
       {
-        path: '/register',
+        path: Path.Register,
         element: <RegisterPage />,
       },
       {
-        path: '/forget-password',
+        path: Path.ForgetPassword,
         element: <ForgetPasswordPage />,
       },
     ],
@@ -114,11 +115,11 @@ export const routes: RouteObject[] = [
     children: accessRoutes,
   },
   {
-    path: '/403',
+    path: Path.Forbidden,
     element: <ForbiddenPage />,
   },
   {
-    path: '*',
+    path: Path.NotFound,
     element: <NotFoundPage />,
   },
 ]
