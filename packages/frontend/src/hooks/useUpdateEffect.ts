@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 
-function useUpdateEffect(
+export function useUpdateEffect(
   effect: React.EffectCallback,
   deps?: React.DependencyList
 ) {

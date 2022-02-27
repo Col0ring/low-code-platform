@@ -16,6 +16,11 @@ export class User {
   username: string
 
   @Column({
+    nullable: true,
+  })
+  avatar: string
+
+  @Column({
     transformer: {
       to(value: string) {
         return bcrypt.hashSync(value, 10)

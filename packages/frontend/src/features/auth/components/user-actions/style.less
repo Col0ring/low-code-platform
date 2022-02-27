@@ -1,0 +1,23 @@
+.user-actions {
+  display: flex;
+  align-items: center;
+
+  .action-tools {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+  }
+
+  .avatar-container {
+    display: flex;
+    align-items: flex-end;
+
+    .avatar-dropdown-icon {
+      transition: transform 0.3s ease;
+
+      &.open {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}

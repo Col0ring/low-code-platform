@@ -5,6 +5,7 @@ import { Role } from './constants'
 export interface User {
   id: number
   phone: string
+  avatar?: string
   username: string
   roles: Role[]
 }

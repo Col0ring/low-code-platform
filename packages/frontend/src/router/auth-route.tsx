@@ -2,7 +2,7 @@ import React from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { ensureArray } from '@/utils'
-import { useAppSelector } from '@/store'
+import { useAuth } from '@/hooks'
 import { Role } from '@/features/auth/constants'
 import { useGetUserInfoQuery } from '@/features/auth/auth.service'
 import RouteLoading, { RouteLoadingProps } from './route-loading'
@@ -52,9 +52,9 @@ const AuthRoute: React.FC<AuthRouteProps> = (props) => {
 
   const location = useLocation()
 
-  const auth = useAppSelector((state) => state.auth)
+  const auth = useAuth()
+  const { hasToken } = auth
   // 登出或者没有登录过 hasToken 为 false
-  const hasToken = !!(auth.token || auth.refreshToken)
   const { isLoading, data } = useGetUserInfoQuery(
     !hasToken || auth.user ? skipToken : !needAuth
   )

@@ -1,6 +1,6 @@
 import React from 'react'
 import { RouteObject } from 'react-router-dom'
-import EditPage from '@/features/editor/pages/edit'
+import EditPage from '@/features/design/pages/page-designer'
 import { Role } from '@/features/auth/constants'
 import AuthRoute from './auth-route'
 import LazyRoute from './lazy-route'
@@ -9,13 +9,26 @@ import NotFoundPage from './pages/404'
 import LoginPage from '@/features/auth/pages/login'
 import AuthLayout from '@/features/auth/layouts/auth-layout'
 import RegisterPage from '@/features/auth/pages/register'
+import DesignLayout from '@/features/design/layouts/design-layout'
 
 export const accessRoutes: RouteObject[] = []
 
 export const routes: RouteObject[] = [
   {
-    path: '/',
-    element: <EditPage />,
+    path: '/design',
+    element: <DesignLayout />,
+    children: [
+      {
+        path: 'page-designer',
+        element: (
+          <LazyRoute
+            component={React.lazy(
+              () => import('@/features/design/pages/page-designer')
+            )}
+          />
+        ),
+      },
+    ],
   },
   {
     element: (
@@ -71,7 +84,9 @@ export const routes: RouteObject[] = [
       <AuthRoute
         element={
           <LazyRoute
-            component={React.lazy(() => import('@/features/editor/pages/edit'))}
+            component={React.lazy(
+              () => import('@/features/design/pages/page-designer')
+            )}
           />
         }
         needAuth
