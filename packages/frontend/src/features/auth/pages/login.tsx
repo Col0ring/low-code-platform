@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
-import { useSearchParams, Navigate } from 'react-router-dom'
+import { useSearchParams, Navigate, Link } from 'react-router-dom'
 import { Tabs } from 'antd'
 import { useGetAuthCodeMutation, useLoginMutation } from '../auth.service'
 import PasswordForm, { PasswordFormProps } from '../components/password-form'
 import CodeForm, { CodeFormProps } from '../components/code-form'
+import { Path } from '@/router/constants'
 
 const Login: React.FC = () => {
   const [activeKey, setActiveKey] = useState('password')
-  const [login, { data, isLoading }] = useLoginMutation()
+  const [login, { isSuccess, isLoading }] = useLoginMutation()
   const [getAuthCode] = useGetAuthCodeMutation()
   const [searchParams] = useSearchParams({
     redirect: '',
@@ -39,7 +40,16 @@ const Login: React.FC = () => {
           />
         </Tabs.TabPane>
       </Tabs>
-      {data && (
+      <div className="flex justify-between pb-4">
+        <Link
+          className="text-gray-500 hover:text-gray-400"
+          to={Path.ForgetPassword}
+        >
+          忘记密码？
+        </Link>
+        <Link to={Path.Register}>去注册</Link>
+      </div>
+      {isSuccess && (
         <Navigate replace to={searchParams.get('redirect') || '/dashboard'} />
       )}
     </>

@@ -8,6 +8,7 @@ import { JwtAuthGuard } from './jwt-auth.guard'
 import { LocalAuthGuard } from './local-auth.guard'
 import { RefreshTokenJwtAuthGuard } from './refresh-token-jwt-auth.guard'
 import { JwtUser, LocalUser, RefreshTokenJwtUser } from './type'
+import { ResetPasswordDto } from './dto/reset-password.dto'
 
 @Controller('auth')
 export class AuthController {
@@ -16,6 +17,11 @@ export class AuthController {
   @Post('/register')
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto)
+  }
+
+  @Post('/resetPassword')
+  resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto)
   }
 
   @UseGuards(LocalAuthGuard)

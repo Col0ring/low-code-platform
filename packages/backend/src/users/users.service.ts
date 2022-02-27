@@ -43,4 +43,14 @@ export class UsersService {
       ...partialEntity,
     })
   }
+  updateOneByPhone(phone: string, partialEntity: Partial<User>) {
+    return this.usersRepository.update(
+      {
+        phone,
+      },
+      {
+        ...partialEntity,
+      }
+    )
+  }
 }

@@ -28,6 +28,31 @@ export const authApi = createServiceApi({
       },
       invalidatesTags: (result) => (result ? ['Auth'] : []),
     }),
+    resetPassword: builder.mutation<
+      void,
+      {
+        password: string
+        code: string
+        phone: string
+      }
+    >({
+      query(data) {
+        return {
+          url: '/auth/resetPassword',
+          method: 'post',
+          body: data,
+        }
+      },
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled
+          void message.success('修改密码成功，已自动跳转至登录页')
+        } catch (error) {
+          // do nothing
+        }
+      },
+      invalidatesTags: (result) => (result ? ['Auth'] : []),
+    }),
     // TODO
     getAuthCode: builder.mutation<
       {
@@ -143,6 +168,7 @@ export const authApi = createServiceApi({
 export const {
   useGetUserInfoQuery,
   useRegisterMutation,
+  useResetPasswordMutation,
   useGetAuthCodeMutation,
   useLoginMutation,
   useLogoutMutation,

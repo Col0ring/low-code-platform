@@ -11,6 +11,7 @@ import { authConfig, AuthConfig } from './auth.config'
 import { LocalUser, TokenPayload, Tokens } from './type'
 import { RegisterDto } from './dto/register.dto'
 import { Role } from './constants'
+import { ResetPasswordDto } from './dto/reset-password.dto'
 
 const fakeRoles = [Role.User]
 @Injectable()
@@ -60,6 +61,12 @@ export class AuthService {
       refreshToken: tokens.refreshToken,
     })
     return tokens
+  }
+  async resetPassword(dto: ResetPasswordDto) {
+    await this.usersService.updateOneByPhone(dto.phone, {
+      password: dto.password,
+      refreshToken: null,
+    })
   }
 
   async register(dto: RegisterDto) {

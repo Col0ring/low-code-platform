@@ -14,22 +14,21 @@ import {
 
 export interface RegisterFormProps {
   onRegister: (values: any) => void
-  loading?: boolean
+  loading: boolean
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
-  const [form] = Form.useForm()
   const onFinish: FormProps['onFinish'] = (values) => {
-    onRegister(values)
-    form.resetFields()
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { rePassword, ...rest } = values
+    onRegister(rest)
   }
   return (
     <Form
-      form={form}
       labelCol={{
         span: 5,
       }}
-      className="pt-7 pb-5"
+      className="pt-7"
       onFinish={onFinish}
     >
       <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
@@ -39,7 +38,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
           autoComplete="phone"
         />
       </Form.Item>
-      <Form.Item name="name" label="用户名" rules={[emptyValidator('用户名')]}>
+      <Form.Item
+        name="username"
+        label="用户名"
+        rules={[emptyValidator('用户名')]}
+      >
         <Input
           prefix={<UserOutlined />}
           placeholder="Username"
@@ -66,7 +69,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
         rules={[
           ({ getFieldValue }) => ({
             validator(_, value) {
-              if (!value || getFieldValue('password') === value) {
+              if (getFieldValue('password') === value) {
                 return Promise.resolve()
               }
               return Promise.reject('两次密码输入不一致')

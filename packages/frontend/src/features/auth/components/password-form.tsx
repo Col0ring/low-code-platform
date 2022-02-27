@@ -4,7 +4,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { emptyValidator, phoneValidator } from '@/utils/validators'
 export interface PasswordFormProps {
   onLogin: (phone: string, password: string) => void
-  loading?: boolean
+  loading: boolean
 }
 
 const PasswordForm: React.FC<PasswordFormProps> = ({ onLogin, loading }) => {
@@ -23,7 +23,7 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ onLogin, loading }) => {
         password: '1',
       }}
       onFinish={onFinish}
-      className="pt-7 pb-5"
+      className="pt-7"
     >
       <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
         <Input

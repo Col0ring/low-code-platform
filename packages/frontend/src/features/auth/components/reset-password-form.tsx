@@ -1,21 +1,31 @@
 import React from 'react'
-import { Form, FormProps, Button, Input, Col, Row } from 'antd'
-import { StarOutlined } from '@ant-design/icons'
-import { phoneValidator, normalValidator } from '@/utils/validators'
+import { Form, FormProps, Button, Input, Row, Col } from 'antd'
+import { StarOutlined, LockOutlined, PhoneOutlined } from '@ant-design/icons'
+
+import {
+  emptyValidator,
+  normalValidator,
+  phoneValidator,
+} from '@/utils/validators'
 import AuthCodeButton from './auth-code-button'
 
-export interface CodeFormProps {
-  onLogin: (phone: string, code: string) => void
+export interface ResetPasswordFormProps {
+  onResetPassword: (values: any) => void
   onAuthCodeButtonClick: (phone: string) => void
   loading: boolean
 }
 
-const CodeForm: React.FC<CodeFormProps> = ({
-  onLogin,
-  loading,
+const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
+  onResetPassword,
   onAuthCodeButtonClick: onAuthCodeButtonClickProp,
+  loading,
 }) => {
   const [form] = Form.useForm()
+  const onFinish: FormProps['onFinish'] = (values) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { rePassword, ...rest } = values
+    onResetPassword(rest)
+  }
   const onAuthCodeButtonClick = async () => {
     try {
       await form.validateFields(['phone'])
@@ -24,29 +34,20 @@ const CodeForm: React.FC<CodeFormProps> = ({
       return Promise.reject()
     }
   }
-  const onFinish: FormProps['onFinish'] = (values) => {
-    const { phone, code } = values
-    onLogin(phone, code)
-  }
-
   return (
     <Form
-      size="large"
       form={form}
-      initialValues={{
-        phone: '13696035481',
-      }}
       labelCol={{
         span: 5,
       }}
-      onFinish={onFinish}
       className="pt-7"
+      onFinish={onFinish}
     >
       <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
         <Input
-          prefix={<span className="text-gray-400">+86</span>}
+          prefix={<PhoneOutlined />}
           placeholder="Phone"
-          autoComplete="on"
+          autoComplete="phone"
         />
       </Form.Item>
       <Form.Item label="验证码">
@@ -75,13 +76,40 @@ const CodeForm: React.FC<CodeFormProps> = ({
           </Col>
         </Row>
       </Form.Item>
+      <Form.Item name="password" label="密 码" rules={[emptyValidator('密码')]}>
+        <Input.Password
+          prefix={<LockOutlined />}
+          placeholder="Password"
+          autoComplete="current-password"
+        />
+      </Form.Item>
+      <Form.Item
+        name="rePassword"
+        label="确认密码"
+        rules={[
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              if (getFieldValue('password') === value) {
+                return Promise.resolve()
+              }
+              return Promise.reject('两次密码输入不一致')
+            },
+          }),
+        ]}
+      >
+        <Input.Password
+          prefix={<LockOutlined />}
+          placeholder="Password"
+          autoComplete="re-password"
+        />
+      </Form.Item>
       <Form.Item>
         <Button block type="primary" htmlType="submit" loading={loading}>
-          {loading ? '正在' : ''}登陆
+          {loading ? '正在' : ''}重置密码
         </Button>
       </Form.Item>
     </Form>
   )
 }
 
-export default CodeForm
+export default ResetPasswordForm

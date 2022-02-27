@@ -1,8 +1,8 @@
 import { IsString, IsPhoneNumber, IsNotEmpty } from 'class-validator'
-export class RegisterDto {
+export class ResetPasswordDto {
   @IsString()
   @IsNotEmpty()
-  username: string
+  code: string
 
   @IsPhoneNumber('CN', {
     message: 'Please input correct phone',

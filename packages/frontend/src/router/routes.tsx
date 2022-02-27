@@ -10,6 +10,7 @@ import LoginPage from '@/features/auth/pages/login'
 import AuthLayout from '@/features/auth/layouts/auth-layout'
 import RegisterPage from '@/features/auth/pages/register'
 import DesignLayout from '@/features/design/layouts/design-layout'
+import ForgetPasswordPage from '@/features/auth/pages/forget-password'
 
 export const accessRoutes: RouteObject[] = []
 
@@ -47,6 +48,10 @@ export const routes: RouteObject[] = [
       {
         path: '/register',
         element: <RegisterPage />,
+      },
+      {
+        path: '/forget-password',
+        element: <ForgetPasswordPage />,
       },
     ],
   },
