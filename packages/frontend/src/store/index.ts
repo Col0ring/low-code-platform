@@ -9,7 +9,7 @@ import { userApi } from '@/features/user/user.service'
 import { rtkQueryErrorLogger } from './rtk-query-error-logger-middleware'
 
 function setupStore() {
-  const devMiddlewares: Middleware[] = [logger]
+  const devMiddlewares: Middleware[] = []
   const prodMiddlewares: Middleware[] = [rtkQueryErrorLogger]
   const apiMiddlewares: Middleware[] = [authApi.middleware, userApi.middleware]
   const store = configureStore({

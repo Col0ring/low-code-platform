@@ -4,7 +4,38 @@
   height: 100vh;
 
   .design-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+    padding: 0 10px;
+    line-height: 52px;
     background-color: #fff;
+
+    .design-header-navigation {
+      display: flex;
+      align-items: center;
+    }
+
+    .design-header-navbar {
+      .ant-tabs-nav {
+        margin-bottom: 0;
+        line-height: 52px;
+      }
+
+      .ant-tabs-tab {
+        padding: 0;
+      }
+
+      a {
+        color: currentcolor;
+      }
+    }
+
+    .design-header-actions {
+      display: flex;
+      align-items: center;
+    }
   }
 
   .design-main {

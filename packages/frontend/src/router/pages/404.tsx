@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Result, Button } from 'antd'
+import { Path } from '../constants'
 
 const NotFoundPage: React.FC = () => {
   const navigate = useNavigate()
@@ -14,7 +15,7 @@ const NotFoundPage: React.FC = () => {
         <Button
           type="primary"
           onClick={() =>
-            navigate('/dashboard', {
+            navigate(Path.Dashboard, {
               replace: true,
             })
           }

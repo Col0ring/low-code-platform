@@ -1,6 +1,6 @@
 import React from 'react'
 import { RouteObject } from 'react-router-dom'
-import EditPage from '@/features/design/pages/page-designer'
+import EditPage from '@/features/design/pages/design-index'
 import { Role } from '@/features/auth/constants'
 import AuthRoute from './auth-route'
 import LazyRoute from './lazy-route'
@@ -11,24 +11,45 @@ import AuthLayout from '@/features/auth/layouts/auth-layout'
 import RegisterPage from '@/features/auth/pages/register'
 import DesignLayout from '@/features/design/layouts/design-layout'
 import ForgetPasswordPage from '@/features/auth/pages/forget-password'
-import { Path } from './constants'
 
 export const accessRoutes: RouteObject[] = []
 
 export const routes: RouteObject[] = [
   {
     path: '/design',
-    element: <DesignLayout />,
+    element: (
+      <AuthRoute
+        element={<DesignLayout />}
+        needAuth
+        loadingFullScreen
+        roles={Role.User}
+      />
+    ),
     children: [
       {
-        path: 'page-designer',
+        index: true,
         element: (
           <LazyRoute
             component={React.lazy(
-              () => import('@/features/design/pages/page-designer')
+              () => import('@/features/design/pages/design-index')
             )}
           />
         ),
+      },
+      {
+        element: <DesignLayout />,
+        children: [
+          {
+            path: '/design/setting',
+            element: (
+              <LazyRoute
+                component={React.lazy(
+                  () => import('@/features/design/pages/design-index')
+                )}
+              />
+            ),
+          },
+        ],
       },
     ],
   },
@@ -43,15 +64,15 @@ export const routes: RouteObject[] = [
     ),
     children: [
       {
-        path: Path.Login,
+        path: '/login',
         element: <LoginPage />,
       },
       {
-        path: Path.Register,
+        path: '/register',
         element: <RegisterPage />,
       },
       {
-        path: Path.ForgetPassword,
+        path: '/forget-password',
         element: <ForgetPasswordPage />,
       },
     ],
@@ -91,13 +112,13 @@ export const routes: RouteObject[] = [
         element={
           <LazyRoute
             component={React.lazy(
-              () => import('@/features/design/pages/page-designer')
+              () => import('@/features/design/pages/design-index')
             )}
           />
         }
         needAuth
         loadingFullScreen
-        roles={[Role.User]}
+        roles={Role.User}
       />
     ),
     children: accessRoutes,
@@ -115,11 +136,11 @@ export const routes: RouteObject[] = [
     children: accessRoutes,
   },
   {
-    path: Path.Forbidden,
+    path: '/403',
     element: <ForbiddenPage />,
   },
   {
-    path: Path.NotFound,
+    path: '*',
     element: <NotFoundPage />,
   },
 ]

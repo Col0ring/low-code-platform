@@ -79,7 +79,7 @@ const UserActions: React.FC = () => {
         onVisibleChange={setVisible}
       >
         <div className="avatar-container">
-          <Avatar src={user?.avatar} size="large" alt={user?.username} />
+          <Avatar src={user?.avatar} alt={user?.username} />
           <DownOutlined className={classes} />
         </div>
       </Dropdown>

@@ -7,9 +7,14 @@ import { Role } from '@/features/auth/constants'
 import { useGetUserInfoQuery } from '@/features/auth/auth.service'
 import RouteLoading, { RouteLoadingProps } from './route-loading'
 import ForbiddenPage from './pages/403'
+import { Path } from './constants'
 
-function matchRoles(roles: string[], routeRoles: string[]) {
-  return roles.some((role) => routeRoles.includes(role))
+function matchRoles(roles: string[], routeRoles?: string[]) {
+  return (
+    roles.includes(Role.Admin) ||
+    !routeRoles ||
+    routeRoles.some((routeRole) => roles.includes(routeRole))
+  )
 }
 
 export interface AuthProps {
@@ -41,15 +46,14 @@ const AuthRoute: React.FC<AuthRouteProps> = (props) => {
     element,
     navigateWhenForbidden,
     loading: loadingProp,
-    roles: routeRoles = [],
+    roles: routeRoles,
     loadingFullScreen,
     needAuth,
     notLogin,
-    redirect = notLogin ? '/dashboard' : '/login',
+    redirect = notLogin ? Path.Dashboard : Path.Login,
   } = props as InternalProps
 
   const loading = loadingProp ?? true
-
   const location = useLocation()
 
   const auth = useAuth()
@@ -59,7 +63,7 @@ const AuthRoute: React.FC<AuthRouteProps> = (props) => {
     !hasToken || auth.user ? skipToken : !needAuth
   )
 
-  const user = hasToken ? data : auth.user
+  const user = hasToken ? data || auth.user : auth.user
 
   if (isLoading && loading) {
     return <RouteLoading loadingFullScreen={loadingFullScreen} />
@@ -70,15 +74,16 @@ const AuthRoute: React.FC<AuthRouteProps> = (props) => {
   }
   if (needAuth) {
     if (user) {
-      if (matchRoles(user.roles, ensureArray(routeRoles))) {
+      if (matchRoles(user.roles, routeRoles && ensureArray(routeRoles))) {
         return <>{element}</>
       }
 
       if (navigateWhenForbidden) {
-        return <Navigate replace to="/403" />
+        return <Navigate replace to={Path.Forbidden} />
       }
       return <ForbiddenPage />
     }
+
     return (
       <Navigate
         replace
