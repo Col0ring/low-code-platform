@@ -1,5 +1,5 @@
 import React from 'react'
-import { RouteObject } from 'react-router-dom'
+import { RouteObject, Navigate } from 'react-router-dom'
 import EditPage from '@/features/design/pages/design-index'
 import { Role } from '@/features/auth/constants'
 import AuthRoute from './auth-route'
@@ -11,10 +11,15 @@ import AuthLayout from '@/features/auth/layouts/auth-layout'
 import RegisterPage from '@/features/auth/pages/register'
 import DesignLayout from '@/features/design/layouts/design-layout'
 import ForgetPasswordPage from '@/features/auth/pages/forget-password'
+import { Path } from './constants'
 
 export const accessRoutes: RouteObject[] = []
 
 export const routes: RouteObject[] = [
+  {
+    path: '/',
+    element: <Navigate to={Path.Dashboard} replace />,
+  },
   {
     path: '/design',
     element: (
@@ -40,7 +45,7 @@ export const routes: RouteObject[] = [
         element: <DesignLayout />,
         children: [
           {
-            path: '/design/setting',
+            path: 'setting',
             element: (
               <LazyRoute
                 component={React.lazy(

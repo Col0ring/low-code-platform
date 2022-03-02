@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
 import { useLogoutMutation } from '../../auth.service'
 import './style.less'
+import { Path } from '@/router/constants'
 
 const UserActionsDropdown: React.FC = () => {
   const navigate = useNavigate()
@@ -21,6 +22,7 @@ const UserActionsDropdown: React.FC = () => {
   const onLogoutButtonClick = () => {
     Modal.confirm({
       title: '提示',
+      zIndex: 9999,
       content: '确认退出登录吗？',
       async onOk() {
         await logout()
@@ -33,24 +35,30 @@ const UserActionsDropdown: React.FC = () => {
       {isAdmin && (
         <>
           <Menu.Item
+            key={Path.Dashboard}
             icon={<HomeOutlined />}
             onClick={() => {
-              navigate('/')
+              navigate(Path.Dashboard)
             }}
           >
             回到首页
           </Menu.Item>
           <Menu.Item
+            key={Path.Admin}
             icon={<DashboardOutlined />}
             onClick={() => {
-              navigate('/admin')
+              navigate(Path.Admin)
             }}
           >
             管理平台
           </Menu.Item>
         </>
       )}
-      <Menu.Item icon={<LogoutOutlined />} onClick={onLogoutButtonClick}>
+      <Menu.Item
+        key={Path.Login}
+        icon={<LogoutOutlined />}
+        onClick={onLogoutButtonClick}
+      >
         退出登陆
       </Menu.Item>
     </Menu>

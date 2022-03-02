@@ -36,7 +36,7 @@ export class AuthController {
     await this.authService.logout(user.id)
   }
 
-  @Auth(Role.User)
+  @Auth(Role.User, Role.Admin)
   @Get('/getUserInfo')
   getUserInfo(@User() user: JwtUser) {
     return this.authService.getUserInfo(user.id)

@@ -13,7 +13,7 @@ import { RegisterDto } from './dto/register.dto'
 import { Role } from './constants'
 import { ResetPasswordDto } from './dto/reset-password.dto'
 
-const fakeRoles = [Role.User]
+const fakeRoles = [Role.Admin, Role.User]
 @Injectable()
 export class AuthService {
   constructor(

@@ -1,0 +1,58 @@
+@import '@/styles/variables.less';
+
+.visual-editor {
+  display: flex;
+  justify-content: space-between;
+
+  .editor-menu-area {
+    position: relative;
+    display: flex;
+
+    .menu-pane {
+      position: relative;
+      z-index: 2;
+      width: 46px;
+      background-color: #fff;
+
+      .menu-pane-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        font-size: 16px;
+        cursor: pointer;
+
+        &.active {
+          color: #1890ff;
+        }
+      }
+    }
+
+    .menu-content {
+      width: 300px;
+      height: 100%;
+
+      &.fixed-active {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 1;
+        transform: translateX(100%);
+      }
+    }
+  }
+
+  .editor-simulator-area {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .editor-operator-area {
+    width: 300px;
+    height: 100%;
+    background-color: #fff;
+
+    .ant-tab-stretch();
+  }
+}

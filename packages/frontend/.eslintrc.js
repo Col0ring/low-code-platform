@@ -36,6 +36,7 @@ module.exports = {
     'import/no-unresolved': ['error', { ignore: ['^virtual:.+'] }],
     // react
     'react/self-closing-comp': 'error',
+    'react/prop-types': 'off',
     // click element muse have keyboard events
     'jsx-a11y/click-events-have-key-events': 'off',
     // click element must have a role property
@@ -89,6 +90,12 @@ module.exports = {
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
         '@typescript-eslint/ban-types': 'off',
+        '@typescript-eslint/no-misused-promises': [
+          'error',
+          {
+            checksVoidReturn: false,
+          },
+        ],
         // no any
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-unsafe-argument': 'off',

@@ -1,9 +1,13 @@
 import React from 'react'
-import { Button, Layout, Menu } from 'antd'
+import VisualEditor from '../../components/visual-editor'
 import './style.less'
 
 const DesignIndexPage: React.FC = () => {
-  return <div className="">11</div>
+  return (
+    <div className="design-index-page">
+      <VisualEditor className="h-full" />
+    </div>
+  )
 }
 
 export default DesignIndexPage

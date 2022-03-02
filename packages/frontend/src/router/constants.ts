@@ -9,6 +9,8 @@ export enum Path {
   DesignIndex = '/design',
   DesignSetting = '/design/setting',
   DesignPublish = '/design/publish',
+  // admin
+  Admin = '/admin',
   // misc
   NotFound = '*',
   Forbidden = '/403',
