@@ -1,12 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import classnames from 'classnames'
-import { Card, Space } from 'antd'
-import {
-  AppleOutlined,
-  CloseCircleOutlined,
-  LinkOutlined,
-  DisconnectOutlined,
-} from '@ant-design/icons'
+import { AppleOutlined } from '@ant-design/icons'
 import MenuPaneItem, { MenuPaneItemProps } from './menu-pane-item'
 import MenuContent from './menu-content'
 

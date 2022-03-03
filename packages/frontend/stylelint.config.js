@@ -2,7 +2,6 @@ const prettierConfig = require('./prettier.config')
 
 module.exports = {
   customSyntax: 'postcss-less',
-
   extends: [
     // 标准配置
     'stylelint-config-standard',

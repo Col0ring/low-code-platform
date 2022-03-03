@@ -2,6 +2,7 @@ import React from 'react'
 import classnames from 'classnames'
 import EditorMenuArea from './editor-menu-area'
 import EditorOperatorArea from './editor-operator-area'
+import EditorSimulatorArea from './editor-simulator-area'
 import './style.less'
 export interface VisualEditorProps {
   className?: string
@@ -12,7 +13,7 @@ const VisualEditor: React.FC<VisualEditorProps> = (props) => {
   return (
     <div className={classes}>
       <EditorMenuArea />
-      <div className="editor-simulator-area">center</div>
+      <EditorSimulatorArea />
       <EditorOperatorArea />
     </div>
   )

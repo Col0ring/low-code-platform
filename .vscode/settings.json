@@ -11,7 +11,6 @@
   },
   "editor.formatOnSave": true,
   "files.insertFinalNewline": true,
-  "stylelint.config": {},
   "eslint.validate": [
     "javascript",
     "javascriptreact",
