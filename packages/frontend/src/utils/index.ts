@@ -2,6 +2,7 @@ import React from 'react'
 export * from './local-storage'
 export * from './env'
 export * from './store'
+export * from './dom'
 
 export function noop() {
   // do nothing

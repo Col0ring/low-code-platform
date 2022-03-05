@@ -17,6 +17,8 @@
     "typescript",
     "typescriptreact"
   ],
+  "less.validate": false,
+  "css.validate": false,
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

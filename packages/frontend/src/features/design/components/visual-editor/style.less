@@ -44,16 +44,45 @@
   }
 
   .editor-simulator-area {
+    position: relative;
+    top: 0;
+    left: 0;
     flex: 1;
     min-width: 400px;
-    margin: 0 2px;
+    overflow: auto;
 
-    .simulator-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 3px 16px;
-      background-color: #fff;
+    .simulator-toolbar-container {
+      @apply sticky top-0 left-0;
+
+      width: 100%;
+      padding: 1px 4px;
+      padding-bottom: 20px;
+      background-color: #f3f3f3;
+
+      .simulator-toolbar {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+        padding: 3px 16px;
+        overflow: auto;
+        white-space: nowrap;
+        background-color: #fff;
+
+        .ant-btn {
+          margin-right: 4px;
+        }
+      }
+    }
+
+    .simulator-content-container {
+      // width: auto;
+      margin: 0 20px;
+
+      .simulator-content {
+        margin: 0 auto;
+        background-color: #fff;
+      }
     }
   }
 
