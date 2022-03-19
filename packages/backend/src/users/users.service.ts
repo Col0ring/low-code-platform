@@ -20,11 +20,18 @@ export class UsersService {
   }
 
   findOneById(id: number) {
-    return this.usersRepository.findOne(id)
+    return this.usersRepository.findOne({
+      where: {
+        id,
+      },
+    })
   }
 
   findOneByIdWithRefreshToken(id: number) {
-    return this.usersRepository.findOne(id, {
+    return this.usersRepository.findOne({
+      where: {
+        id,
+      },
       select: getExcludeSelect(this.usersRepository, ['password']),
     })
   }

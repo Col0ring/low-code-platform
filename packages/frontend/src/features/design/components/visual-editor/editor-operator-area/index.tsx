@@ -8,7 +8,13 @@ const EditorOperatorArea: React.FC = () => {
 
   return (
     <div className="editor-operator-area">
-      <Tabs size="small" centered activeKey={active} onChange={setActive}>
+      <Tabs
+        size="small"
+        centered
+        activeKey={active}
+        onChange={setActive}
+        moreIcon={null}
+      >
         {operators.map((operator, index) => (
           <Tabs.TabPane tab={operator} key={index} />
         ))}

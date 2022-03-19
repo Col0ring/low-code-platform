@@ -6,7 +6,7 @@ const SimulatorContent: React.FC = () => {
     <div className="simulator-content-container">
       <div
         style={{
-          width: 9600,
+          width: 960,
           height: 750,
         }}
         className="simulator-content"
