@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { AppleOutlined } from '@ant-design/icons'
 import MenuPaneItem, { MenuPaneItemProps } from './menu-pane-item'
 import MenuContent from './menu-content'
+import { Draggable } from '../dragging'
 
 const panes: (Pick<MenuPaneItemProps, 'icon' | 'title'> & {
   content: React.ReactNode
@@ -14,7 +15,25 @@ const panes: (Pick<MenuPaneItemProps, 'icon' | 'title'> & {
   {
     icon: <AppleOutlined />,
     title: '组件库',
-    content: <div />,
+    content: (
+      <div>
+        <Draggable
+          onDragStart={(_, e) => {
+            e.dataTransfer.effectAllowed = 'move'
+            e.dataTransfer.setData(
+              'component-node',
+              JSON.stringify({
+                a: 1,
+              })
+            )
+          }}
+          className="draggable"
+          draggingClassName="active"
+        >
+          123
+        </Draggable>
+      </div>
+    ),
   },
   {
     icon: <AppleOutlined />,

@@ -16,7 +16,7 @@ const {
   defaultValue: '',
 })
 
-export interface RouteState {
+export interface AuthState {
   roles: Role[]
   token: string
   refreshToken: string
@@ -27,7 +27,7 @@ const login = createAction('login', withPayloadType<TokenPayload>())
 const setUser = createAction('setUser', withPayloadType<any>())
 const logout = createAction('logout')
 
-const initialState: () => RouteState = () => ({
+const initialState: () => AuthState = () => ({
   roles: [],
   token: getTokenStorage(),
   refreshToken: getRefreshTokenStorage(),

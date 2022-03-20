@@ -1,15 +1,15 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
+import useMountedState from './useMountedState'
 
 export function useUpdateEffect(
   effect: React.EffectCallback,
   deps?: React.DependencyList
 ) {
-  const firstMounted = useRef(false)
+  const isMounted = useMountedState()
   useEffect(() => {
-    if (firstMounted.current) {
+    if (isMounted()) {
       return effect()
     }
-    firstMounted.current = true
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 }
