@@ -3,6 +3,7 @@ import { AppleOutlined } from '@ant-design/icons'
 import MenuPaneItem, { MenuPaneItemProps } from './menu-pane-item'
 import MenuContent from './menu-content'
 import { Draggable } from '../dragging'
+import { DraggingData } from '@/features/design/constants'
 
 const panes: (Pick<MenuPaneItemProps, 'icon' | 'title'> & {
   content: React.ReactNode
@@ -21,7 +22,7 @@ const panes: (Pick<MenuPaneItemProps, 'icon' | 'title'> & {
           onDragStart={(_, e) => {
             e.dataTransfer.effectAllowed = 'move'
             e.dataTransfer.setData(
-              'component-node',
+              DraggingData.ComponentNode,
               JSON.stringify({
                 a: 1,
               })
