@@ -1,5 +1,5 @@
 import React from 'react'
-import VisualEditor from '../../components/visual-editor'
+import VisualEditor from '@/features/visual-editor'
 import './style.less'
 
 const DesignIndexPage: React.FC = () => {

@@ -1,8 +1,8 @@
 import React from 'react'
 import { Row, Col } from 'antd'
-import { ComponentNode } from '../../../../type'
+import { ComponentNodeProps } from '../../../type'
 
-const LayoutContainer: React.FC<ComponentNode> = () => {
+const LayoutContainer: React.FC<ComponentNodeProps> = () => {
   return (
     <Row>
       <Col>{}</Col>

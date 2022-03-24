@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import classnames from 'classnames'
 import { usePersistFn } from '@/hooks'
 import { noop } from '@/utils'
-import useDrop, { DropAreaOptions } from '../../../hooks/useDrog'
+import useDrop, { DropAreaOptions } from '../../hooks/useDrog'
 
 export interface DragAreaProps extends DropAreaOptions {
   style?: React.CSSProperties

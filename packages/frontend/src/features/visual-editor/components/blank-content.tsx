@@ -1,21 +1,26 @@
 import React from 'react'
 import { PlusOutlined } from '@ant-design/icons'
-import { DragArea } from '../dragging'
+import { DragArea } from './dragging'
 import { safeJsonParser } from '@/utils'
 import { DraggingData } from '@/features/design/constants'
+import { DragData } from '../type'
 
 export interface BlankContent {
-  onDrop?: () => void
+  onDrop: (data: DragData, e: React.DragEvent) => void
 }
 
-const BlankContent: React.FC<BlankContent> = () => {
+const BlankContent: React.FC<BlankContent> = ({ onDrop }) => {
   return (
     <DragArea
       onDrop={(e) => {
         e.dataTransfer.dropEffect = 'move'
-        console.log(
-          safeJsonParser(e.dataTransfer.getData(DraggingData.ComponentNode), {})
+        const componentNode = safeJsonParser<DragData>(
+          e.dataTransfer.getData(DraggingData.ComponentNode),
+          {
+            name: '',
+          }
         )
+        onDrop(componentNode, e)
       }}
       className="w-full h-full flex flex-col text-gray-400 items-center justify-center border-dotted border-gray-600 border"
     >

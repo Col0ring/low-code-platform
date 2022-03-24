@@ -1,8 +1,8 @@
 import React from 'react'
 import classnames from 'classnames'
-import EditorMenuArea from './editor-menu-area'
-import EditorOperatorArea from './editor-operator-area'
-import EditorSimulatorArea from './editor-simulator-area'
+import EditorMenuArea from './components/editor-menu-area'
+import EditorOperatorArea from './components/editor-operator-area'
+import EditorSimulatorArea from './components/editor-simulator-area'
 import './style.less'
 export interface VisualEditorProps {
   className?: string

@@ -40,6 +40,44 @@
         z-index: 1;
         transform: translateX(100%);
       }
+
+      .components-library-pane {
+        position: relative;
+        top: 0;
+        left: 0;
+        height: 100%;
+        overflow: auto;
+
+        .search {
+          position: sticky;
+          top: 0;
+          left: 0;
+          z-index: 1;
+          width: 100%;
+          background-color: #fff;
+
+          .search-input {
+            padding: 12px 12px 0;
+          }
+        }
+
+        .components {
+          .component-item {
+            padding: 4px 8px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            background-color: transparent;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+
+            &:hover {
+              color: #1890ff;
+              border-color: #1890ff;
+            }
+          }
+        }
+      }
     }
   }
 

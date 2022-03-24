@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
-import useDrag, { UseDragOptions } from '../../../hooks/useDrag'
+import useDrag, { UseDragOptions } from '../../hooks/useDrag'
 
 export interface DraggableProps<T = any> extends UseDragOptions<T> {
   data?: T

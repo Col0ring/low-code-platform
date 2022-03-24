@@ -31,6 +31,11 @@ const MenuContent: React.FC<MenuContentProps> = (props) => {
     <div className={classes}>
       <Card
         title={title}
+        bodyStyle={{
+          padding: 0,
+          flex: 1,
+          height: 0,
+        }}
         extra={
           <Space>
             {React.createElement(fixed ? DisconnectOutlined : LinkOutlined, {
@@ -39,7 +44,7 @@ const MenuContent: React.FC<MenuContentProps> = (props) => {
             <CloseCircleOutlined onClick={onCloseButtonClick} />
           </Space>
         }
-        className="h-full"
+        className="h-full flex flex-col"
       >
         {children}
       </Card>

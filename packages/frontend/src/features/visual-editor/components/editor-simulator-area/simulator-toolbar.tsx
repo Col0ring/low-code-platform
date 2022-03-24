@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { Tooltip, Divider, Button, Radio } from 'antd'
-import redoSvg from '../assets/redo.svg?raw'
-import undoSvg from '../assets/undo.svg?raw'
+import redoSvg from '../../assets/redo.svg?raw'
+import undoSvg from '../../assets/undo.svg?raw'
 import {
   DownloadOutlined,
   UploadOutlined,
