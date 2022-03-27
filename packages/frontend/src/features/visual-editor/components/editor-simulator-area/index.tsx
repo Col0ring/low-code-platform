@@ -6,7 +6,7 @@ const EditorSimulatorArea: React.FC = () => {
   return (
     <div className="editor-simulator-area">
       <SimulatorToolbar />
-      <SimulatorContent componentNodes={[]} />
+      <SimulatorContent />
     </div>
   )
 }

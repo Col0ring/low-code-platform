@@ -20,7 +20,7 @@ const BlankContent: React.FC<BlankContent> = ({ onDrop }) => {
             name: '',
           }
         )
-        onDrop(componentNode, e)
+        componentNode.name && onDrop(componentNode, e)
       }}
       className="w-full h-full flex flex-col text-gray-400 items-center justify-center border-dotted border-gray-600 border bg-gray-100"
     >

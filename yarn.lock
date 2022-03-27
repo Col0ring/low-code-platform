@@ -5169,7 +5169,7 @@ image-size@~0.5.0:
   resolved "https://registry.npmmirror.com/image-size/-/image-size-0.5.5.tgz#09dfd4ab9d20e29eb1c3e80b8990378df9e3cb9c"
   integrity sha512-6TDAlDPZxUFCv+fuOkIoXT/V/f3Qbq8e37p+YOiYrUv3v9cc3/6x78VdfPgFVaB9dZYeLUfKgHRebpkm/oP2VQ==
 
-immer@^9.0.7:
+immer@^9.0.12, immer@^9.0.7:
   version "9.0.12"
   resolved "https://registry.npmmirror.com/immer/-/immer-9.0.12.tgz#2d33ddf3ee1d247deab9d707ca472c8c942a0f20"
   integrity sha512-lk7UNmSbAukB5B6dh9fnh5D0bJTOFKxVg2cyJWTYrWRfhLrLMBquONcUs3aFq507hNoIZEDDh8lb8UtOizSMhA==
@@ -8432,10 +8432,10 @@ react-router@6.2.2, react-router@^6.2.2:
   dependencies:
     history "^5.2.0"
 
-react-use-methods@^2.4.2:
-  version "2.4.2"
-  resolved "https://registry.npmmirror.com/react-use-methods/-/react-use-methods-2.4.2.tgz#111eb34e5610e1d3f9775cf44a1e104dea643394"
-  integrity sha512-o0gn79VL3odTF90om3OFOn2yDhrDTFL7cnbYyEh/Hxm9m/eAFVHOZYhTUiC0O1aVgDEgzbSyw9LiKLSg6NG1ow==
+react-use-methods@^2.4.3:
+  version "2.4.3"
+  resolved "https://registry.yarnpkg.com/react-use-methods/-/react-use-methods-2.4.3.tgz#2a41fc443e8e21c80387f1cc4273bb2c159408ae"
+  integrity sha512-h3Re18uZb4Qg9NTznygOJorsO7DpdpK3XefZLJrm6Wm9Upv4tSg5YUO6Hp1yoAiu5MqXybYQUQF8caDSnvTx6w==
   dependencies:
     "@babel/runtime" "^7.17.8"
 
@@ -10183,6 +10183,11 @@ typeorm@^0.3.0:
     uuid "^8.3.2"
     xml2js "^0.4.23"
     yargs "^17.3.1"
+
+types-kit@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.npmmirror.com/types-kit/-/types-kit-0.0.4.tgz#9a9be9c270a26d27f08e27affba1e10267b81fa5"
+  integrity sha512-ABmPV1Xhk8WeppsbQ7BwQZkEgHhSynNoXtpKmQX6IlFXbHG+xNepRdo8gNZf3JKpo6TEzKDa83BJ3zwGRH3LRA==
 
 typescript@4.6.2, typescript@^4.4.3:
   version "4.6.2"

@@ -1,18 +1,12 @@
 import React from 'react'
 import BlankContent from '../blank-content'
-import { ComponentRenderNode } from '../../type'
 import { getComponentNode } from '../node-components'
 import { DragArea } from '../dragging'
 import { useEditorContext } from '../../provider'
 
-export interface SimulatorContentProps {
-  componentNodes: ComponentRenderNode[]
-}
-
-const SimulatorContent: React.FC<SimulatorContentProps> = ({
-  componentNodes,
-}) => {
-  console.log(useEditorContext())
+const SimulatorContent: React.FC = () => {
+  const [{ componentNodes, immerComponentNodes }, { updateComponentNode }] =
+    useEditorContext()
   const pageStyle =
     componentNodes.length === 0
       ? { width: 960, height: 1000 }
@@ -22,8 +16,14 @@ const SimulatorContent: React.FC<SimulatorContentProps> = ({
       <DragArea style={pageStyle} className="simulator-content">
         {componentNodes.length === 0 ? (
           <BlankContent
-            onDrop={(data) => {
-              console.log(data)
+            onDrop={({ name }) => {
+              const { component, ...rest } = getComponentNode(name)
+              void updateComponentNode(() => {
+                immerComponentNodes.push({
+                  ...rest,
+                  props: component.getInitialProps(),
+                })
+              })
             }}
           />
         ) : (
@@ -32,6 +32,7 @@ const SimulatorContent: React.FC<SimulatorContentProps> = ({
               // TODO: key uuid
               key: index,
               node,
+              immerNode: immerComponentNodes[index],
             })
           })
         )}

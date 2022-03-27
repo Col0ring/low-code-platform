@@ -1,4 +1,5 @@
 import React from 'react'
+import { StrictOmit } from 'types-kit'
 export interface ComponentNode<T extends object = any> {
   component: NodeComponent<T>
   name: string
@@ -7,7 +8,7 @@ export interface ComponentNode<T extends object = any> {
 }
 
 export interface ComponentRenderNode<T extends object = any>
-  extends Omit<ComponentNode<T>, 'getInitialProps'> {
+  extends StrictOmit<ComponentNode, 'component'> {
   props: T
 }
 
@@ -22,6 +23,7 @@ export interface DragData {
 
 export interface NodeComponentProps<T extends object = any> {
   node: ComponentRenderNode<T>
+  immerNode: ComponentRenderNode<T>
 }
 
 export type NodeComponent<T extends object = any> = React.FC<

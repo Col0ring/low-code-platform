@@ -2,6 +2,8 @@
   "name": "low-code-platform",
   "private": true,
   "scripts": {
+    "start:f": "yarn workspace @low-code/frontend run dev",
+    "start:b": "yarn workspace @low-code/backend run start:dev",
     "prepare": "husky install",
     "pre-commit:lint-staged": "lint-staged",
     "commit-msg:commitlint": "commitlint --config commitlint.config.js -e $HUSKY_GIT_PARAMS",
@@ -19,6 +21,7 @@
     "husky": "^7.0.4",
     "lint-staged": "^12.3.7",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.4.12"
+    "postcss": "^8.4.12",
+    "types-kit": "^0.0.4"
   }
 }
