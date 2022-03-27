@@ -14,21 +14,18 @@ export const componentsLibrary: ComponentsGroup[] = [
         title: '容器',
         component: Container,
         icon: <ContainerOutlined />,
-        props: {},
       },
       {
         name: 'layout-container',
         title: '布局容器',
         component: LayoutContainer,
         icon: <ContainerOutlined />,
-        props: {},
       },
       {
         name: 'layout-container2',
         title: '布局容器2',
         component: LayoutContainer,
         icon: <ContainerOutlined />,
-        props: {},
       },
     ],
   },
@@ -40,7 +37,6 @@ export const componentsLibrary: ComponentsGroup[] = [
         title: '文本',
         component: Text,
         icon: <FileTextOutlined />,
-        props: {},
       },
     ],
   },
@@ -55,3 +51,7 @@ export const componentsMap = componentsLibrary.reduce(
   },
   {} as Record<string, ComponentNode>
 )
+
+export function getComponentNode(name: string) {
+  return componentsMap[name] || null
+}

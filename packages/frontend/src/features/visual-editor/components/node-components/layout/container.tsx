@@ -1,8 +1,12 @@
 import React from 'react'
 import BlankContent from '../../blank-content'
-import { ComponentNodeProps } from '../../../type'
+import { NodeComponent, ComponentRenderNode } from '../../../type'
 
-const Container: React.FC<ComponentNodeProps> = ({ node }) => {
+export interface ContainerProps {
+  children: ComponentRenderNode[]
+}
+
+const Container: NodeComponent = ({ node }) => {
   const { props } = node
   return (
     <>
@@ -14,5 +18,7 @@ const Container: React.FC<ComponentNodeProps> = ({ node }) => {
     </>
   )
 }
+
+Container.getInitialProps = () => ({})
 
 export default Container

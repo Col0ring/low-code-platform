@@ -1,19 +1,21 @@
 import React from 'react'
 import BlankContent from '../blank-content'
-import { ComponentNode } from '../../type'
-import { componentsMap } from '../node-components'
+import { ComponentRenderNode } from '../../type'
+import { getComponentNode } from '../node-components'
 import { DragArea } from '../dragging'
+import { useEditorContext } from '../../provider'
 
 export interface SimulatorContentProps {
-  componentNodes: ComponentNode[]
+  componentNodes: ComponentRenderNode[]
 }
 
 const SimulatorContent: React.FC<SimulatorContentProps> = ({
   componentNodes,
 }) => {
+  console.log(useEditorContext())
   const pageStyle =
     componentNodes.length === 0
-      ? { width: 960, height: 750 }
+      ? { width: 960, height: 1000 }
       : { width: 960, minHeight: 750 }
   return (
     <div className="simulator-content-container">
@@ -26,7 +28,7 @@ const SimulatorContent: React.FC<SimulatorContentProps> = ({
           />
         ) : (
           componentNodes.map((node, index) => {
-            return React.createElement(componentsMap[node.name].component, {
+            return React.createElement(getComponentNode(node.name).component, {
               // TODO: key uuid
               key: index,
               node,

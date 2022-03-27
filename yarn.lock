@@ -451,6 +451,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@^7.17.8":
+  version "7.17.8"
+  resolved "https://registry.npmmirror.com/@babel/runtime/-/runtime-7.17.8.tgz#3e56e4aff81befa55ac3ac6a0967349fd1c5bca2"
+  integrity sha512-dQpEpK0O9o6lj6oPu0gRDbbnk+4LeHlNcBpspf6Olzt3GIX4P1lWF1gS+pHLDFlaJvbR6q7jCfQ08zA4QJBnmA==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/template@^7.16.7", "@babel/template@^7.3.3":
   version "7.16.7"
   resolved "https://registry.npmmirror.com/@babel/template/-/template-7.16.7.tgz#8d126c8701fde4d66b264b3eba3d96f07666d155"
@@ -8424,6 +8431,13 @@ react-router@6.2.2, react-router@^6.2.2:
   integrity sha512-/MbxyLzd7Q7amp4gDOGaYvXwhEojkJD5BtExkuKmj39VEE0m3l/zipf6h2WIB2jyAO0lI6NGETh4RDcktRm4AQ==
   dependencies:
     history "^5.2.0"
+
+react-use-methods@^2.4.2:
+  version "2.4.2"
+  resolved "https://registry.npmmirror.com/react-use-methods/-/react-use-methods-2.4.2.tgz#111eb34e5610e1d3f9775cf44a1e104dea643394"
+  integrity sha512-o0gn79VL3odTF90om3OFOn2yDhrDTFL7cnbYyEh/Hxm9m/eAFVHOZYhTUiC0O1aVgDEgzbSyw9LiKLSg6NG1ow==
+  dependencies:
+    "@babel/runtime" "^7.17.8"
 
 react@^17.0.2:
   version "17.0.2"

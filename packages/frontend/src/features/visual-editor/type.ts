@@ -1,10 +1,14 @@
+import React from 'react'
 export interface ComponentNode<T extends object = any> {
-  children?: ComponentNode[]
-  props: T
-  component: React.ElementType<ComponentNodeProps>
+  component: NodeComponent<T>
   name: string
   icon?: React.ReactNode
   title?: string
+}
+
+export interface ComponentRenderNode<T extends object = any>
+  extends Omit<ComponentNode<T>, 'getInitialProps'> {
+  props: T
 }
 
 export interface ComponentsGroup {
@@ -14,9 +18,14 @@ export interface ComponentsGroup {
 
 export interface DragData {
   name: string
-  children?: DragData[]
 }
 
-export interface ComponentNodeProps<T extends object = any> {
-  node: ComponentNode<T>
+export interface NodeComponentProps<T extends object = any> {
+  node: ComponentRenderNode<T>
+}
+
+export type NodeComponent<T extends object = any> = React.FC<
+  NodeComponentProps<T>
+> & {
+  getInitialProps: () => T
 }

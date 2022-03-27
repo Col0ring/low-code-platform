@@ -42,7 +42,7 @@ const panes: (Pick<MenuPaneItemProps, 'icon' | 'title'> & {
                               e.dataTransfer.setData(
                                 DraggingData.ComponentNode,
                                 JSON.stringify({
-                                  a: 1,
+                                  name: component.name,
                                 })
                               )
                             }}

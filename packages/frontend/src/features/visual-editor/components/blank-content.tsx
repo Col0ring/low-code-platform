@@ -22,7 +22,7 @@ const BlankContent: React.FC<BlankContent> = ({ onDrop }) => {
         )
         onDrop(componentNode, e)
       }}
-      className="w-full h-full flex flex-col text-gray-400 items-center justify-center border-dotted border-gray-600 border"
+      className="w-full h-full flex flex-col text-gray-400 items-center justify-center border-dotted border-gray-600 border bg-gray-100"
     >
       <PlusOutlined className="text-gray-500 text-2xl" />
       <span className="mt-2">拖拽组件或区块到这里</span>

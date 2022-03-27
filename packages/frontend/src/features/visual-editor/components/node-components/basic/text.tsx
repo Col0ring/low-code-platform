@@ -1,8 +1,10 @@
 import React from 'react'
-import { ComponentNodeProps } from '../../../type'
+import { NodeComponent } from '../../../type'
 
-const Text: React.FC<ComponentNodeProps> = () => {
+const Text: NodeComponent = () => {
   return <p>text</p>
 }
+
+Text.getInitialProps = () => ({})
 
 export default Text
