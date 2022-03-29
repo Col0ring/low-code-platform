@@ -6,18 +6,20 @@ export interface EditorState {
   componentNodes: ComponentRenderNode[]
   immerComponentNodes: ComponentRenderNode[]
   isDragging: boolean
+  actionNode: ComponentRenderNode | null
 }
 
 const initialState: EditorState = {
   componentNodes: [],
   immerComponentNodes: createDraft([]),
   isDragging: false,
+  actionNode: null,
 }
 
 export const { useEditorContext, EditorProvider } = createMethodsContext(
   (state) => ({
     methods: {
-      setState(payload: Partial<EditorState>) {
+      setEditorState(payload: Partial<EditorState>) {
         return { ...state, ...payload }
       },
     },
@@ -29,7 +31,7 @@ export const { useEditorContext, EditorProvider } = createMethodsContext(
           await recipe(state.immerComponentNodes)
           const newComponentNodes = finishDraft(state.immerComponentNodes)
           dispatch({
-            type: 'setState',
+            type: 'setEditorState',
             payload: [
               {
                 componentNodes: newComponentNodes,

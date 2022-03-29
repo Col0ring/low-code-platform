@@ -4,6 +4,7 @@ import { ComponentNode, ComponentsGroup } from '../../type'
 import Text from './basic/text'
 import Container from './layout/container'
 import LayoutContainer from './layout/layout-container'
+import Layout from './layout/layout'
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
@@ -13,6 +14,13 @@ export const componentsLibrary: ComponentsGroup[] = [
         name: 'container',
         title: '容器',
         component: Container,
+        icon: <ContainerOutlined />,
+      },
+      {
+        // 不会显示在 menu 菜单中
+        name: 'layout',
+        hideInMenu: true,
+        component: Layout,
         icon: <ContainerOutlined />,
       },
       {

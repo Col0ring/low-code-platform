@@ -33,39 +33,37 @@ function useDrop(options: DropAreaOptions = {}): UseDropReturn {
   optionsRef.current = options
   const [isHovering, setIsHovering] = useState(false)
 
-  const getProps = useCallback(
-    (callback: DropCallback): DropProps => {
-      return {
-        onDragOver: (event) => {
-          event.preventDefault()
-          optionsRef.current.onDragOver?.(event)
-        },
-        onDragEnter: (event) => {
-          event.preventDefault()
-          setIsHovering(true)
-          optionsRef.current.onDragEnter?.(event)
-        },
-        onDragLeave: (event) => {
-          event.preventDefault()
-          setIsHovering(false)
-          optionsRef.current.onDragLeave?.(event)
-        },
-        onDrop: (event) => {
-          event.preventDefault()
-          event.persist()
-          setIsHovering(false)
-          optionsRef.current.onDrop?.(event)
-          callback(event.dataTransfer, event)
-        },
-        onPaste: (event) => {
-          event.persist()
-          optionsRef.current.onPaste?.(event)
-          callback(event.clipboardData, event)
-        },
-      }
-    },
-    [setIsHovering]
-  )
+  const getProps = useCallback((callback: DropCallback): DropProps => {
+    return {
+      onDragOver: (event) => {
+        event.preventDefault()
+        setIsHovering(true)
+        optionsRef.current.onDragOver?.(event)
+      },
+      onDragEnter: (event) => {
+        event.preventDefault()
+        setIsHovering(true)
+        optionsRef.current.onDragEnter?.(event)
+      },
+      onDragLeave: (event) => {
+        event.preventDefault()
+        setIsHovering(false)
+        optionsRef.current.onDragLeave?.(event)
+      },
+      onDrop: (event) => {
+        event.preventDefault()
+        event.persist()
+        setIsHovering(false)
+        optionsRef.current.onDrop?.(event)
+        callback(event.dataTransfer, event)
+      },
+      onPaste: (event) => {
+        event.persist()
+        optionsRef.current.onPaste?.(event)
+        callback(event.clipboardData, event)
+      },
+    }
+  }, [])
 
   const isMounted = useMountedState()
   const callback: DropCallback = useCallback(

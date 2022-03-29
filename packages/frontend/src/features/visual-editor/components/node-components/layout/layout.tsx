@@ -6,11 +6,11 @@ import { getComponentNode } from '..'
 import { getId } from '@/utils'
 import NodeContainer from '../../node-container'
 
-export interface ContainerProps {
+export interface LayoutProps {
   children: ComponentRenderNode[]
 }
 
-const Container: NodeComponent<ContainerProps> = ({
+const Layout: NodeComponent<LayoutProps> = ({
   node,
   immerNode,
   parentNodes,
@@ -51,10 +51,10 @@ const Container: NodeComponent<ContainerProps> = ({
   )
 }
 
-Container.getInitialProps = () => ({
+Layout.getInitialProps = () => ({
   children: [],
 })
 
-Container.getId = () => getId('container')
+Layout.getId = () => getId('layout')
 
-export default Container
+export default Layout

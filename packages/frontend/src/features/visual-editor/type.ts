@@ -1,15 +1,16 @@
 import React from 'react'
-import { StrictOmit } from 'types-kit'
 export interface ComponentNode<T extends object = any> {
   component: NodeComponent<T>
+  hideInMenu?: boolean
   name: string
   icon?: React.ReactNode
   title?: string
 }
 
 export interface ComponentRenderNode<T extends object = any>
-  extends StrictOmit<ComponentNode, 'component'> {
+  extends Pick<ComponentNode, 'title' | 'name'> {
   props: T
+  id: string
 }
 
 export interface ComponentsGroup {
@@ -21,7 +22,11 @@ export interface DragData {
   name: string
 }
 
-export interface NodeComponentProps<T extends object = any> {
+export interface NodeComponentProps<
+  T extends object = any,
+  P extends ComponentRenderNode[] = ComponentRenderNode[]
+> {
+  parentNodes: P
   node: ComponentRenderNode<T>
   immerNode: ComponentRenderNode<T>
 }
@@ -30,4 +35,5 @@ export type NodeComponent<T extends object = any> = React.FC<
   NodeComponentProps<T>
 > & {
   getInitialProps: () => T
+  getId: () => string
 }

@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid'
 import React from 'react'
 export * from './local-storage'
 export * from './env'
@@ -27,4 +28,8 @@ export function safeJsonParser<T>(str: string, defaultValue: T): T {
   } catch (error) {
     return defaultValue
   }
+}
+
+export function getId(prefix: string) {
+  return `${prefix}_${nanoid(10)}`
 }
