@@ -15,7 +15,7 @@ const BlankContent: React.FC<BlankContent> = ({ onDrop }) => {
   const classes = useMemo(
     () =>
       classnames(
-        'p-3 w-full h-full flex flex-col text-gray-400 items-center justify-center border-dotted border-gray-600 border',
+        'p-3 h-full flex flex-col text-gray-400 items-center justify-center border-dashed border-1 border-gray-600 border m-1',
         isHovering ? 'bg-blue-100' : 'bg-gray-100'
       ),
     [isHovering]

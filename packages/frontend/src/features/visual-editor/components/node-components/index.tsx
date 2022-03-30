@@ -5,11 +5,19 @@ import Text from './basic/text'
 import Container from './layout/container'
 import LayoutContainer from './layout/layout-container'
 import Layout from './layout/layout'
+import Page from './layout/page'
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
     group: '布局',
     components: [
+      {
+        name: 'page',
+        title: '页面',
+        hideInMenu: true,
+        component: Page,
+        icon: <ContainerOutlined />,
+      },
       {
         name: 'container',
         title: '容器',

@@ -8437,10 +8437,10 @@ react-router@6.2.2, react-router@^6.2.2:
   dependencies:
     history "^5.2.0"
 
-react-use-methods@^2.4.3:
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/react-use-methods/-/react-use-methods-2.4.3.tgz#2a41fc443e8e21c80387f1cc4273bb2c159408ae"
-  integrity sha512-h3Re18uZb4Qg9NTznygOJorsO7DpdpK3XefZLJrm6Wm9Upv4tSg5YUO6Hp1yoAiu5MqXybYQUQF8caDSnvTx6w==
+react-use-methods@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.npmmirror.com/react-use-methods/-/react-use-methods-2.5.0.tgz#e7ac118d0cf8dd67d330ca6a0e7277814e505687"
+  integrity sha512-99yMIEMqRt43dVi2h4ZtbE6LcrMsdyf31geXY5HYNolN4Xd30fdX6I7SXba/dxDE+jfgSbLiaZqRMl0hnPPLMg==
   dependencies:
     "@babel/runtime" "^7.17.8"
 

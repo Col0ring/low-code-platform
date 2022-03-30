@@ -1,6 +1,7 @@
 import { createMethodsContext } from 'react-use-methods'
 import { createDraft, finishDraft } from 'immer'
 import { ComponentRenderNode } from './type'
+import { getComponentNode } from './components/node-components'
 
 export interface EditorState {
   componentNodes: ComponentRenderNode[]
@@ -9,11 +10,25 @@ export interface EditorState {
   actionNode: ComponentRenderNode | null
 }
 
-const initialState: EditorState = {
-  componentNodes: [],
-  immerComponentNodes: createDraft([]),
-  isDragging: false,
-  actionNode: null,
+function getInitialPage(): ComponentRenderNode {
+  const { component, title } = getComponentNode('page')
+  return {
+    title,
+    name: 'page',
+    props: component.getInitialProps(),
+    id: component.getId(),
+  }
+}
+
+const initialState: () => EditorState = () => {
+  const initialPage = getInitialPage()
+  const componentNodes = [initialPage]
+  return {
+    componentNodes,
+    immerComponentNodes: createDraft(componentNodes),
+    isDragging: false,
+    actionNode: null,
+  }
 }
 
 export const { useEditorContext, EditorProvider } = createMethodsContext(

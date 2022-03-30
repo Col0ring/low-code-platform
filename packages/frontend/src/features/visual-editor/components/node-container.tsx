@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react'
+import React, { useRef, useMemo, useState } from 'react'
 import { Dropdown, Space } from 'antd'
 import {
   DownloadOutlined,
@@ -8,7 +8,6 @@ import {
   ClearOutlined,
   CopyOutlined,
 } from '@ant-design/icons'
-import useHover from '../hooks/useHover'
 import { ComponentRenderNode } from '../type'
 import { useEditorContext } from '../provider'
 import { useClassName } from '@/hooks'
@@ -54,19 +53,20 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   parentNodes,
 }) => {
   const ref = useRef<HTMLDivElement>(null)
-  const isHovering = useHover(ref)
+  const [isHovering, setIsHovering] = useState(false)
+
   const [{ actionNode }, { setEditorState }] = useEditorContext()
   const renderParentNodes = useMemo(
-    () => parentNodes.reverse().slice(0, 5),
+    () => parentNodes.reverse().slice(0, 5).reverse(),
     [parentNodes]
   )
   const isActionNode = useMemo(() => actionNode === node, [actionNode, node])
   const classes = useClassName(
     [
-      'relative border-1 border',
+      'relative border-2 border -m-2px',
       {
         'border-transparent': !isHovering && !isActionNode,
-        'border-blue-400 border-dotted': isHovering && !isActionNode,
+        'border-blue-400 border-dashed': isHovering && !isActionNode,
         'border-blue-500': isActionNode,
       },
     ],
@@ -74,8 +74,17 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   )
 
   return (
+    // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
     <div
       className={classes}
+      onMouseOver={(e) => {
+        e.stopPropagation()
+        setIsHovering(true)
+      }}
+      onMouseOut={(e) => {
+        e.stopPropagation()
+        setIsHovering(false)
+      }}
       ref={ref}
       onClick={(e) => {
         e.stopPropagation()
@@ -84,10 +93,16 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
         })
       }}
     >
+      {isHovering && !isActionNode && (
+        <div className="absolute top-0 left-0  transform -translate-y-full text-blue-400 text-xs pb-1">
+          {node.title || node.name}
+        </div>
+      )}
+
       {isActionNode && (
         <div className="absolute right-0 top-0 transform -translate-y-full flex text-white pb-1">
           <Dropdown
-            trigger={['hover']}
+            trigger={['hover', 'click']}
             overlay={
               <div>
                 {renderParentNodes.map((parentNode) => {

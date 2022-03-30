@@ -15,7 +15,7 @@ const Layout: NodeComponent<LayoutProps> = ({
   immerNode,
   parentNodes,
 }) => {
-  const [, { updateComponentNode }] = useEditorContext()
+  const [, { updateComponentNode, setEditorState }] = useEditorContext()
   const {
     props: { children },
   } = node
@@ -26,11 +26,15 @@ const Layout: NodeComponent<LayoutProps> = ({
           onDrop={({ name }) => {
             const { component, title } = getComponentNode(name)
             void updateComponentNode(() => {
-              immerNode.props.children.push({
+              const newNode = {
                 title,
                 name,
                 id: component.getId(),
                 props: component.getInitialProps(),
+              }
+              immerNode.props.children.push(newNode)
+              setEditorState({
+                actionNode: newNode,
               })
             })
           }}

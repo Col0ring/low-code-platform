@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import BlankContent from '../../blank-content'
 import { NodeComponent, ComponentRenderNode } from '../../../type'
 import { useEditorContext } from '../../../provider'
@@ -6,21 +6,25 @@ import { getComponentNode } from '..'
 import { getId } from '@/utils'
 import NodeContainer from '../../node-container'
 
-export interface ContainerProps {
+export interface PageProps {
   children: ComponentRenderNode[]
 }
 
-const Container: NodeComponent<ContainerProps> = ({
-  node,
-  immerNode,
-  parentNodes,
-}) => {
+const Page: NodeComponent<PageProps> = ({ node, immerNode, parentNodes }) => {
   const [, { updateComponentNode, setEditorState }] = useEditorContext()
+
   const {
     props: { children },
   } = node
+  const pageStyle = useMemo(
+    () =>
+      children.length === 0
+        ? { width: 300, height: 750 }
+        : { width: 300, minHeight: 750 },
+    [children.length]
+  )
   return (
-    <div>
+    <div className="w-full h-full" style={pageStyle}>
       {children.length === 0 ? (
         <BlankContent
           onDrop={({ name }) => {
@@ -55,10 +59,10 @@ const Container: NodeComponent<ContainerProps> = ({
   )
 }
 
-Container.getInitialProps = () => ({
+Page.getInitialProps = () => ({
   children: [],
 })
 
-Container.getId = () => getId('container')
+Page.getId = () => getId('page')
 
-export default Container
+export default Page
