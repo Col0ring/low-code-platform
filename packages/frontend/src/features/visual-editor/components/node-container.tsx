@@ -1,5 +1,5 @@
 import React, { useRef, useMemo } from 'react'
-import { Dropdown } from 'antd'
+import { Dropdown, Space } from 'antd'
 import {
   DownloadOutlined,
   UploadOutlined,
@@ -26,14 +26,24 @@ interface NodePathItemProps {
 }
 
 const NodePathItem: React.FC<NodePathItemProps> = ({ node, className }) => {
-  const classes = useClassName([className], [className])
+  const classes = useClassName(
+    [className, 'cursor-pointer rounded-sm px-1 '],
+    [className]
+  )
   const [, { setEditorState }] = useEditorContext()
+  const componentNode = useMemo(() => getComponentNode(node.name), [node.name])
   return (
     <div
-      className="cursor-pointer"
-      onClick={() => setEditorState({ actionNode: node })}
+      className={classes}
+      onClick={(e) => {
+        e.stopPropagation()
+        setEditorState({ actionNode: node })
+      }}
     >
-      123
+      <Space size="small">
+        {componentNode.icon}
+        {componentNode.title || componentNode.name}
+      </Space>
     </div>
   )
 }
@@ -45,53 +55,64 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null)
   const isHovering = useHover(ref)
-  const [, { setEditorState }] = useEditorContext()
+  const [{ actionNode }, { setEditorState }] = useEditorContext()
   const renderParentNodes = useMemo(
     () => parentNodes.reverse().slice(0, 5),
     [parentNodes]
   )
+  const isActionNode = useMemo(() => actionNode === node, [actionNode, node])
   const classes = useClassName(
     [
+      'relative border-1 border',
       {
-        'border border-blue-500': isHovering,
+        'border-transparent': !isHovering && !isActionNode,
+        'border-blue-400 border-dotted': isHovering && !isActionNode,
+        'border-blue-500': isActionNode,
       },
     ],
-    [isHovering]
+    [isHovering, isActionNode]
   )
 
   return (
     <div
-      className={'relative border border-blue-500 border-2'}
+      className={classes}
       ref={ref}
-      onClick={() =>
+      onClick={(e) => {
+        e.stopPropagation()
         setEditorState({
           actionNode: node,
         })
-      }
+      }}
     >
-      <div className="absolute right-0 top-0 transform -translate-y-full flex text-white pb-1">
-        <div className="bg-blue-500 px-1 rounded-sm">
+      {isActionNode && (
+        <div className="absolute right-0 top-0 transform -translate-y-full flex text-white pb-1">
           <Dropdown
             trigger={['hover']}
             overlay={
               <div>
                 {renderParentNodes.map((parentNode) => {
-                  return <NodePathItem node={parentNode} key={parentNode.id} />
+                  return (
+                    <NodePathItem
+                      className="bg-gray-500 hover:bg-gray-400 text-white"
+                      node={parentNode}
+                      key={parentNode.id}
+                    />
+                  )
                 })}
               </div>
             }
           >
             <div>
-              <NodePathItem node={node} />
+              <NodePathItem className="bg-blue-500" node={node} />
             </div>
           </Dropdown>
+          <div className="bg-blue-500 px-1 ml-1 rounded-sm">
+            <MinusSquareOutlined />
+            <MinusSquareOutlined className="mx-1" />
+            <MinusSquareOutlined />
+          </div>
         </div>
-        <div className="bg-blue-500 px-1 ml-1 rounded-sm">
-          <MinusSquareOutlined />
-          <MinusSquareOutlined className="mx-1" />
-          <MinusSquareOutlined />
-        </div>
-      </div>
+      )}
       {React.createElement(getComponentNode(node.name).component, {
         key: node.id,
         node,

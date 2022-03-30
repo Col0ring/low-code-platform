@@ -49,7 +49,7 @@ const ComponentsLibraryPane: React.FC = () => {
                           <div className="component-item">
                             <Space>
                               {component.icon}
-                              {component.title}
+                              {component.title || component.name}
                             </Space>
                           </div>
                         </Draggable>
