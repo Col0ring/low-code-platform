@@ -4,35 +4,71 @@ import { PlusOutlined } from '@ant-design/icons'
 import { DragArea } from './dragging'
 import { safeJsonParser } from '@/utils'
 import { DraggingData } from '../constants'
-import { DragData } from '../type'
+import { BaseLayoutProps, ComponentRenderNode, DragData } from '../type'
+import { createNewNode } from './node-components'
+import { useEditorContext } from '../provider'
 
 export interface BlankContent {
-  onDrop: (data: DragData, e: React.DragEvent) => void
+  immerNode: ComponentRenderNode<BaseLayoutProps>
+  disabled?: boolean
 }
 
-const BlankContent: React.FC<BlankContent> = ({ onDrop }) => {
+const BlankContent: React.FC<BlankContent> = ({ immerNode, disabled }) => {
   const [isHovering, setIsHovering] = useState(false)
   const classes = useMemo(
     () =>
       classnames(
         'p-3 h-full flex flex-col text-gray-400 items-center justify-center border-dashed border-1 border-gray-600 border',
-        isHovering ? 'bg-blue-100' : 'bg-gray-100'
+        disabled ? 'bg-gray-300' : isHovering ? 'bg-blue-100' : 'bg-gray-100'
       ),
-    [isHovering]
+    [disabled, isHovering]
   )
+  const [
+    { moveNode, immerMoveParentNode },
+    { updateComponentNode, setEditorState },
+  ] = useEditorContext()
+
   return (
     <div className="p-1 h-full">
       <DragArea
         onChange={setIsHovering}
         onDrop={(e) => {
+          if (disabled) {
+            return
+          }
           e.dataTransfer.dropEffect = 'move'
           const componentNode = safeJsonParser<DragData>(
             e.dataTransfer.getData(DraggingData.ComponentNode),
             {
-              name: '',
-            }
+              type: '',
+            } as unknown as DragData
           )
-          componentNode.name && onDrop(componentNode, e)
+          if (componentNode.type) {
+            void updateComponentNode(() => {
+              if (componentNode.type === 'add') {
+                const newNode = createNewNode(componentNode.name)
+                immerNode.props.children.push(newNode)
+                setEditorState({
+                  actionNode: newNode,
+                })
+              } else if (
+                componentNode.type === 'move' &&
+                immerMoveParentNode &&
+                moveNode
+              ) {
+                immerNode.props.children.push(moveNode)
+                immerMoveParentNode.props.children.splice(
+                  componentNode.index,
+                  1
+                )
+                setEditorState({
+                  immerMoveParentNode: null,
+                  moveNode: null,
+                  actionNode: moveNode,
+                })
+              }
+            })
+          }
         }}
         className={classes}
       >

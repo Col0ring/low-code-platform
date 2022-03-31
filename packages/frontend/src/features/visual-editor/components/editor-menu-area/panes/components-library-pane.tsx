@@ -27,16 +27,24 @@ const ComponentsLibraryPane: React.FC = () => {
                       <Col span={12} key={component.name}>
                         <Draggable
                           onDragStart={(_, e) => {
+                            const div = document.createElement('div')
+                            div.innerHTML = component.title || component.name
+                            div.className = 'draggable'
+                            document.body.appendChild(div)
+                            e.dataTransfer.setDragImage(div, 10, 10)
+
                             e.dataTransfer.effectAllowed = 'move'
                             e.dataTransfer.setData(
                               DraggingData.ComponentNode,
                               JSON.stringify({
                                 name: component.name,
+                                type: 'add',
                               })
                             )
                             setEditorState({
                               isDragging: true,
                               actionNode: null,
+                              hoveringNode: null,
                             })
                           }}
                           onDragEnd={() => {
@@ -44,8 +52,6 @@ const ComponentsLibraryPane: React.FC = () => {
                               isDragging: false,
                             })
                           }}
-                          className="draggable"
-                          draggingClassName="active"
                         >
                           <div className="component-item">
                             <Space>

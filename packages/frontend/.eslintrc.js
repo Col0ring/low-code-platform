@@ -41,6 +41,7 @@ module.exports = {
     'jsx-a11y/click-events-have-key-events': 'off',
     // click element must have a role property
     'jsx-a11y/no-static-element-interactions': 'off',
+    'jsx-a11y/mouse-events-have-key-events': 'off',
     'eslint-comments/disable-enable-pair': [
       'warn',
       {

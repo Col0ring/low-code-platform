@@ -1,17 +1,22 @@
 import React, { useRef, useCallback, useMemo, useState } from 'react'
 import { Dropdown, Space, Tooltip } from 'antd'
 import { SaveOutlined, DeleteOutlined, CopyOutlined } from '@ant-design/icons'
-import { ComponentRenderNode, DragData, NodeComponentProps } from '../type'
+import {
+  BaseLayoutProps,
+  ComponentRenderNode,
+  DragData,
+  NodeComponentProps,
+} from '../type'
 import { useEditorContext } from '../provider'
 import { useClassName } from '@/hooks'
 import { createNewNode, getComponentNode } from './node-components'
 import { safeJsonParser } from '@/utils'
 import { DraggingData } from '../constants'
-import { DragArea } from './dragging'
+import { DragArea, Draggable } from './dragging'
 
 export interface NodeContainerProps extends NodeComponentProps {
   index: number
-  immerParentNode: NodeComponentProps['parentNodes'][number] | null
+  immerParentNode: ComponentRenderNode<BaseLayoutProps> | null
 }
 
 interface NodePathItemProps {
@@ -56,10 +61,10 @@ const NodeWrapperBar: React.FC<NodeWrapperBarProps> = ({
 
   const classes = useClassName(
     [
-      `${placement}-0  w-full absolute left-0 h-30px transform flex`,
+      `w-full absolute left-0 h-50px transform flex`,
       {
-        '-translate-y-full items-end': placement === 'top',
-        'translate-y-full': placement === 'bottom',
+        '-translate-y-full items-end top-0': placement === 'top',
+        'bottom-0 translate-y-full': placement === 'bottom',
         'opacity-0': !isHovering,
       },
     ],
@@ -74,10 +79,10 @@ const NodeWrapperBar: React.FC<NodeWrapperBarProps> = ({
         const componentNode = safeJsonParser<DragData>(
           e.dataTransfer.getData(DraggingData.ComponentNode),
           {
-            name: '',
-          }
+            type: '',
+          } as unknown as DragData
         )
-        componentNode.name &&
+        componentNode.type &&
           onDrop(
             {
               ...componentNode,
@@ -95,19 +100,25 @@ const NodeWrapperBar: React.FC<NodeWrapperBarProps> = ({
 
 const NodeContainer: React.FC<NodeContainerProps> = ({
   node,
+  disabled: disabledProp,
   immerNode,
   parentNodes,
   immerParentNode,
   index,
 }) => {
   const ref = useRef<HTMLDivElement>(null)
-  const [isHovering, setIsHovering] = useState(false)
-
-  const [{ actionNode }, { setEditorState, updateComponentNode }] =
-    useEditorContext()
+  const [
+    { actionNode, hoveringNode, isDragging, moveNode, immerMoveParentNode },
+    { setEditorState, updateComponentNode },
+  ] = useEditorContext()
+  const isHovering = useMemo(() => hoveringNode === node, [hoveringNode, node])
   const renderParentNodes = useMemo(
     () => parentNodes.reverse().slice(0, 5).reverse(),
     [parentNodes]
+  )
+  const disabled = useMemo(
+    () => disabledProp || node === moveNode,
+    [disabledProp, moveNode, node]
   )
   const isActionNode = useMemo(() => actionNode === node, [actionNode, node])
   const classes = useClassName(
@@ -123,35 +134,78 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   )
 
   const onNodeWrapperBarDrop: NodeWrapperBarProps['onDrop'] = useCallback(
-    ({ name, placement }) => {
+    ({ placement, ...dragData }) => {
       if (immerParentNode) {
         void updateComponentNode(() => {
-          const newNode = createNewNode(name)
-          immerParentNode.props.children.splice(
-            placement === 'top' ? index : index + 1,
-            0,
-            newNode
-          )
-          setEditorState({
-            actionNode: newNode,
-          })
+          if (dragData.type === 'add') {
+            const newNode = createNewNode(dragData.name)
+            immerParentNode.props.children.splice(
+              placement === 'top' ? index : index + 1,
+              0,
+              newNode
+            )
+            setEditorState({
+              actionNode: newNode,
+            })
+          } else if (
+            dragData.type === 'move' &&
+            immerMoveParentNode &&
+            moveNode
+          ) {
+            if (immerMoveParentNode === immerParentNode) {
+              const children: (ComponentRenderNode | null)[] =
+                immerParentNode.props.children
+              children[dragData.index] = null
+              children.splice(
+                placement === 'top' ? index : index + 1,
+                0,
+                moveNode
+              )
+              immerParentNode.props.children = children.filter(
+                (n) => n !== null
+              ) as ComponentRenderNode[]
+            } else {
+              immerMoveParentNode.props.children.splice(dragData.index, 1)
+              immerParentNode.props.children.splice(
+                placement === 'top' ? index : index + 1,
+                0,
+                moveNode
+              )
+            }
+
+            setEditorState({
+              immerMoveParentNode: null,
+              moveNode: null,
+              actionNode: moveNode,
+            })
+          }
         })
       }
     },
-    [immerParentNode, index, setEditorState, updateComponentNode]
+    [
+      moveNode,
+      immerMoveParentNode,
+      immerParentNode,
+      index,
+      setEditorState,
+      updateComponentNode,
+    ]
   )
 
   return (
-    // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
     <div
       className={classes}
       onMouseOver={(e) => {
         e.stopPropagation()
-        setIsHovering(true)
+        setEditorState({
+          hoveringNode: node,
+        })
       }}
       onMouseOut={(e) => {
         e.stopPropagation()
-        setIsHovering(false)
+        setEditorState({
+          hoveringNode: null,
+        })
       }}
       ref={ref}
       onClick={(e) => {
@@ -161,7 +215,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
         })
       }}
     >
-      {immerParentNode && (
+      {!disabled && immerParentNode && isDragging && (
         <>
           <NodeWrapperBar placement="top" onDrop={onNodeWrapperBarDrop} />
           <NodeWrapperBar placement="bottom" onDrop={onNodeWrapperBarDrop} />
@@ -209,11 +263,47 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
           </div>
         </div>
       )}
-      {React.createElement(getComponentNode(node.name).component, {
-        node,
-        parentNodes: parentNodes,
-        immerNode,
-      })}
+      <Draggable
+        draggable={!!immerParentNode}
+        onDragStart={(_, e) => {
+          const div = document.createElement('div')
+          div.innerHTML = node.title || node.name
+          div.className = 'draggable'
+          document.body.appendChild(div)
+          e.dataTransfer.setDragImage(div, 10, 10)
+          e.stopPropagation()
+          e.dataTransfer.effectAllowed = 'move'
+          e.dataTransfer.setData(
+            DraggingData.ComponentNode,
+            JSON.stringify({
+              type: 'move',
+              index,
+            })
+          )
+          setEditorState({
+            hoveringNode: null,
+            actionNode: null,
+            isDragging: true,
+            moveNode: node,
+            immerMoveParentNode: immerParentNode,
+          })
+        }}
+        onDragEnd={(_, e) => {
+          e.stopPropagation()
+          setEditorState({
+            isDragging: false,
+            moveNode: null,
+            immerMoveParentNode: null,
+          })
+        }}
+      >
+        {React.createElement(getComponentNode(node.name).component, {
+          node,
+          disabled,
+          parentNodes: parentNodes,
+          immerNode,
+        })}
+      </Draggable>
     </div>
   )
 }

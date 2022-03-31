@@ -18,9 +18,15 @@ export interface ComponentsGroup {
   components: ComponentNode[]
 }
 
-export interface DragData {
-  name: string
-}
+export type DragData =
+  | {
+      name: string
+      type: 'add'
+    }
+  | {
+      type: 'move'
+      index: number
+    }
 
 export interface BaseLayoutProps {
   children: ComponentRenderNode[]
@@ -29,6 +35,7 @@ export interface NodeComponentProps<
   T extends object = any,
   P extends ComponentRenderNode<BaseLayoutProps>[] = ComponentRenderNode<BaseLayoutProps>[]
 > {
+  disabled?: boolean
   parentNodes: P
   node: ComponentRenderNode<T>
   immerNode: ComponentRenderNode<T>

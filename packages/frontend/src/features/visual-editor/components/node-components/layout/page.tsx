@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react'
 import BlankContent from '../../blank-content'
 import { NodeComponent, ComponentRenderNode } from '../../../type'
-import { useEditorContext } from '../../../provider'
-import { createNewNode } from '..'
 import { getId } from '@/utils'
 import NodeContainer from '../../node-container'
 
@@ -10,9 +8,12 @@ export interface PageProps {
   children: ComponentRenderNode[]
 }
 
-const Page: NodeComponent<PageProps> = ({ node, immerNode, parentNodes }) => {
-  const [, { updateComponentNode, setEditorState }] = useEditorContext()
-
+const Page: NodeComponent<PageProps> = ({
+  node,
+  immerNode,
+  parentNodes,
+  disabled,
+}) => {
   const {
     props: { children },
   } = node
@@ -30,21 +31,12 @@ const Page: NodeComponent<PageProps> = ({ node, immerNode, parentNodes }) => {
   return (
     <div style={pageStyle}>
       {children.length === 0 ? (
-        <BlankContent
-          onDrop={({ name }) => {
-            void updateComponentNode(() => {
-              const newNode = createNewNode(name)
-              immerNode.props.children.push(newNode)
-              setEditorState({
-                actionNode: newNode,
-              })
-            })
-          }}
-        />
+        <BlankContent immerNode={immerNode} disabled={disabled} />
       ) : (
         children.map((child, index) => {
           return (
             <NodeContainer
+              disabled={disabled}
               immerParentNode={immerNode}
               index={index}
               key={child.id}

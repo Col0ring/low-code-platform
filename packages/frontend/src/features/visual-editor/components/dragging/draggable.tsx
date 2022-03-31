@@ -3,6 +3,7 @@ import classnames from 'classnames'
 import useDrag, { UseDragOptions } from '../../hooks/useDrag'
 
 export interface DraggableProps<T = any> extends UseDragOptions<T> {
+  draggable?: boolean
   data?: T
   style?: React.CSSProperties
   className?: string
@@ -15,12 +16,18 @@ export const Draggable: React.FC<DraggableProps> = ({
   className,
   style,
   draggingClassName,
+  draggable = true,
   ...props
 }) => {
   const [getProps, { isDragging }] = useDrag(props)
   const classes = classnames(className, isDragging && draggingClassName)
   return (
-    <div {...getProps(data)} style={style} className={classes}>
+    <div
+      {...getProps(data)}
+      style={style}
+      className={classes}
+      draggable={draggable}
+    >
       {children}
     </div>
   )

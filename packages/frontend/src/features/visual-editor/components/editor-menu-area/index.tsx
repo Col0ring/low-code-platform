@@ -3,6 +3,7 @@ import { AppleOutlined } from '@ant-design/icons'
 import MenuPaneItem, { MenuPaneItemProps } from './menu-pane-item'
 import MenuContent from './menu-content'
 import ComponentsLibraryPane from './panes/components-library-pane'
+import OutlineTreePane from './panes/outline-tree-pane'
 
 const panes: (Pick<MenuPaneItemProps, 'icon' | 'title'> & {
   content: React.ReactNode
@@ -10,7 +11,7 @@ const panes: (Pick<MenuPaneItemProps, 'icon' | 'title'> & {
   {
     icon: <AppleOutlined />,
     title: '大纲树',
-    content: <div />,
+    content: <OutlineTreePane />,
   },
   {
     icon: <AppleOutlined />,

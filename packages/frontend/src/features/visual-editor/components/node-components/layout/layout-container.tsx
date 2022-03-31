@@ -22,6 +22,7 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
   node,
   immerNode,
   parentNodes,
+  disabled,
 }) => {
   const {
     props: { children, spans },
@@ -39,6 +40,7 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
           return (
             <Col span={span} key={child.id}>
               <NodeContainer
+                disabled={disabled}
                 immerParentNode={null}
                 index={index}
                 key={child.id}

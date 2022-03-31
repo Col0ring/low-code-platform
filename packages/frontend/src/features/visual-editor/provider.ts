@@ -1,13 +1,16 @@
 import { createMethodsContext } from 'react-use-methods'
 import { createDraft, finishDraft } from 'immer'
-import { ComponentRenderNode } from './type'
+import { BaseLayoutProps, ComponentRenderNode } from './type'
 import { getComponentNode } from './components/node-components'
 
 export interface EditorState {
   componentNodes: ComponentRenderNode[]
   immerComponentNodes: ComponentRenderNode[]
   isDragging: boolean
+  moveNode: ComponentRenderNode | null
+  immerMoveParentNode: ComponentRenderNode<BaseLayoutProps> | null
   actionNode: ComponentRenderNode | null
+  hoveringNode: ComponentRenderNode | null
 }
 
 function getInitialPage(): ComponentRenderNode {
@@ -27,7 +30,10 @@ const initialState: () => EditorState = () => {
     componentNodes,
     immerComponentNodes: createDraft(componentNodes),
     isDragging: false,
+    moveNode: null,
+    immerMoveParentNode: null,
     actionNode: null,
+    hoveringNode: null,
   }
 }
 

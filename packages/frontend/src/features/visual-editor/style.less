@@ -41,6 +41,11 @@
         transform: translateX(100%);
       }
 
+      .outline-tree-pane {
+        height: 100%;
+        overflow: auto;
+      }
+
       .components-library-pane {
         position: relative;
         top: 0;
@@ -70,6 +75,7 @@
             background-color: transparent;
             border: 1px solid #e5e7eb;
             border-radius: 4px;
+            cursor: pointer;
 
             &:hover {
               color: #1890ff;
@@ -88,6 +94,7 @@
     flex: 1;
     min-width: 400px;
     overflow: auto;
+    user-select: none;
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -157,9 +164,10 @@
 }
 
 .draggable {
-  cursor: pointer;
-
-  &.active {
-    cursor: move;
-  }
+  display: inline-block;
+  padding: 2px 24px;
+  font-size: 12px;
+  border-radius: 2px;
+  cursor: move;
+  @apply bg-gray-500;
 }
