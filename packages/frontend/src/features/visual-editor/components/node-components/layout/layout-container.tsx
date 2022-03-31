@@ -2,9 +2,7 @@ import React, { useMemo } from 'react'
 import { Row, Col } from 'antd'
 import { getId } from '@/utils'
 import { ComponentRenderNode, NodeComponent } from '../../../type'
-import { getComponentNode } from '..'
-import BlankContent from '../../blank-content'
-import { useEditorContext } from '../../../provider'
+import { createNewNode } from '..'
 import NodeContainer from '../../node-container'
 
 function parseSpan(spans: string) {
@@ -25,11 +23,13 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
   immerNode,
   parentNodes,
 }) => {
-  const [, { updateComponentNode }] = useEditorContext()
-
   const {
     props: { children, spans },
   } = node
+  const childParentNodes = useMemo(
+    () => [...parentNodes, node],
+    [parentNodes, node]
+  )
   const ColSpanArr = useMemo(() => parseSpan(spans), [spans])
   return (
     <Row>
@@ -37,28 +37,15 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
         ColSpanArr.map((span, index) => {
           const child = children[index]
           return (
-            <Col span={span} key={child?.id || index}>
-              {child ? (
-                <NodeContainer
-                  key={child.id}
-                  node={child}
-                  parentNodes={parentNodes}
-                  immerNode={immerNode.props.children[index]}
-                />
-              ) : (
-                <BlankContent
-                  onDrop={({ name }) => {
-                    const { component, ...rest } = getComponentNode(name)
-                    void updateComponentNode(() => {
-                      immerNode.props.children[index] = {
-                        ...rest,
-                        id: component.getId(),
-                        props: component.getInitialProps(),
-                      }
-                    })
-                  }}
-                />
-              )}
+            <Col span={span} key={child.id}>
+              <NodeContainer
+                immerParentNode={null}
+                index={index}
+                key={child.id}
+                node={child}
+                parentNodes={childParentNodes}
+                immerNode={immerNode.props.children[index]}
+              />
             </Col>
           )
         })}
@@ -67,7 +54,11 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
 }
 
 LayoutContainer.getInitialProps = () => ({
-  children: [],
+  children: [
+    createNewNode('layout'),
+    createNewNode('layout'),
+    createNewNode('layout'),
+  ],
   spans: '8:8:8',
 })
 LayoutContainer.getId = () => getId('layout-container')

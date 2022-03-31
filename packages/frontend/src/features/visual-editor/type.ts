@@ -22,9 +22,12 @@ export interface DragData {
   name: string
 }
 
+export interface BaseLayoutProps {
+  children: ComponentRenderNode[]
+}
 export interface NodeComponentProps<
   T extends object = any,
-  P extends ComponentRenderNode[] = ComponentRenderNode[]
+  P extends ComponentRenderNode<BaseLayoutProps>[] = ComponentRenderNode<BaseLayoutProps>[]
 > {
   parentNodes: P
   node: ComponentRenderNode<T>

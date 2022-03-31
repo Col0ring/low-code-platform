@@ -1,6 +1,6 @@
 import React from 'react'
 import { FileTextOutlined, ContainerOutlined } from '@ant-design/icons'
-import { ComponentNode, ComponentsGroup } from '../../type'
+import { ComponentNode, ComponentRenderNode, ComponentsGroup } from '../../type'
 import Text from './basic/text'
 import Container from './layout/container'
 import LayoutContainer from './layout/layout-container'
@@ -27,6 +27,7 @@ export const componentsLibrary: ComponentsGroup[] = [
       {
         // 不会显示在 menu 菜单中
         name: 'layout',
+        title: '布局',
         hideInMenu: true,
         component: Layout,
         icon: <ContainerOutlined />,
@@ -70,4 +71,14 @@ export const componentsMap = componentsLibrary.reduce(
 
 export function getComponentNode(name: string) {
   return componentsMap[name] || null
+}
+
+export function createNewNode(name: string): ComponentRenderNode {
+  const { component, title } = getComponentNode(name)
+  return {
+    title,
+    name,
+    id: component.getId(),
+    props: component.getInitialProps(),
+  }
 }

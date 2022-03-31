@@ -36,6 +36,7 @@ const ComponentsLibraryPane: React.FC = () => {
                             )
                             setEditorState({
                               isDragging: true,
+                              actionNode: null,
                             })
                           }}
                           onDragEnd={() => {
