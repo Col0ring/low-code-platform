@@ -47,6 +47,7 @@ const ComponentsLibraryPane: React.FC = () => {
                                 type: 'add',
                               })
                             )
+
                             setEditorState({
                               isDragging: true,
                               actionNode: null,

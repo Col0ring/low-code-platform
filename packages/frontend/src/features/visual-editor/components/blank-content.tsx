@@ -15,18 +15,22 @@ export interface BlankContent {
 
 const BlankContent: React.FC<BlankContent> = ({ immerNode, disabled }) => {
   const [isHovering, setIsHovering] = useState(false)
+  const [
+    { isDragging, moveNode, immerMoveParentNode },
+    { updateComponentNode, setEditorState },
+  ] = useEditorContext()
   const classes = useMemo(
     () =>
       classnames(
         'p-3 h-full flex flex-col text-gray-400 items-center justify-center border-dashed border-1 border-gray-600 border',
-        disabled ? 'bg-gray-300' : isHovering ? 'bg-blue-100' : 'bg-gray-100'
+        disabled
+          ? 'bg-gray-300'
+          : isHovering && isDragging
+          ? 'bg-blue-100'
+          : 'bg-gray-100'
       ),
-    [disabled, isHovering]
+    [disabled, isHovering, isDragging]
   )
-  const [
-    { moveNode, immerMoveParentNode },
-    { updateComponentNode, setEditorState },
-  ] = useEditorContext()
 
   return (
     <div className="p-1 h-full relative">
@@ -64,6 +68,7 @@ const BlankContent: React.FC<BlankContent> = ({ immerNode, disabled }) => {
                 setEditorState({
                   immerMoveParentNode: null,
                   hoveringNode: null,
+                  moveNode: null,
                   actionNode: moveNode,
                 })
               }

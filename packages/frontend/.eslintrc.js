@@ -90,6 +90,7 @@ module.exports = {
         '@typescript-eslint/no-shadow': 'error',
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/no-extra-semi': 'off',
         '@typescript-eslint/ban-types': 'off',
         '@typescript-eslint/no-misused-promises': [
           'error',

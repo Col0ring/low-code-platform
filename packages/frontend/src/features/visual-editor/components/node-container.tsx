@@ -138,9 +138,10 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
         'border-transparent': !isHovering && !isActionNode,
         'border-blue-400 border-dashed': isHovering && !isActionNode,
         'border-blue-500': isActionNode,
+        'z-1': moveNode === node,
       },
     ],
-    [isHovering, isActionNode]
+    [isHovering, isActionNode, moveNode, node]
   )
 
   const dragImage = useMemo(() => {
@@ -289,13 +290,13 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
       <Draggable
         draggable={!!immerParentNode}
         onDragStart={(_, e) => {
+          e.dataTransfer.effectAllowed = 'move'
           dragImage.innerHTML = node.title || node.name
           document
             .getElementById('editor-drag-image-container')
             ?.appendChild(dragImage)
           e.dataTransfer.setDragImage(dragImage, 10, 10)
           e.stopPropagation()
-          e.dataTransfer.effectAllowed = 'move'
           e.dataTransfer.setData(
             DraggingData.ComponentNode,
             JSON.stringify({

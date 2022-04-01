@@ -64,5 +64,5 @@ LayoutContainer.getInitialProps = () => ({
   spans: '8:8:8',
 })
 LayoutContainer.getId = () => getId('layout-container')
-
+LayoutContainer.disabledChildAction = true
 export default LayoutContainer

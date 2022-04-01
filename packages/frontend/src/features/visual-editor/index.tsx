@@ -13,7 +13,13 @@ const VisualEditor: React.FC<VisualEditorProps> = (props) => {
   const classes = classnames(className, 'visual-editor')
   return (
     <EditorProvider>
-      <div className={classes}>
+      <div
+        className={classes}
+        onDragOver={(e) => {
+          e.preventDefault()
+          e.dataTransfer.dropEffect = 'move'
+        }}
+      >
         <EditorMenuArea />
         <EditorSimulatorArea />
         <EditorOperatorArea />

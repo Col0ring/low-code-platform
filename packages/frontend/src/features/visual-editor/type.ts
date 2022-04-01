@@ -35,6 +35,7 @@ export interface NodeComponentProps<
   T extends object = any,
   P extends ComponentRenderNode<BaseLayoutProps>[] = ComponentRenderNode<BaseLayoutProps>[]
 > {
+  // 禁止响应
   disabled?: boolean
   parentNodes: P
   node: ComponentRenderNode<T>
@@ -46,4 +47,5 @@ export type NodeComponent<T extends object = any> = React.FC<
 > & {
   getInitialProps: () => T
   getId: () => string
+  disabledChildAction?: boolean
 }

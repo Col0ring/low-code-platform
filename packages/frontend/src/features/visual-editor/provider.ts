@@ -43,6 +43,13 @@ export const { useEditorContext, EditorProvider } = createMethodsContext(
   (state) => ({
     methods: {
       setEditorState(payload: Partial<EditorState>) {
+        if (payload.actionNode !== undefined) {
+          return {
+            ...state,
+            ...payload,
+            menuSelectedKeys: payload.actionNode ? [payload.actionNode.id] : [],
+          }
+        }
         return { ...state, ...payload }
       },
     },
@@ -73,16 +80,6 @@ export const { useEditorContext, EditorProvider } = createMethodsContext(
     effects: {
       componentNodes(dispatch, newValue) {
         // console.log(newValue)
-      },
-      actionNode(dispatch, newValue) {
-        dispatch({
-          type: 'setEditorState',
-          payload: [
-            {
-              menuSelectedKeys: newValue ? [newValue.id] : [],
-            },
-          ],
-        })
       },
     },
   }),
