@@ -74,8 +74,8 @@ const NodeWrapperBar: React.FC<NodeWrapperBarProps> = ({
     [
       'bg-blue-500 h-5px w-full',
       {
-        'transform -translate-y-1/2': placement === 'top',
-        'transform translate-y-1/2': placement === 'bottom',
+        'transform -translate-y-full': placement === 'top',
+        'transform translate-y-full': placement === 'bottom',
       },
     ],
     [placement]

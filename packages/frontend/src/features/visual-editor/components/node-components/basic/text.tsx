@@ -3,7 +3,7 @@ import React from 'react'
 import { NodeComponent } from '../../../type'
 
 const Text: NodeComponent = () => {
-  return <p>text</p>
+  return <p style={{ lineHeight: 1 }}>text</p>
 }
 
 Text.getInitialProps = () => ({})

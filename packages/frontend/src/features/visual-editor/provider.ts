@@ -4,6 +4,7 @@ import { BaseLayoutProps, ComponentRenderNode } from './type'
 import { getComponentNode } from './components/node-components'
 
 export interface EditorState {
+  menuSelectedKeys: (string | number)[]
   componentNodes: ComponentRenderNode[]
   immerComponentNodes: ComponentRenderNode[]
   isDragging: boolean
@@ -27,6 +28,7 @@ const initialState: () => EditorState = () => {
   const initialPage = getInitialPage()
   const componentNodes = [initialPage]
   return {
+    menuSelectedKeys: [],
     componentNodes,
     immerComponentNodes: createDraft(componentNodes),
     isDragging: false,
@@ -71,6 +73,16 @@ export const { useEditorContext, EditorProvider } = createMethodsContext(
     effects: {
       componentNodes(dispatch, newValue) {
         // console.log(newValue)
+      },
+      actionNode(dispatch, newValue) {
+        dispatch({
+          type: 'setEditorState',
+          payload: [
+            {
+              menuSelectedKeys: newValue ? [newValue.id] : [],
+            },
+          ],
+        })
       },
     },
   }),

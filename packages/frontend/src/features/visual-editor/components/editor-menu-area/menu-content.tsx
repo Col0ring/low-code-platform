@@ -8,6 +8,7 @@ import {
 import classnames from 'classnames'
 
 export interface MenuContentProps {
+  className?: string
   title: string
   fixed: boolean
   onFixedButtonClick: (fixed: boolean) => void
@@ -17,11 +18,12 @@ const MenuContent: React.FC<MenuContentProps> = (props) => {
   const {
     fixed,
     title,
+    className,
     children,
     onFixedButtonClick: onFixedButtonClickProp,
     onCloseButtonClick,
   } = props
-  const classes = classnames('menu-content', {
+  const classes = classnames(className, 'menu-content', {
     'fixed-active': fixed,
   })
   const onFixedButtonClick = () => {

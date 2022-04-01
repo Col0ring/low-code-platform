@@ -31,9 +31,13 @@ const panes: (Pick<MenuPaneItemProps, 'icon' | 'title'> & {
 ]
 
 const EditorMenuArea: React.FC = () => {
-  const [active, setActive] = useState(1)
+  const [active, setActive] = useState(-1)
   const [fixed, setFixed] = useState(false)
+  const [visited, setVisited] = useState<Record<number, boolean>>(() => ({}))
   const onPaneClick: MenuPaneItemProps['onClick'] = ({ index }) => {
+    if (!visited[index]) {
+      setVisited({ ...visited, [index]: true })
+    }
     setActive(index)
   }
   const onCloseButtonClick = () => {
@@ -55,15 +59,21 @@ const EditorMenuArea: React.FC = () => {
           />
         ))}
       </div>
-      {activePane && (
-        <MenuContent
-          title={activePane.title}
-          fixed={fixed}
-          onFixedButtonClick={setFixed}
-          onCloseButtonClick={onCloseButtonClick}
-        >
-          {activePane.content}
-        </MenuContent>
+
+      {panes.map(
+        (pane, index) =>
+          visited[index] && (
+            <MenuContent
+              key={pane.title}
+              className={activePane === pane ? '' : 'hidden'}
+              title={pane.title}
+              fixed={fixed}
+              onFixedButtonClick={setFixed}
+              onCloseButtonClick={onCloseButtonClick}
+            >
+              {pane.content}
+            </MenuContent>
+          )
       )}
     </div>
   )

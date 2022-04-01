@@ -44,6 +44,18 @@
       .outline-tree-pane {
         height: 100%;
         overflow: auto;
+
+        .ant-tree-node-selected {
+          @apply bg-gray-200;
+        }
+
+        .ant-tree-drop-indicator {
+          @apply bg-red-500;
+
+          &::after {
+            @apply border-red-500;
+          }
+        }
       }
 
       .components-library-pane {
