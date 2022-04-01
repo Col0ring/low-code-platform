@@ -49,8 +49,12 @@ export const { useEditorContext, EditorProvider } = createMethodsContext(
         recipe: (draft: ComponentRenderNode[]) => void | Promise<void>
       ) {
         return async ({ dispatch }) => {
-          await recipe(state.immerComponentNodes)
+          const res = recipe(state.immerComponentNodes)
+          if (res instanceof Promise) {
+            await res
+          }
           const newComponentNodes = finishDraft(state.immerComponentNodes)
+          console.log(newComponentNodes)
           dispatch({
             type: 'setEditorState',
             payload: [
@@ -62,6 +66,11 @@ export const { useEditorContext, EditorProvider } = createMethodsContext(
             ],
           })
         }
+      },
+    },
+    effects: {
+      componentNodes(dispatch, newValue) {
+        // console.log(newValue)
       },
     },
   }),

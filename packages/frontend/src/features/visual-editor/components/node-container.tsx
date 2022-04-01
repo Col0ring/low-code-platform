@@ -61,14 +61,24 @@ const NodeWrapperBar: React.FC<NodeWrapperBarProps> = ({
 
   const classes = useClassName(
     [
-      `w-full absolute left-0 h-50px transform flex`,
+      `w-full absolute left-0 h-20px flex z-1 items-center`,
       {
-        '-translate-y-full items-end top-0': placement === 'top',
-        'bottom-0 translate-y-full': placement === 'bottom',
+        '-top-5px': placement === 'top',
+        '-bottom-5px': placement === 'bottom',
         'opacity-0': !isHovering,
       },
     ],
     [placement, isHovering]
+  )
+  const barClasses = useClassName(
+    [
+      'bg-blue-500 h-5px w-full',
+      {
+        'transform -translate-y-1/2': placement === 'top',
+        'transform translate-y-1/2': placement === 'bottom',
+      },
+    ],
+    [placement]
   )
   return (
     <DragArea
@@ -93,7 +103,7 @@ const NodeWrapperBar: React.FC<NodeWrapperBarProps> = ({
         e.stopPropagation()
       }}
     >
-      <div className="bg-blue-500 h-5px w-full" />
+      <div className={barClasses} />
     </DragArea>
   )
 }
@@ -132,6 +142,13 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
     ],
     [isHovering, isActionNode]
   )
+
+  const dragImage = useMemo(() => {
+    const div = document.createElement('div')
+    div.innerHTML = ''
+    div.className = 'draggable'
+    return div
+  }, [])
 
   const onNodeWrapperBarDrop: NodeWrapperBarProps['onDrop'] = useCallback(
     ({ placement, ...dragData }) => {
@@ -176,6 +193,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
             setEditorState({
               immerMoveParentNode: null,
               moveNode: null,
+              hoveringNode: null,
               actionNode: moveNode,
             })
           }
@@ -197,15 +215,19 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
       className={classes}
       onMouseOver={(e) => {
         e.stopPropagation()
-        setEditorState({
-          hoveringNode: node,
-        })
+        if (!isDragging) {
+          setEditorState({
+            hoveringNode: node,
+          })
+        }
       }}
       onMouseOut={(e) => {
         e.stopPropagation()
-        setEditorState({
-          hoveringNode: null,
-        })
+        if (!isDragging) {
+          setEditorState({
+            hoveringNode: null,
+          })
+        }
       }}
       ref={ref}
       onClick={(e) => {
@@ -221,6 +243,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
           <NodeWrapperBar placement="bottom" onDrop={onNodeWrapperBarDrop} />
         </>
       )}
+
       {isHovering && !isActionNode && (
         <div className="absolute top-0 left-0 width-auto transform -translate-y-full text-blue-400 text-xs pb-1">
           {node.title || node.name}
@@ -266,11 +289,11 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
       <Draggable
         draggable={!!immerParentNode}
         onDragStart={(_, e) => {
-          const div = document.createElement('div')
-          div.innerHTML = node.title || node.name
-          div.className = 'draggable'
-          document.body.appendChild(div)
-          e.dataTransfer.setDragImage(div, 10, 10)
+          dragImage.innerHTML = node.title || node.name
+          document
+            .getElementById('editor-drag-image-container')
+            ?.appendChild(dragImage)
+          e.dataTransfer.setDragImage(dragImage, 10, 10)
           e.stopPropagation()
           e.dataTransfer.effectAllowed = 'move'
           e.dataTransfer.setData(
@@ -289,11 +312,17 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
           })
         }}
         onDragEnd={(_, e) => {
+          document
+            .getElementById('editor-drag-image-container')
+            ?.removeChild(dragImage)
           e.stopPropagation()
-          setEditorState({
-            isDragging: false,
-            moveNode: null,
-            immerMoveParentNode: null,
+          // mouseover 延迟问题
+          requestAnimationFrame(() => {
+            setEditorState({
+              isDragging: false,
+              moveNode: null,
+              immerMoveParentNode: null,
+            })
           })
         }}
       >

@@ -1,5 +1,5 @@
 import { Col, Divider, Input, Row, Space } from 'antd'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Draggable } from '../../dragging'
 import { componentsLibrary } from '../../node-components'
 import { DraggingData } from '../../../constants'
@@ -7,6 +7,12 @@ import { useEditorContext } from '@/features/visual-editor/provider'
 
 const ComponentsLibraryPane: React.FC = () => {
   const [, { setEditorState }] = useEditorContext()
+  const dragImage = useMemo(() => {
+    const div = document.createElement('div')
+    div.innerHTML = ''
+    div.className = 'draggable'
+    return div
+  }, [])
   return (
     <div className="components-library-pane">
       <div className="search">
@@ -27,12 +33,12 @@ const ComponentsLibraryPane: React.FC = () => {
                       <Col span={12} key={component.name}>
                         <Draggable
                           onDragStart={(_, e) => {
-                            const div = document.createElement('div')
-                            div.innerHTML = component.title || component.name
-                            div.className = 'draggable'
-                            document.body.appendChild(div)
-                            e.dataTransfer.setDragImage(div, 10, 10)
-
+                            dragImage.innerHTML =
+                              component.title || component.name
+                            document
+                              .getElementById('editor-drag-image-container')
+                              ?.appendChild(dragImage)
+                            e.dataTransfer.setDragImage(dragImage, 10, 10)
                             e.dataTransfer.effectAllowed = 'move'
                             e.dataTransfer.setData(
                               DraggingData.ComponentNode,
@@ -48,8 +54,13 @@ const ComponentsLibraryPane: React.FC = () => {
                             })
                           }}
                           onDragEnd={() => {
-                            setEditorState({
-                              isDragging: false,
+                            document
+                              .getElementById('editor-drag-image-container')
+                              ?.removeChild(dragImage)
+                            requestAnimationFrame(() => {
+                              setEditorState({
+                                isDragging: false,
+                              })
                             })
                           }}
                         >

@@ -29,7 +29,7 @@ const BlankContent: React.FC<BlankContent> = ({ immerNode, disabled }) => {
   ] = useEditorContext()
 
   return (
-    <div className="p-1 h-full">
+    <div className="p-1 h-full relative">
       <DragArea
         onChange={setIsHovering}
         onDrop={(e) => {
@@ -63,7 +63,7 @@ const BlankContent: React.FC<BlankContent> = ({ immerNode, disabled }) => {
                 )
                 setEditorState({
                   immerMoveParentNode: null,
-                  moveNode: null,
+                  hoveringNode: null,
                   actionNode: moveNode,
                 })
               }

@@ -18,6 +18,10 @@ const VisualEditor: React.FC<VisualEditorProps> = (props) => {
         <EditorSimulatorArea />
         <EditorOperatorArea />
       </div>
+      <div
+        className="fixed top-0 left-0 -z-1"
+        id="editor-drag-image-container"
+      />
     </EditorProvider>
   )
 }
