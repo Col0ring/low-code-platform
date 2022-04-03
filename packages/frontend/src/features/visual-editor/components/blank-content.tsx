@@ -4,20 +4,20 @@ import { PlusOutlined } from '@ant-design/icons'
 import { DragArea } from './dragging'
 import { safeJsonParser } from '@/utils'
 import { DraggingData } from '../constants'
-import { BaseLayoutProps, ComponentRenderNode, DragData } from '../type'
+import { DragData, ParentComponentRenderNode } from '../type'
 import { createNewNode } from './node-components'
 import { useEditorContext } from '../provider'
 
 export interface BlankContent {
-  immerNode: ComponentRenderNode<BaseLayoutProps>
+  node: ParentComponentRenderNode
   disabled?: boolean
 }
 
-const BlankContent: React.FC<BlankContent> = ({ immerNode, disabled }) => {
+const BlankContent: React.FC<BlankContent> = ({ node, disabled }) => {
   const [isHovering, setIsHovering] = useState(false)
   const [
-    { isDragging, moveNode, immerMoveParentNode },
-    { updateComponentNode, setEditorState },
+    { isDragging, moveNode, moveParentNode },
+    { updateComponentNode, finishDragging },
   ] = useEditorContext()
   const classes = useMemo(
     () =>
@@ -41,38 +41,33 @@ const BlankContent: React.FC<BlankContent> = ({ immerNode, disabled }) => {
             return
           }
           e.dataTransfer.dropEffect = 'move'
-          const componentNode = safeJsonParser<DragData>(
+          const dragData = safeJsonParser<DragData>(
             e.dataTransfer.getData(DraggingData.ComponentNode),
             {
               type: '',
             } as unknown as DragData
           )
-          if (componentNode.type) {
-            void updateComponentNode(() => {
-              if (componentNode.type === 'add') {
-                const newNode = createNewNode(componentNode.name)
-                immerNode.props.children.push(newNode)
-                setEditorState({
-                  actionNode: newNode,
-                })
-              } else if (
-                componentNode.type === 'move' &&
-                immerMoveParentNode &&
-                moveNode
-              ) {
-                immerNode.props.children.push(moveNode)
-                immerMoveParentNode.props.children.splice(
-                  componentNode.index,
-                  1
-                )
-                setEditorState({
-                  immerMoveParentNode: null,
-                  hoveringNode: null,
-                  moveNode: null,
-                  actionNode: moveNode,
-                })
-              }
-            })
+          if (dragData.type) {
+            if (dragData.type === 'add') {
+              const newNode = createNewNode(dragData.name)
+              finishDragging({ actionNode: newNode })
+              updateComponentNode({
+                type: 'add',
+                parentNode: node,
+                index: node.children.length,
+                newNode,
+              })
+            } else if (dragData.type == 'move' && moveNode && moveParentNode) {
+              finishDragging({ actionNode: moveNode })
+              updateComponentNode({
+                type: 'move',
+                moveNode,
+                moveParentNode,
+                moveNodeIndex: dragData.index,
+                parentNode: node,
+                nodeIndex: node.children.length,
+              })
+            }
           }
         }}
         className={classes}

@@ -1,6 +1,11 @@
 import React from 'react'
 import { FileTextOutlined, ContainerOutlined } from '@ant-design/icons'
-import { ComponentNode, ComponentRenderNode, ComponentsGroup } from '../../type'
+import {
+  ComponentNode,
+  ComponentRenderNode,
+  ComponentsGroup,
+  ParentComponentRenderNode,
+} from '../../type'
 import Text from './basic/text'
 import Container from './layout/container'
 import LayoutContainer from './layout/layout-container'
@@ -12,29 +17,29 @@ export const componentsLibrary: ComponentsGroup[] = [
     group: '布局',
     components: [
       {
-        name: 'page',
-        title: '页面',
+        name: Page.nodeName,
+        title: Page.title,
         hideInMenu: true,
         component: Page,
         icon: <ContainerOutlined />,
       },
       {
-        name: 'container',
-        title: '容器',
+        name: Container.nodeName,
+        title: Container.title,
         component: Container,
         icon: <ContainerOutlined />,
       },
       {
         // 不会显示在 menu 菜单中
-        name: 'layout',
-        title: '布局',
+        name: Layout.nodeName,
+        title: Layout.title,
         hideInMenu: true,
         component: Layout,
         icon: <ContainerOutlined />,
       },
       {
-        name: 'layout-container',
-        title: '布局容器',
+        name: LayoutContainer.nodeName,
+        title: LayoutContainer.title,
         component: LayoutContainer,
         icon: <ContainerOutlined />,
       },
@@ -69,12 +74,28 @@ export const componentsMap = componentsLibrary.reduce(
   {} as Record<string, ComponentNode>
 )
 
+export function isParentComponentRenderNode(
+  node: ComponentRenderNode
+): node is ParentComponentRenderNode {
+  return !!node?.children
+}
+
 export function getComponentNode(name: string) {
   return componentsMap[name] || null
 }
 
 export function createNewNode(name: string): ComponentRenderNode {
+  console.log(name)
   const { component, title } = getComponentNode(name)
+  if (component.getInitialChildren) {
+    return {
+      title,
+      name,
+      id: component.getId(),
+      props: component.getInitialProps(),
+      children: component.getInitialChildren(),
+    }
+  }
   return {
     title,
     name,

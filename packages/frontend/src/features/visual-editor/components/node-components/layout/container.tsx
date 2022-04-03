@@ -1,22 +1,11 @@
 import React, { useMemo } from 'react'
 import BlankContent from '../../blank-content'
-import { NodeComponent, ComponentRenderNode } from '../../../type'
+import { NodeComponent } from '../../../type'
 import { getId } from '@/utils'
 import NodeContainer from '../../node-container'
 
-export interface ContainerProps {
-  children: ComponentRenderNode[]
-}
-
-const Container: NodeComponent<ContainerProps> = ({
-  node,
-  immerNode,
-  parentNodes,
-  disabled,
-}) => {
-  const {
-    props: { children },
-  } = node
+const Container: NodeComponent = ({ node, parentNodes, disabled }) => {
+  const { children } = node
 
   const childParentNodes = useMemo(
     () => [...parentNodes, node],
@@ -25,18 +14,17 @@ const Container: NodeComponent<ContainerProps> = ({
   return (
     <div>
       {children.length === 0 ? (
-        <BlankContent disabled={disabled} immerNode={immerNode} />
+        <BlankContent disabled={disabled} node={node} />
       ) : (
         children.map((child, index) => {
           return (
             <NodeContainer
               disabled={disabled}
-              immerParentNode={immerNode}
+              draggable
               index={index}
               key={child.id}
               node={child}
               parentNodes={childParentNodes}
-              immerNode={immerNode.props.children[index]}
             />
           )
         })
@@ -45,10 +33,10 @@ const Container: NodeComponent<ContainerProps> = ({
   )
 }
 
-Container.getInitialProps = () => ({
-  children: [],
-})
-
+Container.nodeName = 'container'
+Container.title = '容器'
+Container.getInitialProps = () => ({})
+Container.getInitialChildren = () => []
 Container.getId = () => getId('container')
 
 export default Container

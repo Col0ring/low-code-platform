@@ -1,22 +1,11 @@
 import React, { useMemo } from 'react'
 import BlankContent from '../../blank-content'
-import { NodeComponent, ComponentRenderNode } from '../../../type'
+import { NodeComponent } from '../../../type'
 import { getId } from '@/utils'
 import NodeContainer from '../../node-container'
 
-export interface PageProps {
-  children: ComponentRenderNode[]
-}
-
-const Page: NodeComponent<PageProps> = ({
-  node,
-  immerNode,
-  parentNodes,
-  disabled,
-}) => {
-  const {
-    props: { children },
-  } = node
+const Page: NodeComponent = ({ node, parentNodes, disabled }) => {
+  const { children } = node
   const pageStyle = useMemo(
     () =>
       children.length === 0
@@ -31,18 +20,17 @@ const Page: NodeComponent<PageProps> = ({
   return (
     <div style={pageStyle}>
       {children.length === 0 ? (
-        <BlankContent immerNode={immerNode} disabled={disabled} />
+        <BlankContent node={node} disabled={disabled} />
       ) : (
         children.map((child, index) => {
           return (
             <NodeContainer
               disabled={disabled}
-              immerParentNode={immerNode}
+              draggable
               index={index}
               key={child.id}
               node={child}
               parentNodes={childParentNodes}
-              immerNode={immerNode.props.children[index]}
             />
           )
         })
@@ -50,11 +38,10 @@ const Page: NodeComponent<PageProps> = ({
     </div>
   )
 }
-
-Page.getInitialProps = () => ({
-  children: [],
-})
-
+Page.nodeName = 'page'
+Page.title = '页面'
 Page.getId = () => getId('page')
+Page.getInitialProps = () => ({})
+Page.getInitialChildren = () => []
 
 export default Page

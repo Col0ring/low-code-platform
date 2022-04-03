@@ -1,22 +1,11 @@
 import React, { useMemo } from 'react'
 import BlankContent from '../../blank-content'
-import { NodeComponent, ComponentRenderNode } from '../../../type'
+import { NodeComponent } from '../../../type'
 import { getId } from '@/utils'
 import NodeContainer from '../../node-container'
 
-export interface LayoutProps {
-  children: ComponentRenderNode[]
-}
-
-const Layout: NodeComponent<LayoutProps> = ({
-  node,
-  immerNode,
-  parentNodes,
-  disabled,
-}) => {
-  const {
-    props: { children },
-  } = node
+const Layout: NodeComponent = ({ node, parentNodes, disabled }) => {
+  const { children } = node
   const childParentNodes = useMemo(
     () => [...parentNodes, node],
     [parentNodes, node]
@@ -24,7 +13,7 @@ const Layout: NodeComponent<LayoutProps> = ({
   return (
     <div>
       {children.length === 0 ? (
-        <BlankContent disabled={disabled} immerNode={immerNode} />
+        <BlankContent disabled={disabled} node={node} />
       ) : (
         children.map((child, index) => {
           return (
@@ -33,9 +22,8 @@ const Layout: NodeComponent<LayoutProps> = ({
               index={index}
               key={child.id}
               node={child}
-              immerParentNode={immerNode}
+              draggable
               parentNodes={childParentNodes}
-              immerNode={immerNode.props.children[index]}
             />
           )
         })
@@ -43,10 +31,13 @@ const Layout: NodeComponent<LayoutProps> = ({
     </div>
   )
 }
-
+Layout.nodeName = 'layout'
+Layout.title = '布局'
 Layout.getInitialProps = () => ({
   children: [],
 })
+
+Layout.getInitialChildren = () => []
 
 Layout.getId = () => getId('layout')
 
