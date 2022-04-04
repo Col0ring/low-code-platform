@@ -18,9 +18,16 @@ interface DataNode extends OriginDataNode {
 }
 
 function generateData(
-  componentNodes: ComponentRenderNode[],
-  parentNode: ParentComponentRenderNode | null,
-  draggable: boolean
+  {
+    componentNodes,
+    parentNode,
+    draggable,
+  }: {
+    componentNodes: ComponentRenderNode[]
+    parentNode: ParentComponentRenderNode | null
+    draggable: boolean
+  },
+  currentScreen?: ComponentRenderNode | null
 ): DataNode[] {
   return componentNodes.map((node, index) => {
     const { title, name, children, id } = node
@@ -29,6 +36,7 @@ function generateData(
       nodeIndex: index,
       name,
       node,
+      disabled: !!(currentScreen && currentScreen.id !== id),
       draggable,
       parentNode,
       title,
@@ -36,23 +44,33 @@ function generateData(
       isLeaf,
       children: isLeaf
         ? undefined
-        : generateData(
-            children,
-            node as ParentComponentRenderNode,
-            getComponentNode(name).component.childActionDisabled ? false : true
-          ),
+        : generateData({
+            componentNodes: children,
+            parentNode: node as ParentComponentRenderNode,
+            draggable: getComponentNode(name).component.childActionDisabled
+              ? false
+              : true,
+          }),
     }
   })
 }
 
 const OutlineTreePane: React.FC = () => {
   const [
-    { componentNodes, menuSelectedKeys },
-    { setEditorState, startDragging, finishDragging, updateComponentNode },
+    { componentNodes, menuSelectedKeys, currentScreen },
+    { setActionNode, startDragging, finishDragging, updateComponentNode },
   ] = useEditorContext()
   const treeData = useMemo(
-    () => generateData(componentNodes, null, false),
-    [componentNodes]
+    () =>
+      generateData(
+        {
+          componentNodes,
+          draggable: false,
+          parentNode: null,
+        },
+        currentScreen
+      ),
+    [componentNodes, currentScreen]
   )
   const dragImage = useMemo(() => {
     const div = document.createElement('div')
@@ -65,8 +83,6 @@ const OutlineTreePane: React.FC = () => {
       <Tree
         className="draggable-tree"
         allowDrop={({ dropNode, dropPosition }) => {
-          console.log(dropNode)
-
           const { draggable, name } = dropNode as unknown as DataNode
           // dropPosition === 0  代表放入 dropNode 内部 1 代表相同等级，-1 最顶层的第一个
           return ((dropNode.isLeaf ||
@@ -90,9 +106,7 @@ const OutlineTreePane: React.FC = () => {
         icon={({ name }: DataNode) => getComponentNode(name).icon}
         onSelect={(_, { node }) => {
           if (!menuSelectedKeys.includes(node.key)) {
-            setEditorState({
-              actionNode: (node as unknown as DataNode).node,
-            })
+            setActionNode((node as unknown as DataNode).node)
           }
         }}
         defaultExpandAll
@@ -145,10 +159,11 @@ const OutlineTreePane: React.FC = () => {
             parentNode: moveParentNode,
             nodeIndex: moveNodeIndex,
           } = dragNode as unknown as DataNode
-          if (!moveParentNode || !dropParentNode) {
+          if (!moveParentNode) {
             return
           }
           finishDragging({ actionNode: moveNode })
+
           if (position === 0) {
             updateComponentNode({
               type: 'move',
@@ -159,13 +174,17 @@ const OutlineTreePane: React.FC = () => {
               nodeIndex: 0,
             })
           } else if (position === 1) {
+            if (!dropParentNode) {
+              return
+            }
             updateComponentNode({
               type: 'move',
               moveNode,
               moveParentNode,
               moveNodeIndex,
               parentNode: dropParentNode,
-              nodeIndex: dropNodeIndex,
+              // 在当前节点的下面一个
+              nodeIndex: dropNodeIndex + 1,
             })
           }
         }}

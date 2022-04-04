@@ -1,6 +1,6 @@
 import React from 'react'
 
-export interface ComponentNode<T extends object = {}> {
+export interface ComponentNode<T extends object = any> {
   component: NodeComponent<T>
   hideInMenu?: boolean
   name: string
@@ -8,14 +8,15 @@ export interface ComponentNode<T extends object = {}> {
   title?: string
 }
 
-export interface ComponentRenderNode<T extends object = {}>
+export interface ComponentRenderNode<T extends object = any>
   extends Pick<ComponentNode, 'title' | 'name'> {
   props: T
+  style: React.CSSProperties
   children?: ComponentRenderNode[]
   id: string
 }
 
-export interface ParentComponentRenderNode<T extends object = {}>
+export interface ParentComponentRenderNode<T extends object = any>
   extends ComponentRenderNode<T> {
   children: ComponentRenderNode[]
 }
@@ -34,6 +35,7 @@ export type DragData =
       type: 'move'
       index: number
     }
+
 export type UpdateComponentNodeOptions = {
   addSnapshot?: boolean
 } & (
@@ -70,7 +72,7 @@ export type UpdateComponentNodeOptions = {
 )
 
 export interface NodeComponentProps<
-  T extends object = {},
+  T extends object = any,
   P extends ParentComponentRenderNode[] = ParentComponentRenderNode[]
 > {
   // 禁止响应

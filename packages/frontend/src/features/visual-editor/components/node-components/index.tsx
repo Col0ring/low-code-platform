@@ -10,17 +10,17 @@ import Text from './basic/text'
 import Container from './layout/container'
 import LayoutContainer from './layout/layout-container'
 import Layout from './layout/layout'
-import Page from './layout/page'
+import Screen from './layout/screen'
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
     group: '布局',
     components: [
       {
-        name: Page.nodeName,
-        title: Page.title,
+        name: Screen.nodeName,
+        title: Screen.title,
         hideInMenu: true,
-        component: Page,
+        component: Screen,
         icon: <ContainerOutlined />,
       },
       {
@@ -85,12 +85,12 @@ export function getComponentNode(name: string) {
 }
 
 export function createNewNode(name: string): ComponentRenderNode {
-  console.log(name)
   const { component, title } = getComponentNode(name)
   if (component.getInitialChildren) {
     return {
       title,
       name,
+      style: {},
       id: component.getId(),
       props: component.getInitialProps(),
       children: component.getInitialChildren(),
@@ -99,6 +99,28 @@ export function createNewNode(name: string): ComponentRenderNode {
   return {
     title,
     name,
+    style: {},
+    id: component.getId(),
+    props: component.getInitialProps(),
+  }
+}
+
+export function copyNode(node: ComponentRenderNode): ComponentRenderNode {
+  const { component } = getComponentNode(node.name)
+  if (node.children) {
+    return {
+      title: node.title,
+      name: node.name,
+      style: node.style,
+      id: component.getId(),
+      props: node.props,
+      children: node.children.map((child) => copyNode(child)),
+    }
+  }
+  return {
+    title: node.title,
+    name: node.name,
+    style: node.style,
     id: component.getId(),
     props: component.getInitialProps(),
   }

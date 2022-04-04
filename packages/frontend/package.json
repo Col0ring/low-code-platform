@@ -17,6 +17,7 @@
     "@reduxjs/toolkit": "^1.8.0",
     "antd": "^4.19.2",
     "classnames": "^2.3.1",
+    "dayjs": "^1.11.0",
     "monaco-editor": "^0.33.0",
     "nanoid": "^3.3.2",
     "normalize.css": "^8.0.1",

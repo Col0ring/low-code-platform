@@ -4,6 +4,7 @@ import MenuPaneItem, { MenuPaneItemProps } from './menu-pane-item'
 import MenuContent from './menu-content'
 import ComponentsLibraryPane from './panes/components-library-pane'
 import OutlineTreePane from './panes/outline-tree-pane'
+import OperationHistoryPane from './panes/operation-history-pane'
 
 const panes: (Pick<MenuPaneItemProps, 'icon' | 'title'> & {
   content: React.ReactNode
@@ -26,6 +27,11 @@ const panes: (Pick<MenuPaneItemProps, 'icon' | 'title'> & {
   {
     icon: <AppleOutlined />,
     title: '操作历史',
+    content: <OperationHistoryPane />,
+  },
+  {
+    icon: <AppleOutlined />,
+    title: '提交历史',
     content: <div />,
   },
 ]

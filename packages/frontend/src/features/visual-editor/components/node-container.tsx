@@ -121,12 +121,24 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   const ref = useRef<HTMLDivElement>(null)
   const [
     { actionNode, hoveringNode, isDragging, moveNode, moveParentNode },
-    { updateComponentNode, startDragging, finishDragging, setEditorState },
+    {
+      updateComponentNode,
+      startDragging,
+      finishDragging,
+      setEditorState,
+      setActionNode,
+    },
   ] = useEditorContext()
   const isHovering = useMemo(() => hoveringNode === node, [hoveringNode, node])
   const renderParentNodes = useMemo(
     () => parentNodes.reverse().slice(0, 5).reverse(),
     [parentNodes]
+  )
+  const isParentNodeAction = useMemo(
+    () =>
+      parentNodes.includes(actionNode as ParentComponentRenderNode) ||
+      parentNodes.includes(moveNode as ParentComponentRenderNode),
+    [actionNode, moveNode, parentNodes]
   )
   const parentNode = useMemo(
     () => parentNodes[parentNodes.length - 1],
@@ -191,7 +203,6 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
       index,
     ]
   )
-
   return (
     <div
       className={classes}
@@ -214,9 +225,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
       ref={ref}
       onClick={(e) => {
         e.stopPropagation()
-        setEditorState({
-          actionNode: node,
-        })
+        setActionNode(node)
       }}
     >
       {!disabled && draggable && isDragging && (
@@ -269,7 +278,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
         </div>
       )}
       <Draggable
-        draggable={draggable}
+        draggable={draggable && !isParentNodeAction}
         onDragStart={(_, e) => {
           e.dataTransfer.effectAllowed = 'move'
           dragImage.innerHTML = node.title || node.name

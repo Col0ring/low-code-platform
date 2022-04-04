@@ -4,22 +4,21 @@ import { useEditorContext } from '../../provider'
 import NodeContainer from '../node-container'
 
 const SimulatorContent: React.FC = () => {
-  const [{ componentNodes, immerComponentNodes }] = useEditorContext()
+  const [{ currentScreen, componentNodes }] = useEditorContext()
   return (
     <div className="inline-flex justify-center min-w-full">
       <div className="simulator-content-container">
         <DragArea className="simulator-content">
           {componentNodes.map((node, index) => {
-            return (
+            return currentScreen?.id === node.id ? (
               <NodeContainer
+                draggable={false}
                 index={index}
-                immerParentNode={null}
                 parentNodes={[]}
                 key={node.id}
                 node={node}
-                immerNode={immerComponentNodes[index]}
               />
-            )
+            ) : null
           })}
         </DragArea>
       </div>

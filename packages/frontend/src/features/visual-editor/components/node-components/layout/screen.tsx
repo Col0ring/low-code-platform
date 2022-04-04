@@ -4,7 +4,15 @@ import { NodeComponent } from '../../../type'
 import { getId } from '@/utils'
 import NodeContainer from '../../node-container'
 
-const Page: NodeComponent = ({ node, parentNodes, disabled }) => {
+export interface ScreenProps {
+  title: string
+}
+
+const Screen: NodeComponent<ScreenProps> = ({
+  node,
+  parentNodes,
+  disabled,
+}) => {
   const { children } = node
   const pageStyle = useMemo(
     () =>
@@ -38,10 +46,12 @@ const Page: NodeComponent = ({ node, parentNodes, disabled }) => {
     </div>
   )
 }
-Page.nodeName = 'page'
-Page.title = '页面'
-Page.getId = () => getId('page')
-Page.getInitialProps = () => ({})
-Page.getInitialChildren = () => []
+Screen.nodeName = 'screen'
+Screen.title = '屏幕'
+Screen.getId = () => getId('screen')
+Screen.getInitialProps = () => ({
+  title: '',
+})
+Screen.getInitialChildren = () => []
 
-export default Page
+export default Screen

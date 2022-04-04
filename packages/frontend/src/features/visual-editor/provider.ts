@@ -1,26 +1,32 @@
 import { createMethodsContext } from 'react-use-methods'
 import { ArrayItem, StrictOmit } from 'types-kit'
-import { createDraft, Draft, finishDraft } from 'immer'
+import { createDraft, Draft, finishDraft, isDraft } from 'immer'
 import {
   ComponentRenderNode,
   ParentComponentRenderNode,
   UpdateComponentNodeOptions,
 } from './type'
-import {
-  createNewNode,
-  isParentComponentRenderNode,
-} from './components/node-components'
-import Page from './components/node-components/layout/page'
+import { isParentComponentRenderNode } from './components/node-components'
 
 export interface EditorState {
   menuSelectedKeys: (string | number)[]
   componentNodes: ComponentRenderNode[]
+  currentScreen: ComponentRenderNode | null
+  componentNodesMap: Record<
+    string,
+    {
+      node: ComponentRenderNode
+      parentNodes: ParentComponentRenderNode[]
+    }
+  >
   immerComponentNodes: Draft<ComponentRenderNode[]>
   immerComponentNodesMap: Record<string, Draft<ComponentRenderNode>>
   snapshots: {
     type: UpdateComponentNodeOptions['type']
     desc: string
     timestamp: number
+    actionNode: ComponentRenderNode | null
+    currentScreen: ComponentRenderNode | null
     componentNodes: ComponentRenderNode[]
   }[]
   snapshotIndex: number
@@ -31,38 +37,58 @@ export interface EditorState {
   hoveringNode: ComponentRenderNode | null
 }
 
-function getImmerComponentNodeMap(
-  immerComponentNodes: Draft<ComponentRenderNode[]>
-): Record<string, Draft<ComponentRenderNode>> {
-  const componentNodesMap: Record<string, Draft<ComponentRenderNode>> = {}
-  immerComponentNodes.forEach((node) => {
-    componentNodesMap[node.id] = node
+function getComponentNodeMap(
+  componentNodes: ComponentRenderNode[],
+  parentNodes: ParentComponentRenderNode[] = []
+): EditorState['componentNodesMap'] {
+  const componentNodesMap: EditorState['componentNodesMap'] = {}
+  componentNodes.forEach((node) => {
+    componentNodesMap[node.id] = {
+      node,
+      parentNodes,
+    }
     if (node.children) {
-      Object.assign(componentNodesMap, getImmerComponentNodeMap(node.children))
+      Object.assign(
+        componentNodesMap,
+        getComponentNodeMap(node.children, [
+          ...parentNodes,
+          node as ParentComponentRenderNode,
+        ])
+      )
     }
   })
   return componentNodesMap
 }
 
+function getImmerComponentNodeMap(
+  immerComponentNodes: Draft<ComponentRenderNode[]>
+): EditorState['immerComponentNodesMap'] {
+  const immerComponentNodesMap: EditorState['immerComponentNodesMap'] = {}
+  immerComponentNodes.forEach((node) => {
+    immerComponentNodesMap[node.id] = node
+    if (node.children) {
+      Object.assign(
+        immerComponentNodesMap,
+        getImmerComponentNodeMap(node.children)
+      )
+    }
+  })
+  return immerComponentNodesMap
+}
+
 // TODO：初始化数据放在组件内部
 const initialState: () => EditorState = () => {
-  const initialPage = createNewNode(Page.nodeName)
-  const componentNodes = [initialPage]
+  const componentNodes: ComponentRenderNode[] = []
   const immerComponentNodes = createDraft(componentNodes)
   return {
     menuSelectedKeys: [],
     componentNodes,
+    currentScreen: null,
     immerComponentNodes,
     immerComponentNodesMap: getImmerComponentNodeMap(immerComponentNodes),
-    snapshots: [
-      {
-        componentNodes,
-        type: 'init',
-        timestamp: Date.now(),
-        desc: '初始化数据',
-      },
-    ],
-    snapshotIndex: 0,
+    componentNodesMap: getComponentNodeMap(componentNodes),
+    snapshots: [],
+    snapshotIndex: -1,
     isDragging: false,
     moveParentNode: null,
     moveNode: null,
@@ -71,8 +97,8 @@ const initialState: () => EditorState = () => {
   }
 }
 
-export const { useEditorContext, EditorProvider } = createMethodsContext(
-  (state) => ({
+export const { useEditorContext, withEditorProvider } = createMethodsContext(
+  (state, getState) => ({
     methods: {
       startDragging(options: {
         moveNode: ComponentRenderNode
@@ -114,15 +140,76 @@ export const { useEditorContext, EditorProvider } = createMethodsContext(
       }: StrictOmit<ArrayItem<EditorState['snapshots']>, 'timestamp'>) {
         return {
           ...state,
-          snapshots: [
-            ...state.snapshots,
-            {
-              type,
-              componentNodes,
-              timestamp: Date.now(),
-              desc,
-            },
-          ],
+          snapshotIndex: state.snapshotIndex + 1,
+          snapshots:
+            state.snapshotIndex !== state.snapshots.length - 1
+              ? [
+                  ...state.snapshots.slice(0, state.snapshotIndex + 1),
+                  {
+                    type,
+                    componentNodes,
+                    timestamp: Date.now(),
+                    desc,
+                    actionNode: state.actionNode,
+                    currentScreen: state.currentScreen,
+                  },
+                ]
+              : [
+                  ...state.snapshots,
+                  {
+                    type,
+                    componentNodes,
+                    timestamp: Date.now(),
+                    desc,
+                    actionNode: state.actionNode,
+                    currentScreen: state.currentScreen,
+                  },
+                ],
+        }
+      },
+      changeSnapShot(snapshotIndex: number) {
+        if (snapshotIndex < 0) {
+          return state
+        } else if (snapshotIndex >= state.snapshots.length) {
+          return state
+        }
+        const { componentNodes, currentScreen, actionNode } =
+          state.snapshots[snapshotIndex]
+        const changedState: EditorState = this.setComponentNodes(componentNodes)
+        return {
+          ...state,
+          ...changedState,
+          currentScreen,
+          snapshotIndex,
+          actionNode,
+        }
+      },
+      setCurrentScreen(currentScreen: ComponentRenderNode | null) {
+        return { ...state, currentScreen }
+      },
+      setComponentNodes(
+        componentNodesOrimmerComponentNodes?:
+          | ComponentRenderNode[]
+          | Draft<ComponentRenderNode[]>
+      ) {
+        const newComponentNodes = isDraft(
+          componentNodesOrimmerComponentNodes || state.immerComponentNodes
+        )
+          ? finishDraft(
+              componentNodesOrimmerComponentNodes || state.immerComponentNodes
+            )
+          : (componentNodesOrimmerComponentNodes as ComponentRenderNode[])
+        const newImmerComponentNodes = createDraft(newComponentNodes)
+        const newComponentNodesMap = getComponentNodeMap(newComponentNodes)
+        const newImmerComponentNodesMap = getImmerComponentNodeMap(
+          newImmerComponentNodes
+        )
+        return {
+          ...state,
+          componentNodes: newComponentNodes,
+          immerComponentNodes: newImmerComponentNodes,
+          componentNodesMap: newComponentNodesMap,
+          immerComponentNodesMap: newImmerComponentNodesMap,
         }
       },
       setEditorState(payload: Partial<EditorState>) {
@@ -130,22 +217,136 @@ export const { useEditorContext, EditorProvider } = createMethodsContext(
       },
     },
     actions: {
+      updateScreen({
+        screen,
+        type,
+      }: {
+        screen: ComponentRenderNode
+        type: 'add' | 'change' | 'clear' | 'delete'
+      }) {
+        return ({ dispatch }) => {
+          const { immerComponentNodes, componentNodes } = state
+          if (type === 'add') {
+            immerComponentNodes.push(screen)
+            dispatch({
+              type: 'setCurrentScreen',
+              payload: [screen],
+            })
+            dispatch({
+              type: 'setActionNode',
+              payload: [screen],
+            })
+            dispatch({
+              type: 'setComponentNodes',
+            })
+            dispatch({
+              type: 'addSnapshot',
+              payload: [
+                {
+                  type: 'add',
+                  componentNodes: getState().componentNodes,
+                  desc: `add: ${screen.title || screen.name}`,
+                },
+              ],
+            })
+          } else if (type === 'change') {
+            dispatch({
+              type: 'setCurrentScreen',
+              payload: [screen],
+            })
+            dispatch({
+              type: 'setActionNode',
+              payload: [screen],
+            })
+            dispatch({
+              type: 'addSnapshot',
+              payload: [
+                {
+                  type: 'update',
+                  componentNodes: getState().componentNodes,
+                  desc: `change: ${screen.title || screen.name}`,
+                },
+              ],
+            })
+          } else if (type === 'clear') {
+            dispatch({
+              type: 'setActionNode',
+              payload: [null],
+            })
+            dispatch({
+              type: 'updateComponentNode',
+              payload: [
+                {
+                  type: 'update',
+                  node: screen,
+                  props: screen.props,
+                  addSnapshot: false,
+                  children: [],
+                },
+              ],
+            })
+            dispatch({
+              type: 'addSnapshot',
+              payload: [
+                {
+                  type: 'update',
+                  componentNodes: getState().componentNodes,
+                  desc: `clear: ${screen.title || screen.name}`,
+                },
+              ],
+            })
+          } else if (type === 'delete') {
+            const currentScreenIndex = componentNodes.findIndex(
+              (item) => item.id === screen.id
+            )
+            immerComponentNodes.splice(currentScreenIndex, 1)
+            const nextScreen =
+              componentNodes[currentScreenIndex - 1] ||
+              componentNodes[currentScreenIndex + 1]
+            dispatch({
+              type: 'setActionNode',
+              payload: [nextScreen],
+            })
+            dispatch({
+              type: 'setCurrentScreen',
+              payload: [nextScreen],
+            })
+            dispatch({
+              type: 'setComponentNodes',
+            })
+            dispatch({
+              type: 'addSnapshot',
+              payload: [
+                {
+                  type: 'delete',
+                  componentNodes: getState().componentNodes,
+                  desc: `delete: ${screen.title || screen.name}`,
+                },
+              ],
+            })
+          }
+        }
+      },
       updateComponentNode(options: UpdateComponentNodeOptions) {
         return ({ dispatch }) => {
-          const { immerComponentNodesMap, componentNodes } = state
+          const { currentScreen, immerComponentNodesMap } = state
           const { addSnapshot = true } = options
           let immerComponentNodes = state.immerComponentNodes
           if (options.type === 'init') {
             const { componentNodes: newComponentNodes } = options
             immerComponentNodes = createDraft(newComponentNodes)
+            dispatch({
+              type: 'setComponentNodes',
+              payload: [immerComponentNodes],
+            })
             addSnapshot &&
               dispatch({
                 type: 'addSnapshot',
                 payload: [
                   {
                     type: 'init',
-                    componentNodes: componentNodes,
-                    desc: `init data`,
+                    componentNodes: getState().componentNodes,
+                    desc: 'init: init data',
                   },
                 ],
               })
@@ -154,14 +355,21 @@ export const { useEditorContext, EditorProvider } = createMethodsContext(
             const immerParentNode = immerComponentNodesMap[parentNode.id]
             if (isParentComponentRenderNode(immerParentNode)) {
               immerParentNode.children.splice(index, 0, newNode)
+
+              dispatch({
+                type: 'setComponentNodes',
+                payload: [immerComponentNodes],
+              })
               addSnapshot &&
                 dispatch({
                   type: 'addSnapshot',
                   payload: [
                     {
                       type: 'add',
-                      componentNodes: componentNodes,
-                      desc: `add: ${newNode.title || newNode.name}`,
+                      componentNodes: getState().componentNodes,
+                      desc: `${currentScreen?.props.title} add: ${
+                        newNode.title || newNode.name
+                      }`,
                     },
                   ],
                 })
@@ -194,14 +402,17 @@ export const { useEditorContext, EditorProvider } = createMethodsContext(
                 immerMoveParentNode.children.splice(moveNodeIndex, 1)
                 immerParentNode.children.splice(nodeIndex, 0, moveNode)
               }
-
+              dispatch({
+                type: 'setComponentNodes',
+                payload: [immerComponentNodes],
+              })
               addSnapshot &&
                 dispatch({
                   type: 'addSnapshot',
                   payload: [
                     {
                       type: 'move',
-                      componentNodes: componentNodes,
+                      componentNodes: getState().componentNodes,
                       desc: `move: ${
                         moveParentNode.title || moveParentNode.name
                       } > ${moveNode.title || moveNode.name} => ${
@@ -219,13 +430,17 @@ export const { useEditorContext, EditorProvider } = createMethodsContext(
             if (children && isParentComponentRenderNode(immerNode)) {
               immerNode.children = children
             }
+            dispatch({
+              type: 'setComponentNodes',
+              payload: [immerComponentNodes],
+            })
             addSnapshot &&
               dispatch({
                 type: 'addSnapshot',
                 payload: [
                   {
                     type: 'update',
-                    componentNodes: componentNodes,
+                    componentNodes: getState().componentNodes,
                     desc: `update: ${node.title || node.name}`,
                   },
                 ],
@@ -235,40 +450,35 @@ export const { useEditorContext, EditorProvider } = createMethodsContext(
             const immerParentNode = immerComponentNodesMap[parentNode.id]
             if (isParentComponentRenderNode(immerParentNode)) {
               immerParentNode.children.splice(index, 1)
+              dispatch({
+                type: 'setComponentNodes',
+                payload: [immerComponentNodes],
+              })
               addSnapshot &&
                 dispatch({
                   type: 'addSnapshot',
                   payload: [
                     {
-                      type: 'update',
-                      componentNodes: componentNodes,
-                      desc: `update: ${node.title || node.name}`,
+                      type: 'delete',
+                      componentNodes: getState().componentNodes,
+                      desc: `delete: ${node.title || node.name}`,
                     },
                   ],
                 })
             }
           }
-
-          const newComponentNodes = finishDraft(immerComponentNodes)
-          const newImmerComponentNodes = createDraft(newComponentNodes)
-          const newImmerComponentNodesMap = getImmerComponentNodeMap(
-            newImmerComponentNodes
-          )
-          dispatch({
-            type: 'setEditorState',
-            payload: [
-              {
-                componentNodes: newComponentNodes,
-                immerComponentNodes: newImmerComponentNodes,
-                immerComponentNodesMap: newImmerComponentNodesMap,
-              } as Pick<
-                EditorState,
-                | 'componentNodes'
-                | 'immerComponentNodes'
-                | 'immerComponentNodesMap'
-              >,
-            ],
-          })
+        }
+      },
+    },
+    effects: {
+      // listen to update the current screen in real time
+      componentNodesMap(dispatch, newValue) {
+        if (state.currentScreen) {
+          if (state.currentScreen !== newValue[state.currentScreen.id].node)
+            dispatch({
+              type: 'setCurrentScreen',
+              payload: [newValue[state.currentScreen.id].node],
+            })
         }
       },
     },
