@@ -1,6 +1,6 @@
 import { createServiceApi } from '@/utils'
 
-export const Design = createServiceApi({
+export const designApi = createServiceApi({
   reducerPath: 'designApi',
   tagTypes: ['Design'],
   endpoints: (builder) => ({

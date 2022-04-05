@@ -15,6 +15,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Path } from '@/router/constants'
 import { stopPropagation } from '@/utils'
+import DefaultAppIcon from '../../components/default-app-icon'
 
 const AppCenterPage: React.FC = () => {
   const navigate = useNavigate()
@@ -72,7 +73,7 @@ const AppCenterPage: React.FC = () => {
               }}
             >
               <div className="flex items-center">
-                <AppstoreOutlined className="bg-blue-400 rounded-md w-44px flex-shrink-0 h-44px flex items-center justify-center text-3xl leading-none text-white" />
+                <DefaultAppIcon size={44} />
                 <div className="text-lg ml-3">title</div>
               </div>
               <div className="text-gray-500 mt-5">desc desc</div>

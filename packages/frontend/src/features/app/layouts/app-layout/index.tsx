@@ -21,6 +21,7 @@ import { Outlet, matchPath, useLocation, Link } from 'react-router-dom'
 import UserActions from '@/features/auth/components/user-actions'
 import { Path } from '@/router/constants'
 import './style.less'
+import DefaultAppIcon from '@/features/main/components/default-app-icon'
 
 const tabPaths = [
   {
@@ -95,7 +96,7 @@ const AppLayout: React.FC = () => {
               <Breadcrumb separator=">">
                 <Breadcrumb.Item>
                   <Space>
-                    <AppstoreOutlined className="bg-blue-400 rounded-md w-24px flex-shrink-0 h-24px flex items-center justify-center leading-none text-white" />
+                    <DefaultAppIcon size={24} />
                     App Name<Tag color="success">已启用</Tag>
                   </Space>
                 </Breadcrumb.Item>

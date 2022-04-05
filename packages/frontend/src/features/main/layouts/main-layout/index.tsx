@@ -3,7 +3,7 @@ import { Affix, Layout, Menu } from 'antd'
 import UserActions from '@/features/auth/components/user-actions'
 import { Outlet, useLocation, Link } from 'react-router-dom'
 import './style.less'
-import logo from '@/features/app/assets/logo.svg'
+import logo from '@/features/main/assets/logo.svg'
 import { Path } from '@/router/constants'
 
 const MainLayout: React.FC = () => {

@@ -12,8 +12,7 @@ import DesignLayout from '@/features/design/layouts/design-layout'
 import ForgetPasswordPage from '@/features/auth/pages/forget-password'
 import { Path } from './constants'
 import AppLayout from '@/features/app/layouts/app-layout'
-import MainLayout from '@/features/app/layouts/main-layout'
-import AppPage from '@/features/app/pages/app-page'
+import MainLayout from '@/features/main/layouts/main-layout'
 
 export const accessRoutes: RouteObject[] = [
   {
@@ -24,7 +23,7 @@ export const accessRoutes: RouteObject[] = [
         element: (
           <LazyRoute
             component={React.lazy(
-              () => import('@/features/app/pages/dashboard')
+              () => import('@/features/main/pages/dashboard')
             )}
           />
         ),
@@ -34,7 +33,7 @@ export const accessRoutes: RouteObject[] = [
         element: (
           <LazyRoute
             component={React.lazy(
-              () => import('@/features/app/pages/app-center')
+              () => import('@/features/main/pages/app-center')
             )}
           />
         ),
@@ -44,7 +43,7 @@ export const accessRoutes: RouteObject[] = [
         element: (
           <LazyRoute
             component={React.lazy(
-              () => import('@/features/app/pages/templates-center')
+              () => import('@/features/main/pages/templates-center')
             )}
           />
         ),
@@ -57,7 +56,13 @@ export const accessRoutes: RouteObject[] = [
     children: [
       {
         path: 'page',
-        element: <AppPage />,
+        element: (
+          <LazyRoute
+            component={React.lazy(
+              () => import('@/features/app/pages/app-page')
+            )}
+          />
+        ),
       },
       {
         path: 'setting',

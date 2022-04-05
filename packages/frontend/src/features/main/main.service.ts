@@ -1,7 +1,7 @@
 import { createServiceApi } from '@/utils'
 
-export const appApi = createServiceApi({
-  reducerPath: 'appApi',
+export const MainApi = createServiceApi({
+  reducerPath: 'mainApi',
   tagTypes: ['App'],
   endpoints: (builder) => ({
     getUserList: builder.query<any, number>({
