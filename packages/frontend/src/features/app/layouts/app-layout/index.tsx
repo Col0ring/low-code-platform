@@ -8,6 +8,8 @@ import {
   Breadcrumb,
   Button,
   Tabs,
+  Tag,
+  Space,
 } from 'antd'
 import {
   AppstoreOutlined,
@@ -66,20 +68,20 @@ const DesignLayoutDropdown: React.FC = () => {
   )
 }
 
-const DesignLayout: React.FC = () => {
+const AppLayout: React.FC = () => {
   const { pathname } = useLocation()
   const activeKey = useMemo(() => getActiveKey(pathname), [pathname])
   const [visible, setVisible] = useState(false)
 
   return (
-    <Layout className="design-layout">
-      <Layout.Header className="design-header">
+    <Layout className="app-layout">
+      <Layout.Header className="app-header">
         <Row gutter={10}>
           <Col span={7}>
-            <div className="design-header-navigation">
+            <div className="app-header-navigation">
               <Dropdown
                 arrow
-                trigger={['click', 'hover']}
+                trigger={['click']}
                 visible={visible}
                 onVisibleChange={setVisible}
                 overlay={<DesignLayoutDropdown />}
@@ -91,41 +93,45 @@ const DesignLayout: React.FC = () => {
                 />
               </Dropdown>
               <Breadcrumb separator=">">
-                <Breadcrumb.Item>App Name</Breadcrumb.Item>
-                <Breadcrumb.Item>Page Name</Breadcrumb.Item>
+                <Breadcrumb.Item>
+                  <Space>
+                    <AppstoreOutlined className="bg-blue-400 rounded-md w-24px flex-shrink-0 h-24px flex items-center justify-center leading-none text-white" />
+                    App Name<Tag color="success">已启用</Tag>
+                  </Space>
+                </Breadcrumb.Item>
               </Breadcrumb>
             </div>
           </Col>
           <Col span={10}>
-            <div className="design-header-navbar">
+            <div className="app-header-navbar">
               <Tabs activeKey={activeKey}>
                 <Tabs.TabPane
-                  tab={<Link to={Path.DesignIndex}>页面设计</Link>}
-                  key="design"
+                  tab={<Link to={Path.DesignIndex}>页面管理</Link>}
+                  key="app"
                 />
                 <Tabs.TabPane
-                  tab={<Link to={Path.DesignSetting}>页面设置</Link>}
+                  tab={<Link to={Path.DesignSetting}>应用设置</Link>}
                   key="setting"
                 />
                 <Tabs.TabPane
-                  tab={<Link to={Path.DesignPublish}>页面发布</Link>}
+                  tab={<Link to={Path.DesignPublish}>应用发布</Link>}
                   key="publish"
                 />
               </Tabs>
             </div>
           </Col>
           <Col span={7}>
-            <div className="design-header-actions">
+            <div className="app-header-actions">
               <UserActions />
             </div>
           </Col>
         </Row>
       </Layout.Header>
-      <Layout.Content className="design-main">
+      <Layout.Content className="app-main">
         <Outlet />
       </Layout.Content>
     </Layout>
   )
 }
 
-export default DesignLayout
+export default AppLayout

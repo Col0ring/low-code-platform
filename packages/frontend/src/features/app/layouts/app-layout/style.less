@@ -1,0 +1,60 @@
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f3f3f3;
+
+  .app-header {
+    height: 52px;
+    margin-bottom: 2px;
+    padding: 0 10px;
+    line-height: 52px;
+    background-color: #fff;
+
+    .app-header-navigation {
+      display: flex;
+      align-items: center;
+      height: 100%;
+
+      .ant-breadcrumb {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .app-header-navbar {
+      display: flex;
+      justify-content: center;
+      background-color: #fff;
+
+      .ant-tabs-nav {
+        margin-bottom: 0;
+        line-height: 52px;
+      }
+
+      .ant-tabs-tab {
+        padding: 0;
+      }
+
+      .ant-tabs-nav-more {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
+      a {
+        color: currentcolor;
+      }
+    }
+
+    .app-header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+  }
+
+  .app-main {
+    flex: 1;
+  }
+}

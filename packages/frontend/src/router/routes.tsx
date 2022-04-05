@@ -1,6 +1,5 @@
 import React from 'react'
-import { RouteObject, Navigate } from 'react-router-dom'
-import EditPage from '@/features/design/pages/design-index'
+import { RouteObject, Outlet, Navigate } from 'react-router-dom'
 import { Role } from '@/features/auth/constants'
 import AuthRoute from './auth-route'
 import LazyRoute from './lazy-route'
@@ -12,24 +11,65 @@ import RegisterPage from '@/features/auth/pages/register'
 import DesignLayout from '@/features/design/layouts/design-layout'
 import ForgetPasswordPage from '@/features/auth/pages/forget-password'
 import { Path } from './constants'
+import AppLayout from '@/features/app/layouts/app-layout'
+import MainLayout from '@/features/app/layouts/main-layout'
+import AppPage from '@/features/app/pages/app-page'
 
-export const accessRoutes: RouteObject[] = []
-
-export const routes: RouteObject[] = [
+export const accessRoutes: RouteObject[] = [
   {
-    path: '/',
-    element: <Navigate to={Path.Dashboard} replace />,
+    element: <MainLayout />,
+    children: [
+      {
+        path: 'dashboard',
+        element: (
+          <LazyRoute
+            component={React.lazy(
+              () => import('@/features/app/pages/dashboard')
+            )}
+          />
+        ),
+      },
+      {
+        path: 'app-center',
+        element: (
+          <LazyRoute
+            component={React.lazy(
+              () => import('@/features/app/pages/app-center')
+            )}
+          />
+        ),
+      },
+      {
+        path: 'templates-center',
+        element: (
+          <LazyRoute
+            component={React.lazy(
+              () => import('@/features/app/pages/templates-center')
+            )}
+          />
+        ),
+      },
+    ],
   },
   {
-    path: '/design',
-    element: (
-      <AuthRoute
-        element={<DesignLayout />}
-        needAuth
-        loadingFullScreen
-        roles={Role.User}
-      />
-    ),
+    path: 'app/:appId',
+    element: <AppLayout />,
+    children: [
+      {
+        path: 'page',
+        element: <AppPage />,
+      },
+      {
+        path: 'setting',
+      },
+      {
+        path: 'publish',
+      },
+    ],
+  },
+  {
+    path: 'design',
+    element: <DesignLayout />,
     children: [
       {
         index: true,
@@ -58,6 +98,13 @@ export const routes: RouteObject[] = [
       },
     ],
   },
+]
+
+export const routes: RouteObject[] = [
+  {
+    path: '/',
+    element: <Navigate to={Path.Dashboard} replace />,
+  },
   {
     element: (
       <AuthRoute
@@ -83,59 +130,12 @@ export const routes: RouteObject[] = [
     ],
   },
   {
-    path: '/public',
-    element: (
-      <AuthRoute loading={false} element={<EditPage />} needAuth={false} />
-    ),
-    children: [
-      // index 代表和父 path 相同的 path
-      {
-        path: '',
-        element: <ForbiddenPage />,
-      },
-      {
-        // path: '*',
-        // index: true,
-        element: <NotFoundPage />,
-      },
-
-      {
-        element: <EditPage />,
-        children: [
-          {
-            path: '2',
-            element: <NotFoundPage />,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    path: '/dashboard',
     element: (
       <AuthRoute
-        element={
-          <LazyRoute
-            component={React.lazy(
-              () => import('@/features/design/pages/design-index')
-            )}
-          />
-        }
+        element={<Outlet />}
         needAuth
         loadingFullScreen
         roles={Role.User}
-      />
-    ),
-    children: accessRoutes,
-  },
-  {
-    path: '/auth',
-    element: (
-      <AuthRoute
-        needAuth
-        loadingFullScreen
-        element={<EditPage />}
-        roles={[Role.User]}
       />
     ),
     children: accessRoutes,
