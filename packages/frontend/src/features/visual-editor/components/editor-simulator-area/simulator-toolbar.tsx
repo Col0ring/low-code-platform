@@ -1,5 +1,5 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react'
-import { Tooltip, Divider, Button, Radio, message } from 'antd'
+import { Tooltip, Divider, Button, Radio, message, Form, Input } from 'antd'
 import redoSvg from '../../assets/redo.svg?raw'
 import undoSvg from '../../assets/undo.svg?raw'
 import {
@@ -17,24 +17,40 @@ import { useEditorContext } from '../../provider'
 import { copyNode, createNewNode } from '../node-components'
 import Screen, { ScreenProps } from '../node-components/layout/screen'
 import { ComponentRenderNode } from '../../type'
-
+import ModalButton from '@/components/modal-button'
+import { emptyValidator } from '@/utils/validators'
+import { MonacoEditor, MonacoEditorProps } from '@/components/monaco-editor'
 const SimulatorToolbar: React.FC = () => {
   const [canScroll, setCanScroll] = useState(false)
   const [screen, setScreen] = useState('')
   const ref = useRef<HTMLDivElement>(null)
   const [
     { currentScreen, snapshotIndex, snapshots, componentNodes },
-    { updateScreen, changeSnapShot },
+    { updateScreen, setActionNode, changeSnapShot, updateComponentNode },
   ] = useEditorContext()
+
+  const [addScreenForm] = Form.useForm()
+  const monacoEditorRef: MonacoEditorProps['editor'] = useRef(null)
 
   const tools = useMemo(
     () => [
       [
         {
           element: (
-            <Button
-              onClick={() => {
+            <ModalButton
+              modalTitle="请输入屏幕名称"
+              modal={
+                <Form form={addScreenForm} preserve={false}>
+                  <Form.Item name="title" rules={[emptyValidator('屏幕名称')]}>
+                    <Input />
+                  </Form.Item>
+                </Form>
+              }
+              onModalOK={async () => {
+                const { title } = await addScreenForm.validateFields()
                 const newScreen = createNewNode(Screen.nodeName)
+                ;(newScreen as ComponentRenderNode<ScreenProps>).props.title =
+                  title
                 updateScreen({
                   type: 'add',
                   screen: newScreen,
@@ -132,20 +148,80 @@ const SimulatorToolbar: React.FC = () => {
       ],
       [
         {
-          element: <Button size="small" icon={<UploadOutlined />} />,
+          element: (
+            <ModalButton
+              modalTitle="导入页面"
+              modal={
+                <div className="h-300px">
+                  <MonacoEditor
+                    editor={monacoEditorRef}
+                    scrollBeyondLastLine={false}
+                    language="json"
+                    minimap={{ enabled: false }}
+                  />
+                </div>
+              }
+              onModalOK={() => {
+                if (monacoEditorRef.current) {
+                  try {
+                    const value = monacoEditorRef.current.getValue()
+                    if (!value) {
+                      return Promise.reject()
+                    }
+                    const nodes = JSON.parse(value)
+                    updateScreen({
+                      type: 'change',
+                      screen: nodes[0],
+                    })
+                    setActionNode(null)
+                    updateComponentNode({
+                      type: 'init',
+                      componentNodes: nodes,
+                    })
+                  } catch (error) {
+                    void message.error('导入失败，请检查格式是否正确')
+                  }
+                }
+              }}
+              size="small"
+              icon={<UploadOutlined />}
+            />
+          ),
           title: '导入页面',
         },
         {
-          element: <Button size="small" icon={<DownloadOutlined />} />,
+          element: (
+            <ModalButton
+              modalTitle="导出页面"
+              showCancelButton={false}
+              modal={
+                <div className="h-300px">
+                  <MonacoEditor
+                    scrollBeyondLastLine={false}
+                    readOnly
+                    value={JSON.stringify(componentNodes, null, 2)}
+                    language="json"
+                    minimap={{ enabled: false }}
+                  />
+                </div>
+              }
+              size="small"
+              icon={<DownloadOutlined />}
+            />
+          ),
           title: '导出页面',
         },
       ],
     ],
     [
+      addScreenForm,
       changeSnapShot,
-      componentNodes.length,
+      componentNodes,
       currentScreen,
+      setActionNode,
       snapshotIndex,
+      snapshots.length,
+      updateComponentNode,
       updateScreen,
     ]
   )
@@ -201,7 +277,7 @@ const SimulatorToolbar: React.FC = () => {
                     })
                   }
                 >
-                  {screenNode.props.title || `屏幕${i + 1}`}
+                  {screenNode.props.title}
                 </Radio.Button>
               )
             )}

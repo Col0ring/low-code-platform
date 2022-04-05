@@ -1,7 +1,6 @@
 import {
   Button,
   Card,
-  Modal,
   Pagination,
   Tag,
   Dropdown,
@@ -10,7 +9,7 @@ import {
   Col,
   Menu,
 } from 'antd'
-import { DownOutlined, AppstoreOutlined } from '@ant-design/icons'
+import { DownOutlined } from '@ant-design/icons'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Path } from '@/router/constants'

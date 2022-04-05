@@ -233,11 +233,11 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
               payload: [screen],
             })
             dispatch({
-              type: 'setActionNode',
-              payload: [screen],
+              type: 'setComponentNodes',
             })
             dispatch({
-              type: 'setComponentNodes',
+              type: 'setActionNode',
+              payload: [screen],
             })
             dispatch({
               type: 'addSnapshot',

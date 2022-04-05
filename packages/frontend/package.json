@@ -13,6 +13,7 @@
     "lint:stylelint": "stylelint --fix --config stylelint.config.js **/*.{less,css,scss}"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@babel/standalone": "^7.17.8",
     "@reduxjs/toolkit": "^1.8.0",
     "antd": "^4.19.2",

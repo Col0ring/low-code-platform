@@ -8,6 +8,7 @@ import {
 } from '@/features/visual-editor/type'
 import { getComponentNode } from '../../node-components'
 import { DraggingData } from '@/features/visual-editor/constants'
+import Screen, { ScreenProps } from '../../node-components/layout/screen'
 
 interface DataNode extends OriginDataNode {
   name: string
@@ -39,7 +40,10 @@ function generateData(
       disabled: !!(currentScreen && currentScreen.id !== id),
       draggable,
       parentNode,
-      title,
+      title:
+        node.name === Screen.nodeName
+          ? (node as ComponentRenderNode<ScreenProps>).props.title
+          : title,
       key: id,
       isLeaf,
       children: isLeaf

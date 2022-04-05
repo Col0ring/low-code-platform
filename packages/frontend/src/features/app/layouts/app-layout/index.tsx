@@ -1,27 +1,12 @@
-import React, { useMemo, useState } from 'react'
-import {
-  Layout,
-  Menu,
-  Dropdown,
-  Row,
-  Col,
-  Breadcrumb,
-  Button,
-  Tabs,
-  Tag,
-  Space,
-} from 'antd'
-import {
-  AppstoreOutlined,
-  GiftOutlined,
-  HomeOutlined,
-  UserOutlined,
-} from '@ant-design/icons'
-import { Outlet, matchPath, useLocation, Link } from 'react-router-dom'
+import React, { useMemo } from 'react'
+import { Layout, Row, Col, Breadcrumb, Tabs, Tag, Space } from 'antd'
+import { Outlet, useLocation, Link } from 'react-router-dom'
 import UserActions from '@/features/auth/components/user-actions'
 import { Path } from '@/router/constants'
 import './style.less'
 import DefaultAppIcon from '@/features/main/components/default-app-icon'
+import { getActiveKey } from '@/router'
+import NavigationDropdown from '../../components/navigation-dropdown'
 
 const tabPaths = [
   {
@@ -38,41 +23,9 @@ const tabPaths = [
   },
 ]
 
-function getActiveKey(pathname: string) {
-  return (
-    tabPaths.find(({ path }) =>
-      matchPath(
-        {
-          path,
-        },
-        pathname
-      )
-    )?.key || ''
-  )
-}
-
-const DesignLayoutDropdown: React.FC = () => {
-  return (
-    <Menu selectable={false}>
-      <Menu.Item key={Path.Dashboard} icon={<HomeOutlined />}>
-        <span className="inline-flex justify-between w-20 items-center">
-          <Link to={Path.Dashboard}>首页</Link>
-        </span>
-      </Menu.Item>
-      <Menu.Item key="/application" icon={<UserOutlined />}>
-        我的应用
-      </Menu.Item>
-      <Menu.Item key="/templates" icon={<GiftOutlined />}>
-        模板中心
-      </Menu.Item>
-    </Menu>
-  )
-}
-
 const AppLayout: React.FC = () => {
   const { pathname } = useLocation()
-  const activeKey = useMemo(() => getActiveKey(pathname), [pathname])
-  const [visible, setVisible] = useState(false)
+  const activeKey = useMemo(() => getActiveKey(tabPaths, pathname), [pathname])
 
   return (
     <Layout className="app-layout">
@@ -80,19 +33,7 @@ const AppLayout: React.FC = () => {
         <Row gutter={10}>
           <Col span={7}>
             <div className="app-header-navigation">
-              <Dropdown
-                arrow
-                trigger={['click']}
-                visible={visible}
-                onVisibleChange={setVisible}
-                overlay={<DesignLayoutDropdown />}
-              >
-                <Button
-                  className="mr-3"
-                  icon={<AppstoreOutlined className="text-lg" />}
-                  shape="circle"
-                />
-              </Dropdown>
+              <NavigationDropdown />
               <Breadcrumb separator=">">
                 <Breadcrumb.Item>
                   <Space>

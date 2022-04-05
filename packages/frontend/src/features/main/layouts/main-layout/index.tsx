@@ -1,13 +1,29 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Affix, Layout, Menu } from 'antd'
 import UserActions from '@/features/auth/components/user-actions'
 import { Outlet, useLocation, Link } from 'react-router-dom'
 import './style.less'
 import logo from '@/features/main/assets/logo.svg'
 import { Path } from '@/router/constants'
+import { getActiveKey } from '@/router'
 
+const tabPaths = [
+  {
+    path: Path.Dashboard,
+    key: Path.Dashboard,
+  },
+  {
+    path: Path.AppCenter,
+    key: Path.AppCenter,
+  },
+  {
+    path: Path.TemplatesCenter,
+    key: Path.TemplatesCenter,
+  },
+]
 const MainLayout: React.FC = () => {
   const { pathname } = useLocation()
+  const activeKey = useMemo(() => getActiveKey(tabPaths, pathname), [pathname])
   return (
     <Layout className="main-layout">
       <Affix>
@@ -25,7 +41,7 @@ const MainLayout: React.FC = () => {
             <Menu
               className="menu-tabs"
               mode="horizontal"
-              selectedKeys={[pathname]}
+              selectedKeys={[activeKey]}
             >
               <Menu.Item key={Path.Dashboard}>
                 <Link to={Path.Dashboard}> 开始</Link>

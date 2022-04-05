@@ -10,6 +10,7 @@ import './index.less'
 
 export interface MonacoEditorProps
   extends monaco.editor.IStandaloneEditorConstructionOptions {
+  editor?: React.MutableRefObject<monaco.editor.IStandaloneCodeEditor | null>
   formatOnSave?: boolean
   defaultValue?: string
   overrideServices?: monaco.editor.IEditorOverrideServices
@@ -28,6 +29,7 @@ export interface MonacoEditorProps
 
 export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
   const {
+    editor: editorProp,
     className,
     style,
     onChange = noop,
@@ -61,6 +63,7 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
         overrideServices
       )
       const editor = editorRef.current
+      editorProp && (editorProp.current = editor)
       const disposable = editor.onDidChangeModelContent((e) => {
         if (!safeChangeRef.current) {
           onPersistChange(editor.getValue(), e)

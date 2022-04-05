@@ -6,7 +6,7 @@ import './style.less'
 import { useEditorContext, withEditorProvider } from './provider'
 import { ComponentRenderNode } from './type'
 import { createNewNode } from './components/node-components'
-import Screen from './components/node-components/layout/screen'
+import Screen, { ScreenProps } from './components/node-components/layout/screen'
 import { useClassName, useUpdateEffect } from '@/hooks'
 import { Spin } from 'antd'
 
@@ -33,7 +33,11 @@ const VisualEditor: React.FC<VisualEditorProps> = (props) => {
         if (isInit) {
           return
         }
-        const initialComponentNodes = data || [createNewNode(Screen.nodeName)]
+        const newScreen = createNewNode(
+          Screen.nodeName
+        ) as ComponentRenderNode<ScreenProps>
+        newScreen.props.title = '屏幕1'
+        const initialComponentNodes = data || [newScreen]
         setCurrentScreen(initialComponentNodes[0])
         updateComponentNode({
           type: 'init',

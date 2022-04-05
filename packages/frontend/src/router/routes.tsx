@@ -7,6 +7,7 @@ import ForbiddenPage from './pages/403'
 import NotFoundPage from './pages/404'
 import LoginPage from '@/features/auth/pages/login'
 import AuthLayout from '@/features/auth/layouts/auth-layout'
+import AppPageLayout from '@/features/app/layouts/app-page-layout'
 import RegisterPage from '@/features/auth/pages/register'
 import DesignLayout from '@/features/design/layouts/design-layout'
 import ForgetPasswordPage from '@/features/auth/pages/forget-password'
@@ -56,13 +57,7 @@ export const accessRoutes: RouteObject[] = [
     children: [
       {
         path: 'page',
-        element: (
-          <LazyRoute
-            component={React.lazy(
-              () => import('@/features/app/pages/app-page')
-            )}
-          />
-        ),
+        element: <AppPageLayout />,
       },
       {
         path: 'setting',
