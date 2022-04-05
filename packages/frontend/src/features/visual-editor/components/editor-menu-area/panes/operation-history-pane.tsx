@@ -29,7 +29,7 @@ const OperationHistoryPane: React.FC = () => {
             }}
           >
             <span>{snapshot.desc}</span>
-            <span className="text-xs">
+            <span className="text-xs flex-shrink-0">
               {dayjs(snapshot.timestamp).format('YYYY/M/D HH:mm:ss')}
             </span>
           </div>

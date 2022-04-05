@@ -417,7 +417,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
                         moveParentNode.title || moveParentNode.name
                       } > ${moveNode.title || moveNode.name} => ${
                         parentNode.title || parentNode.name
-                      } ${moveNode.title || moveNode.name}`,
+                      } > ${moveNode.title || moveNode.name}`,
                     },
                   ],
                 })

@@ -266,7 +266,7 @@ const SimulatorToolbar: React.FC = () => {
           {canScroll && <Divider type="vertical" className="h-7" />}
           <Radio.Group value={screen} size="small">
             {componentNodes.map(
-              (screenNode: ComponentRenderNode<ScreenProps>, i) => (
+              (screenNode: ComponentRenderNode<ScreenProps>) => (
                 <Radio.Button
                   key={screenNode.id}
                   value={screenNode.id}

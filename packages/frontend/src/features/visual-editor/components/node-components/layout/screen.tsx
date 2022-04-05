@@ -34,7 +34,6 @@ const Screen: NodeComponent<ScreenProps> = ({
           return (
             <NodeContainer
               disabled={disabled}
-              draggable
               index={index}
               key={child.id}
               node={child}

@@ -9,8 +9,8 @@ import {
 } from '../type'
 import { useEditorContext } from '../provider'
 import { useClassName } from '@/hooks'
-import { createNewNode, getComponentNode } from './node-components'
-import { safeJsonParser } from '@/utils'
+import { copyNode, createNewNode, getComponentNode } from './node-components'
+import { safeJsonParser, stopPropagation } from '@/utils'
 import { DraggingData } from '../constants'
 import { DragArea, Draggable } from './dragging'
 import { StrictOmit } from 'types-kit'
@@ -18,7 +18,6 @@ import { StrictOmit } from 'types-kit'
 export interface NodeContainerProps
   extends StrictOmit<NodeComponentProps, 'node'> {
   index: number
-  draggable: boolean
   node: ComponentRenderNode
 }
 
@@ -113,7 +112,6 @@ const NodeWrapperBar: React.FC<NodeWrapperBarProps> = ({
 
 const NodeContainer: React.FC<NodeContainerProps> = ({
   node,
-  draggable,
   disabled: disabledProp,
   parentNodes,
   index,
@@ -129,11 +127,13 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
       setActionNode,
     },
   ] = useEditorContext()
+
   const isHovering = useMemo(() => hoveringNode === node, [hoveringNode, node])
   const renderParentNodes = useMemo(
     () => parentNodes.reverse().slice(0, 5).reverse(),
     [parentNodes]
   )
+
   const isParentNodeAction = useMemo(
     () =>
       parentNodes.includes(actionNode as ParentComponentRenderNode) ||
@@ -143,6 +143,12 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   const parentNode = useMemo(
     () => parentNodes[parentNodes.length - 1],
     [parentNodes]
+  )
+  const hasAction = useMemo(
+    () =>
+      parentNode &&
+      !getComponentNode(parentNode.name).component.childActionDisabled,
+    [parentNode]
   )
   const disabled = useMemo(
     () => disabledProp || node === moveNode,
@@ -228,7 +234,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
         setActionNode(node)
       }}
     >
-      {!disabled && draggable && isDragging && (
+      {!disabled && hasAction && isDragging && (
         <>
           <NodeWrapperBar placement="top" onDrop={onNodeWrapperBarDrop} />
           <NodeWrapperBar placement="bottom" onDrop={onNodeWrapperBarDrop} />
@@ -264,21 +270,47 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
             </div>
           </Dropdown>
 
-          <div className="bg-blue-500 px-1 ml-1 rounded-sm">
-            <Tooltip title={<span className="text-xs">保存为区块</span>}>
-              <SaveOutlined />
-            </Tooltip>
-            <Tooltip title={<span className="text-xs">复制</span>}>
-              <CopyOutlined className="mx-1" />
-            </Tooltip>
-            <Tooltip title={<span className="text-xs">删除</span>}>
-              <DeleteOutlined />
-            </Tooltip>
-          </div>
+          {hasAction && (
+            <div
+              className="bg-blue-500 px-1 ml-1 rounded-sm"
+              onClick={stopPropagation}
+            >
+              <Tooltip title={<span className="text-xs">保存为区块</span>}>
+                <SaveOutlined />
+              </Tooltip>
+              <Tooltip title={<span className="text-xs">复制</span>}>
+                <CopyOutlined
+                  className="mx-1"
+                  onClick={() => {
+                    const newNode = copyNode(node)
+                    updateComponentNode({
+                      type: 'add',
+                      newNode,
+                      parentNode,
+                      index: index + 1,
+                    })
+                  }}
+                />
+              </Tooltip>
+              <Tooltip title={<span className="text-xs">删除</span>}>
+                <DeleteOutlined
+                  onClick={() => {
+                    setActionNode(null)
+                    updateComponentNode({
+                      type: 'delete',
+                      node,
+                      parentNode,
+                      index,
+                    })
+                  }}
+                />
+              </Tooltip>
+            </div>
+          )}
         </div>
       )}
       <Draggable
-        draggable={draggable && !isParentNodeAction}
+        draggable={hasAction && !isParentNodeAction}
         onDragStart={(_, e) => {
           e.dataTransfer.effectAllowed = 'move'
           dragImage.innerHTML = node.title || node.name

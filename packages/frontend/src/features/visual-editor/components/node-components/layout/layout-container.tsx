@@ -68,7 +68,6 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
               {child && (
                 <NodeContainer
                   disabled={disabled}
-                  draggable={false}
                   index={index}
                   key={child.id}
                   node={child}
@@ -83,6 +82,7 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
 }
 LayoutContainer.nodeName = 'layout-container'
 LayoutContainer.title = '布局容器'
+LayoutContainer.childActionDisabled = true
 LayoutContainer.getInitialProps = () => ({
   spans: '8:8:8',
 })

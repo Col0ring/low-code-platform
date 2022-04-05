@@ -22,7 +22,6 @@ const Layout: NodeComponent = ({ node, parentNodes, disabled }) => {
               index={index}
               key={child.id}
               node={child}
-              draggable
               parentNodes={childParentNodes}
             />
           )
