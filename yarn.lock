@@ -9965,10 +9965,10 @@ react-router@6.3.0, react-router@^6.3.0:
   dependencies:
     history "^5.2.0"
 
-react-use-methods@^2.5.1:
-  version "2.5.1"
-  resolved "https://registry.npmmirror.com/react-use-methods/-/react-use-methods-2.5.1.tgz#f29f1cfee0d5a0fa6f62ad87a4406e3f525c8602"
-  integrity sha512-X3WHoVCRmOFFSdOXWHdPbB7s2XKHkSoIn3q1cMwy4scnBeyfX88UARsDGUBbJfVGblO1OgPOG5j/epBOyS/mtA==
+react-use-methods@^2.5.3:
+  version "2.5.3"
+  resolved "https://registry.npmmirror.com/react-use-methods/-/react-use-methods-2.5.3.tgz#ee82747752362708b98f989a681d829f4265e0e2"
+  integrity sha512-tIXVv1KrUlzi/jT7doNS9rUnB1/A8PpS6hn4DmSCzzBzdbfrAoQCa1FMHDh9fs9oV32X6CHF+Uu8Oo40+XP60Q==
   dependencies:
     "@babel/runtime" "^7.17.8"
 

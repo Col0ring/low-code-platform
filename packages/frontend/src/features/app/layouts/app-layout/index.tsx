@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { Layout, Row, Col, Breadcrumb, Tabs, Tag, Space } from 'antd'
-import { Outlet, useLocation, Link } from 'react-router-dom'
+import { Outlet, useLocation, Link, useParams } from 'react-router-dom'
 import UserActions from '@/features/auth/components/user-actions'
 import { Path } from '@/router/constants'
 import './style.less'
@@ -10,20 +10,21 @@ import NavigationDropdown from '../../components/navigation-dropdown'
 
 const tabPaths = [
   {
-    path: Path.DesignIndex,
-    key: 'design',
+    path: Path.AppPage(':appId') + '/*',
+    key: 'page',
   },
   {
-    path: Path.DesignSetting,
+    path: Path.AppSetting(':appId'),
     key: 'setting',
   },
   {
-    path: Path.DesignPublish,
+    path: Path.AppPublish(':appId'),
     key: 'publish',
   },
 ]
 
 const AppLayout: React.FC = () => {
+  const { appId } = useParams() as { appId: string }
   const { pathname } = useLocation()
   const activeKey = useMemo(() => getActiveKey(tabPaths, pathname), [pathname])
 
@@ -48,15 +49,15 @@ const AppLayout: React.FC = () => {
             <div className="app-header-navbar">
               <Tabs activeKey={activeKey}>
                 <Tabs.TabPane
-                  tab={<Link to={Path.DesignIndex}>页面管理</Link>}
-                  key="app"
+                  tab={<Link to={Path.AppPage(appId)}>页面管理</Link>}
+                  key="page"
                 />
                 <Tabs.TabPane
-                  tab={<Link to={Path.DesignSetting}>应用设置</Link>}
+                  tab={<Link to={Path.AppSetting(appId)}>应用设置</Link>}
                   key="setting"
                 />
                 <Tabs.TabPane
-                  tab={<Link to={Path.DesignPublish}>应用发布</Link>}
+                  tab={<Link to={Path.AppPublish(appId)}>应用发布</Link>}
                   key="publish"
                 />
               </Tabs>

@@ -78,6 +78,7 @@ export interface NodeComponentProps<
   // 禁止响应
   disabled?: boolean
   parentNodes: P
+  editType?: 'prod' | 'edit'
   node: ParentComponentRenderNode<T>
 }
 

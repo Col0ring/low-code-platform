@@ -20,6 +20,7 @@ import { ComponentRenderNode } from '../../type'
 import ModalButton from '@/components/modal-button'
 import { emptyValidator } from '@/utils/validators'
 import { MonacoEditor, MonacoEditorProps } from '@/components/monaco-editor'
+import EditorPreview from '../editor-preview'
 const SimulatorToolbar: React.FC = () => {
   const [canScroll, setCanScroll] = useState(false)
   const [screen, setScreen] = useState('')
@@ -64,12 +65,24 @@ const SimulatorToolbar: React.FC = () => {
         },
         {
           element: (
-            <Button
-              onClick={() => {
+            <ModalButton
+              modalTitle="请输入屏幕名称"
+              modal={
+                <Form form={addScreenForm} preserve={false}>
+                  <Form.Item name="title" rules={[emptyValidator('屏幕名称')]}>
+                    <Input />
+                  </Form.Item>
+                </Form>
+              }
+              onModalOK={async () => {
                 if (currentScreen) {
+                  const { title } = await addScreenForm.validateFields()
+                  const newScreen = copyNode(currentScreen)
+                  ;(newScreen as ComponentRenderNode<ScreenProps>).props.title =
+                    title
                   updateScreen({
                     type: 'add',
-                    screen: copyNode(currentScreen),
+                    screen: newScreen,
                   })
                 }
               }}
@@ -283,7 +296,16 @@ const SimulatorToolbar: React.FC = () => {
             )}
           </Radio.Group>
           <Divider type="vertical" className="h-7" />
-          <Button size="small">预览</Button>
+          <ModalButton
+            modalProps={{
+              width: '100vw',
+            }}
+            modalTitle="预览"
+            modal={<EditorPreview screens={componentNodes} />}
+            size="small"
+          >
+            预览
+          </ModalButton>
           <Button size="small" type="primary">
             保存
           </Button>

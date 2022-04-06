@@ -3,6 +3,7 @@ import BlankContent from '../../blank-content'
 import { NodeComponent } from '../../../type'
 import { getId } from '@/utils'
 import NodeContainer from '../../node-container'
+import { renderNodes } from '..'
 
 export interface ScreenProps {
   title: string
@@ -12,6 +13,7 @@ const Screen: NodeComponent<ScreenProps> = ({
   node,
   parentNodes,
   disabled,
+  editType,
 }) => {
   const { children } = node
   const pageStyle = useMemo(
@@ -25,6 +27,9 @@ const Screen: NodeComponent<ScreenProps> = ({
     () => [...parentNodes, node],
     [parentNodes, node]
   )
+  if (editType === 'prod') {
+    return <>{renderNodes(children)}</>
+  }
   return (
     <div style={pageStyle}>
       {children.length === 0 ? (

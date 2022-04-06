@@ -14,6 +14,7 @@ import ForgetPasswordPage from '@/features/auth/pages/forget-password'
 import { Path } from './constants'
 import AppLayout from '@/features/app/layouts/app-layout'
 import MainLayout from '@/features/main/layouts/main-layout'
+import AppSettingLayout from '@/features/app/layouts/app-setting-layout'
 
 export const accessRoutes: RouteObject[] = [
   {
@@ -58,9 +59,34 @@ export const accessRoutes: RouteObject[] = [
       {
         path: 'page',
         element: <AppPageLayout />,
+        children: [
+          {
+            path: ':pageId',
+            element: (
+              <LazyRoute
+                component={React.lazy(
+                  () => import('@/features/app/pages/page-detail')
+                )}
+              />
+            ),
+          },
+        ],
       },
       {
         path: 'setting',
+        element: <AppSettingLayout />,
+        children: [
+          {
+            path: 'basic',
+            element: (
+              <LazyRoute
+                component={React.lazy(
+                  () => import('@/features/app/pages/basic-setting')
+                )}
+              />
+            ),
+          },
+        ],
       },
       {
         path: 'publish',

@@ -11,6 +11,7 @@ import Container from './layout/container'
 import LayoutContainer from './layout/layout-container'
 import Layout from './layout/layout'
 import Screen from './layout/screen'
+import { safeJsonParser } from '@/utils'
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
@@ -113,7 +114,7 @@ export function copyNode(node: ComponentRenderNode): ComponentRenderNode {
       name: node.name,
       style: node.style,
       id: component.getId(),
-      props: node.props,
+      props: safeJsonParser(JSON.stringify(node.props), node.props),
       children: node.children.map((child) => copyNode(child)),
     }
   }
@@ -124,4 +125,16 @@ export function copyNode(node: ComponentRenderNode): ComponentRenderNode {
     id: component.getId(),
     props: component.getInitialProps(),
   }
+}
+export function renderNode(node: ComponentRenderNode) {
+  return React.createElement(getComponentNode(node.name).component, {
+    node: node as ParentComponentRenderNode,
+    parentNodes: [],
+    key: node.id,
+    editType: 'prod',
+  })
+}
+
+export function renderNodes(nodes: ComponentRenderNode[]) {
+  return nodes.map((node) => renderNode(node))
 }

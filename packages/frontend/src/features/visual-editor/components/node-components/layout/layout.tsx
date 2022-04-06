@@ -3,13 +3,17 @@ import BlankContent from '../../blank-content'
 import { NodeComponent } from '../../../type'
 import { getId } from '@/utils'
 import NodeContainer from '../../node-container'
+import { renderNodes } from '..'
 
-const Layout: NodeComponent = ({ node, parentNodes, disabled }) => {
+const Layout: NodeComponent = ({ node, parentNodes, disabled, editType }) => {
   const { children } = node
   const childParentNodes = useMemo(
     () => [...parentNodes, node],
     [parentNodes, node]
   )
+  if (editType === 'prod') {
+    return <>{renderNodes(children)}</>
+  }
   return (
     <div>
       {children.length === 0 ? (

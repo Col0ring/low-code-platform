@@ -346,6 +346,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
           node: node as ParentComponentRenderNode,
           disabled,
           parentNodes: parentNodes,
+          editType: 'edit',
         })}
       </Draggable>
     </div>

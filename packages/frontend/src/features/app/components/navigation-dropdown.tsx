@@ -18,10 +18,10 @@ const DropdownOverlay: React.FC = () => {
         </span>
       </Menu.Item>
       <Menu.Item key={Path.AppCenter} icon={<UserOutlined />}>
-        我的应用
+        <Link to={Path.AppCenter}>我的应用</Link>
       </Menu.Item>
       <Menu.Item key={Path.TemplatesCenter} icon={<GiftOutlined />}>
-        模板中心
+        <Link to={Path.TemplatesCenter}>模 板中心</Link>
       </Menu.Item>
     </Menu>
   )

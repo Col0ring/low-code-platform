@@ -2,7 +2,7 @@ import React, { useMemo, useEffect } from 'react'
 import { Row, Col } from 'antd'
 import { getId } from '@/utils'
 import { NodeComponent } from '../../../type'
-import { createNewNode } from '..'
+import { createNewNode, renderNode } from '..'
 import NodeContainer from '../../node-container'
 import { useEditorContext } from '@/features/visual-editor/provider'
 import Layout from './layout'
@@ -25,19 +25,20 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
   node,
   parentNodes,
   disabled,
+  editType,
 }) => {
   const {
     children,
     props: { spans },
   } = node
-  const [, { updateComponentNode }] = useEditorContext()
+  const [, { updateComponentNode }] = useEditorContext(false) || [{}, {}]
   const childParentNodes = useMemo(
     () => [...parentNodes, node],
     [parentNodes, node]
   )
   const ColSpanArr = useMemo(() => parseSpan(spans), [spans])
   useEffect(() => {
-    if (ColSpanArr) {
+    if (editType === 'edit' && ColSpanArr) {
       if (ColSpanArr.length !== children.length) {
         const extraChildren =
           ColSpanArr.length > children.length
@@ -45,7 +46,7 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
                 .fill(0)
                 .map(() => createNewNode(layoutName))
             : []
-        updateComponentNode({
+        updateComponentNode?.({
           type: 'update',
           addSnapshot: false,
           node,
@@ -57,7 +58,14 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
         })
       }
     }
-  }, [node.children, ColSpanArr, children.length, updateComponentNode, node])
+  }, [
+    node.children,
+    ColSpanArr,
+    children.length,
+    updateComponentNode,
+    node,
+    editType,
+  ])
   return (
     <Row>
       {ColSpanArr &&
@@ -65,15 +73,18 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
           const child = children[index]
           return (
             <Col span={span} key={child.id || index}>
-              {child && (
-                <NodeContainer
-                  disabled={disabled}
-                  index={index}
-                  key={child.id}
-                  node={child}
-                  parentNodes={childParentNodes}
-                />
-              )}
+              {child &&
+                (editType === 'edit' ? (
+                  <NodeContainer
+                    disabled={disabled}
+                    index={index}
+                    key={child.id}
+                    node={child}
+                    parentNodes={childParentNodes}
+                  />
+                ) : (
+                  renderNode(child)
+                ))}
             </Col>
           )
         })}

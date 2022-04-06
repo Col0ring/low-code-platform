@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, ButtonProps, Modal } from 'antd'
+import { Button, ButtonProps, Modal, ModalProps } from 'antd'
 
 export interface ModalButtonProps extends ButtonProps {
   modal: React.ReactNode
@@ -10,6 +10,7 @@ export interface ModalButtonProps extends ButtonProps {
   modalOkButtonProps?: ButtonProps
   modalCancelButtonProps?: ButtonProps
   afterModalClose?: () => void
+  modalProps?: ModalProps
 }
 
 const ModalButton: React.FC<ModalButtonProps> = ({
@@ -21,6 +22,7 @@ const ModalButton: React.FC<ModalButtonProps> = ({
   modalOkButtonProps,
   modalCancelButtonProps,
   onModalOK,
+  modalProps,
   ...buttonProps
 }) => {
   const [visible, setVisible] = useState(false)
@@ -34,6 +36,7 @@ const ModalButton: React.FC<ModalButtonProps> = ({
         }}
       />
       <Modal
+        {...modalProps}
         destroyOnClose
         title={modalTitle}
         visible={visible}
@@ -62,6 +65,7 @@ const ModalButton: React.FC<ModalButtonProps> = ({
                 setVisible(false)
               } catch (error) {
                 // reject
+                console.warn(error)
               }
             }}
             type="primary"
