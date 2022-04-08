@@ -1,9 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
 import bcrypt from 'bcrypt'
+import { AppEntity } from '../apps/app.entity'
 @Entity({
   name: 'user',
 })
-export class User {
+export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number
 
@@ -32,6 +33,11 @@ export class User {
     select: false,
   })
   password: string
+
+  @OneToMany(() => AppEntity, (app) => app.user, {
+    onDelete: 'CASCADE',
+  })
+  apps: AppEntity[]
 
   @Column({
     default: null,

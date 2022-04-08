@@ -16,9 +16,12 @@ export const Path = {
   AppPageDetail: (appId: string, pageId: string) =>
     `/app/${appId}/page/${pageId}`,
   // design
-  DesignIndex: '/design',
-  DesignSetting: '/design/setting',
-  DesignPublish: '/design/publish',
+  DesignIndex: (appId: string, pageId: string) =>
+    `/app/${appId}/design/${pageId}`,
+  DesignSetting: (appId: string, pageId: string) =>
+    `/app/${appId}/design/${pageId}/setting`,
+  DesignPublish: (appId: string, pageId: string) =>
+    `/app/${appId}/design/${pageId}/publish`,
   // admin
   Admin: '/admin',
   // misc

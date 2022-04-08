@@ -11,11 +11,15 @@ import { __DEV__ } from './constants'
 import { DatabaseModule } from './database/database.module'
 import { AllExceptionsFilter } from './filters/all-exception.filter'
 import { ValidationPipe } from './pipes/validation.pipe'
+import { AppsModule } from './apps/apps.module'
+import { PagesModule } from './pages/pages.module'
 
 @Module({
   imports: [
     AuthModule,
     UsersModule,
+    PagesModule,
+    AppsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: __DEV__ ? '.dev.env' : '.prod.env',

@@ -4,7 +4,7 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { Request } from 'express'
 import { AuthService } from './auth.service'
 import { StrategyType } from './constants'
-import { User } from '../users/user.entity'
+import { UserEntity } from '../users/user.entity'
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(
@@ -21,7 +21,7 @@ export class LocalStrategy extends PassportStrategy(
 
   async validate(req: Request, phone: string, passwordOrCode: string) {
     const type = req.query.type as 'password' | 'code'
-    let user: null | Omit<User, 'password'>
+    let user: null | Omit<UserEntity, 'password'>
     if (type === 'code') {
       // TODO
       user = await this.authService.validateUser(phone, '1')

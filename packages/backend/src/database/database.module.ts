@@ -1,4 +1,3 @@
-import path from 'path'
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { databaseConfig, DatabaseConfig } from './database.config'
@@ -12,8 +11,7 @@ const TypeOrmDataBaseModule = TypeOrmModule.forRootAsync({
       username: databaseConfigService.username,
       password: databaseConfigService.password,
       database: databaseConfigService.database,
-      // auto load
-      entities: [__dirname + '../../**/*.entity{.ts,.js}'],
+      autoLoadEntities: true,
       synchronize: true,
     }
   },

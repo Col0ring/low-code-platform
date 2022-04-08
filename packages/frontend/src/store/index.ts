@@ -7,15 +7,24 @@ import { authSlice } from '@/features/auth/auth.slice'
 import { authApi } from '@/features/auth/auth.service'
 import { userApi } from '@/features/user/user.service'
 import { rtkQueryErrorLogger } from './rtk-query-error-logger-middleware'
+import { mainApi } from '@/features/main/main.service'
+import { appApi } from '@/features/app/app.service'
 
 function setupStore() {
   const devMiddlewares: Middleware[] = []
   const prodMiddlewares: Middleware[] = [rtkQueryErrorLogger]
-  const apiMiddlewares: Middleware[] = [authApi.middleware, userApi.middleware]
+  const apiMiddlewares: Middleware[] = [
+    authApi.middleware,
+    userApi.middleware,
+    mainApi.middleware,
+    appApi.middleware,
+  ]
   const store = configureStore({
     reducer: {
       [authApi.reducerPath]: authApi.reducer,
       [userApi.reducerPath]: userApi.reducer,
+      [mainApi.reducerPath]: mainApi.reducer,
+      [appApi.reducerPath]: appApi.reducer,
       [authSlice.name]: authSlice.reducer,
     },
     middleware: (getDefaultMiddleware) => {

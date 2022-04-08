@@ -26,6 +26,7 @@ const ModalButton: React.FC<ModalButtonProps> = ({
   ...buttonProps
 }) => {
   const [visible, setVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
   return (
     <>
       <Button
@@ -53,6 +54,7 @@ const ModalButton: React.FC<ModalButtonProps> = ({
                 setVisible(false)
               }}
               key="cancel"
+              loading={loading}
               {...modalCancelButtonProps}
             >
               取消
@@ -61,15 +63,18 @@ const ModalButton: React.FC<ModalButtonProps> = ({
           <Button
             onClick={async () => {
               try {
+                setLoading(true)
                 await onModalOK?.()
                 setVisible(false)
               } catch (error) {
                 // reject
                 console.warn(error)
               }
+              setLoading(false)
             }}
             type="primary"
             key="ok"
+            loading={loading}
             {...modalOkButtonProps}
           >
             确定

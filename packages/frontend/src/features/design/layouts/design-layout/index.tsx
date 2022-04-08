@@ -1,33 +1,60 @@
 import React, { useMemo } from 'react'
-import { Layout, Row, Col, Breadcrumb, Tabs } from 'antd'
+import { Layout, Row, Col, Breadcrumb, Tabs, Space } from 'antd'
 
-import { Outlet, useLocation, Link } from 'react-router-dom'
+import {
+  Outlet,
+  useLocation,
+  Link,
+  useParams,
+  Navigate,
+  useNavigate,
+} from 'react-router-dom'
 import UserActions from '@/features/auth/components/user-actions'
 import { Path } from '@/router/constants'
 import './style.less'
 import { getActiveKey } from '@/router'
 import NavigationDropdown from '@/features/app/components/navigation-dropdown'
-
-const tabPaths = [
-  {
-    path: Path.DesignIndex,
-    key: 'design',
-  },
-  {
-    path: Path.DesignSetting,
-    key: 'setting',
-  },
-  {
-    path: Path.DesignPublish,
-    key: 'publish',
-  },
-]
+import { useGetPageDetailQuery } from '@/features/app/app.service'
+import RouteLoading from '@/router/route-loading'
+import DefaultAppIcon from '@/features/main/components/default-app-icon'
 
 const DesignLayout: React.FC = () => {
+  const { appId, pageId } = useParams() as { appId: string; pageId: string }
   const { pathname } = useLocation()
-  const activeKey = useMemo(() => getActiveKey(tabPaths, pathname), [pathname])
+  const navigate = useNavigate()
+  const { data, isFetching } = useGetPageDetailQuery({
+    appId: +appId,
+    pageId: +pageId,
+  })
+  const pageIndexPath = useMemo(() => Path.AppPage(appId), [appId])
+  const tabs = useMemo(
+    () => [
+      {
+        path: Path.DesignIndex(appId, pageId),
+        key: 'design',
+        title: '页面设计',
+      },
+      {
+        path: Path.DesignSetting(appId, pageId),
+        key: 'setting',
+        title: '页面设置',
+      },
+      {
+        path: Path.DesignPublish(appId, pageId),
+        key: 'publish',
+        title: '页面发布',
+      },
+    ],
+    [appId, pageId]
+  )
+  const activeKey = useMemo(
+    () => getActiveKey(tabs, pathname),
+    [pathname, tabs]
+  )
 
-  return (
+  return isFetching ? (
+    <RouteLoading loadingFullScreen />
+  ) : data ? (
     <Layout className="design-layout">
       <Layout.Header className="design-header">
         <Row gutter={10}>
@@ -35,26 +62,28 @@ const DesignLayout: React.FC = () => {
             <div className="design-header-navigation">
               <NavigationDropdown />
               <Breadcrumb separator=">">
-                <Breadcrumb.Item>App Name</Breadcrumb.Item>
-                <Breadcrumb.Item>Page Name</Breadcrumb.Item>
+                <Breadcrumb.Item
+                  onClick={() => navigate(Path.AppPage(appId))}
+                  className="cursor-pointer"
+                >
+                  <Space>
+                    <DefaultAppIcon size={24} />
+                    {data.app.name}
+                  </Space>
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>{data.name}</Breadcrumb.Item>
               </Breadcrumb>
             </div>
           </Col>
           <Col span={10}>
             <div className="design-header-navbar">
               <Tabs activeKey={activeKey}>
-                <Tabs.TabPane
-                  tab={<Link to={Path.DesignIndex}>页面设计</Link>}
-                  key="design"
-                />
-                <Tabs.TabPane
-                  tab={<Link to={Path.DesignSetting}>页面设置</Link>}
-                  key="setting"
-                />
-                <Tabs.TabPane
-                  tab={<Link to={Path.DesignPublish}>页面发布</Link>}
-                  key="publish"
-                />
+                {tabs.map((tab) => (
+                  <Tabs.TabPane
+                    tab={<Link to={tab.path}>{tab.title}</Link>}
+                    key={tab.key}
+                  />
+                ))}
               </Tabs>
             </div>
           </Col>
@@ -66,9 +95,11 @@ const DesignLayout: React.FC = () => {
         </Row>
       </Layout.Header>
       <Layout.Content className="design-main">
-        <Outlet />
+        <Outlet context={data} />
       </Layout.Content>
     </Layout>
+  ) : (
+    <Navigate to={pageIndexPath} replace />
   )
 }
 

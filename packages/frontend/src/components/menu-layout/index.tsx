@@ -1,26 +1,35 @@
 import { getActiveKey } from '@/router'
 import { Layout, Menu, Space } from 'antd'
 import React, { useMemo } from 'react'
-import { useLocation } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { Link } from 'react-router-dom'
 
-export interface menuLayoutProps {
-  extra?: React.ReactNode
-  menus: {
-    key: string
-    path: string
-    icon?: React.ReactNode
-    title: React.ReactNode
-  }[]
+export interface MenuLayoutItemProps {
+  key: string
+  path: string
+  icon?: React.ReactNode
+  title: React.ReactNode
+  [x: PropertyKey]: any
 }
 
-const MenuLayout: React.FC<menuLayoutProps> = ({ menus, extra, children }) => {
+export interface MenuLayoutProps {
+  extra?: React.ReactNode
+  menus: MenuLayoutItemProps[]
+  render?: (node: React.ReactNode, menu: MenuLayoutItemProps) => React.ReactNode
+}
+
+const MenuLayout: React.FC<MenuLayoutProps> = ({
+  menus,
+  extra,
+  children,
+  render,
+}) => {
+  const navigate = useNavigate()
   const { pathname } = useLocation()
   const activeKey = useMemo(
     () => getActiveKey(menus, pathname),
     [menus, pathname]
   )
-  console.log(activeKey)
   return (
     <Layout className="h-full">
       <Layout.Sider className="bg-white w-300px py-3">
@@ -28,13 +37,21 @@ const MenuLayout: React.FC<menuLayoutProps> = ({ menus, extra, children }) => {
         <Menu selectedKeys={[activeKey]}>
           {menus.map((menu) => {
             return (
-              <Menu.Item key={menu.key}>
-                <Link to={menu.path}>
+              <Menu.Item key={menu.key} onClick={() => navigate(menu.path)}>
+                {render ? (
+                  render(
+                    <Space>
+                      {menu.icon}
+                      {menu.title}
+                    </Space>,
+                    menu
+                  )
+                ) : (
                   <Space>
                     {menu.icon}
                     {menu.title}
                   </Space>
-                </Link>
+                )}
               </Menu.Item>
             )
           })}

@@ -1,4 +1,4 @@
-import { User } from '../users/user.entity'
+import { UserEntity } from '../users/user.entity'
 import { Role } from './constants'
 
 export interface Tokens {
@@ -11,7 +11,7 @@ export interface TokenPayload {
   roles: Role[]
 }
 
-export type LocalUser = Omit<User, 'password'>
+export type LocalUser = Omit<UserEntity, 'password'>
 
 export interface JwtUser {
   id: number

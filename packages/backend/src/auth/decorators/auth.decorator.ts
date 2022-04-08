@@ -7,7 +7,7 @@ import { Roles } from './roles.decorator'
 export function Auth(...roles: Role[]) {
   // 注意先后顺序
   return applyDecorators(
-    Roles(...(roles || [Role.User])),
+    Roles(...(roles.length === 0 ? [Role.User] : roles)),
     UseGuards(JwtAuthGuard, RolesGuard)
   )
 }

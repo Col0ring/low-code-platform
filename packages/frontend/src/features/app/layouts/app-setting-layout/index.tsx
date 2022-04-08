@@ -6,13 +6,13 @@ import { Outlet } from 'react-router'
 const menus: menuLayoutProps['menus'] = [
   {
     title: '基础设置',
-    key: Path.AppBasicSetting('1'),
-    path: Path.AppBasicSetting('1'),
+    key: Path.AppBasicSetting(':appId'),
+    path: Path.AppBasicSetting(':appId'),
   },
   {
     title: '权限设置',
-    key: Path.AppAuthSetting('1'),
-    path: Path.AppAuthSetting('1'),
+    key: Path.AppAuthSetting(':appId'),
+    path: Path.AppAuthSetting(':appId'),
   },
 ]
 

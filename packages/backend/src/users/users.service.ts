@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { getExcludeSelect } from '../database/database.util'
 import { Repository } from 'typeorm'
-import { User } from './user.entity'
+import { UserEntity } from './user.entity'
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>
   ) {}
 
-  insertUser(user: Partial<User>) {
+  insertUser(user: Partial<UserEntity>) {
     return this.usersRepository.save(this.usersRepository.create(user))
   }
 
@@ -45,12 +45,12 @@ export class UsersService {
     })
   }
 
-  updateOneById(id: number, partialEntity: Partial<User>) {
+  updateOneById(id: number, partialEntity: Partial<UserEntity>) {
     return this.usersRepository.update(id, {
       ...partialEntity,
     })
   }
-  updateOneByPhone(phone: string, partialEntity: Partial<User>) {
+  updateOneByPhone(phone: string, partialEntity: Partial<UserEntity>) {
     return this.usersRepository.update(
       {
         phone,

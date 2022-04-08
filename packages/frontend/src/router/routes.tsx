@@ -15,6 +15,7 @@ import { Path } from './constants'
 import AppLayout from '@/features/app/layouts/app-layout'
 import MainLayout from '@/features/main/layouts/main-layout'
 import AppSettingLayout from '@/features/app/layouts/app-setting-layout'
+import PageIndexPage from '@/features/app/pages/page-index'
 
 export const accessRoutes: RouteObject[] = [
   {
@@ -53,6 +54,37 @@ export const accessRoutes: RouteObject[] = [
     ],
   },
   {
+    path: 'app/:appId/design/:pageId',
+    element: <DesignLayout />,
+    children: [
+      {
+        index: true,
+        element: (
+          <LazyRoute
+            component={React.lazy(
+              () => import('@/features/design/pages/design-index')
+            )}
+          />
+        ),
+      },
+      {
+        element: <DesignLayout />,
+        children: [
+          {
+            path: 'setting',
+            element: (
+              <LazyRoute
+                component={React.lazy(
+                  () => import('@/features/design/pages/design-index')
+                )}
+              />
+            ),
+          },
+        ],
+      },
+    ],
+  },
+  {
     path: 'app/:appId',
     element: <AppLayout />,
     children: [
@@ -60,6 +92,10 @@ export const accessRoutes: RouteObject[] = [
         path: 'page',
         element: <AppPageLayout />,
         children: [
+          {
+            index: true,
+            element: <PageIndexPage />,
+          },
           {
             path: ':pageId',
             element: (
@@ -90,37 +126,6 @@ export const accessRoutes: RouteObject[] = [
       },
       {
         path: 'publish',
-      },
-    ],
-  },
-  {
-    path: 'design',
-    element: <DesignLayout />,
-    children: [
-      {
-        index: true,
-        element: (
-          <LazyRoute
-            component={React.lazy(
-              () => import('@/features/design/pages/design-index')
-            )}
-          />
-        ),
-      },
-      {
-        element: <DesignLayout />,
-        children: [
-          {
-            path: 'setting',
-            element: (
-              <LazyRoute
-                component={React.lazy(
-                  () => import('@/features/design/pages/design-index')
-                )}
-              />
-            ),
-          },
-        ],
       },
     ],
   },
