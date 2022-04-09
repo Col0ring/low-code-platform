@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Layout, Row, Col, Breadcrumb, Tabs, Tag, Space, Spin } from 'antd'
+import { Layout, Row, Col, Breadcrumb, Tabs, Tag, Space } from 'antd'
 import {
   Outlet,
   useLocation,
@@ -23,7 +23,7 @@ const AppLayout: React.FC = () => {
   const tabPaths = useMemo(
     () => [
       {
-        path: Path.AppPage(appId) + '/*',
+        path: Path.MatchedAppPage(appId),
         key: 'page',
       },
       {
@@ -41,9 +41,9 @@ const AppLayout: React.FC = () => {
     () => getActiveKey(tabPaths, pathname),
     [pathname, tabPaths]
   )
-  const { data, isFetching } = useGetAppDetailQuery(+appId)
+  const { data, isLoading } = useGetAppDetailQuery(+appId)
 
-  return isFetching ? (
+  return isLoading ? (
     <RouteLoading loadingFullScreen />
   ) : data ? (
     <Layout className="app-layout">
@@ -80,10 +80,10 @@ const AppLayout: React.FC = () => {
                   tab={<Link to={Path.AppSetting(appId)}>应用设置</Link>}
                   key="setting"
                 />
-                {/* <Tabs.TabPane
-                tab={<Link to={Path.AppPublish(appId)}>应用发布</Link>}
-                key="publish"
-              /> */}
+                <Tabs.TabPane
+                  tab={<Link to={Path.AppPublish(appId)}>应用发布</Link>}
+                  key="publish"
+                />
               </Tabs>
             </div>
           </Col>

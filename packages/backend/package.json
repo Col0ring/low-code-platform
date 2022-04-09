@@ -44,6 +44,7 @@
     "express-rate-limit": "^6.3.0",
     "helmet": "^5.0.2",
     "html-webpack-plugin": "^5.5.0",
+    "less": "^4.1.2",
     "less-loader": "^10.2.0",
     "memory-fs": "^0.5.0",
     "mini-css-extract-plugin": "^2.6.0",

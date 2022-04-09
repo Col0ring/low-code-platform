@@ -3,3 +3,8 @@ export enum SearchAppStatus {
   Inactive = 0,
   All = -1,
 }
+
+export enum AppStatus {
+  Active = 1,
+  Inactive = 0,
+}

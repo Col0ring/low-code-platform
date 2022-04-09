@@ -12,7 +12,6 @@ const SimulatorContent: React.FC = () => {
           {componentNodes.map((node, index) => {
             return currentScreen?.id === node.id ? (
               <NodeContainer
-                draggable={false}
                 index={index}
                 parentNodes={[]}
                 key={node.id}

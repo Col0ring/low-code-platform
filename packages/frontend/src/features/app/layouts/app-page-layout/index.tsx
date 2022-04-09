@@ -167,6 +167,13 @@ const AppPageLayout: React.FC = () => {
                 >
                   <Input />
                 </Form.Item>
+                <Form.Item
+                  label="页面路径"
+                  name="path"
+                  rules={[emptyValidator('页面路径')]}
+                >
+                  <Input />
+                </Form.Item>
               </Form>
             }
             onModalOK={async () => {

@@ -37,6 +37,22 @@ export const appApi = createServiceApi({
         },
       ],
     }),
+    buildApp: builder.query<
+      { contentDisposition: string; url: string },
+      number
+    >({
+      query: (appId) => ({
+        url: `/apps/build/${appId}`,
+        responseHandler: async (res) => {
+          return {
+            contentDisposition: res.headers.get('content-disposition'),
+            url: await res
+              .blob()
+              .then((blob) => window.URL.createObjectURL(blob)),
+          }
+        },
+      }),
+    }),
     createApp: builder.mutation<void, StrictOmit<App, 'id'>>({
       query: (values) => ({
         method: 'post',
@@ -45,7 +61,7 @@ export const appApi = createServiceApi({
       }),
       invalidatesTags: (result) => (result ? [{ type: 'App', id: LIST }] : []),
     }),
-    updateApp: builder.mutation<void, App>({
+    updateApp: builder.mutation<void, { id: number } & Partial<App>>({
       query: ({ id, ...data }) => ({
         method: 'put',
         url: `/apps/update/${id}`,
@@ -59,7 +75,7 @@ export const appApi = createServiceApi({
             ]
           : [],
     }),
-    deleteApp: builder.mutation<void, string>({
+    deleteApp: builder.mutation<void, number>({
       query: (appId) => ({
         method: 'delete',
         url: `/apps/delete/${appId}`,
@@ -145,6 +161,7 @@ export const {
   useCreateAppMutation,
   useDeleteAppMutation,
   useUpdateAppMutation,
+  useLazyBuildAppQuery,
   useGetAppDetailQuery,
   useCreatePageMutation,
   useGetPageDetailQuery,

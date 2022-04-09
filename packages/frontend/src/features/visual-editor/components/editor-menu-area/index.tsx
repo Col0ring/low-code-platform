@@ -1,5 +1,10 @@
 import React, { useMemo, useState } from 'react'
-import { AppleOutlined } from '@ant-design/icons'
+import {
+  ApartmentOutlined,
+  AppstoreOutlined,
+  AppstoreAddOutlined,
+  HistoryOutlined,
+} from '@ant-design/icons'
 import MenuPaneItem, { MenuPaneItemProps } from './menu-pane-item'
 import MenuContent from './menu-content'
 import ComponentsLibraryPane from './panes/components-library-pane'
@@ -10,30 +15,30 @@ const panes: (Pick<MenuPaneItemProps, 'icon' | 'title'> & {
   content: React.ReactNode
 })[] = [
   {
-    icon: <AppleOutlined />,
+    icon: <ApartmentOutlined />,
     title: '大纲树',
     content: <OutlineTreePane />,
   },
   {
-    icon: <AppleOutlined />,
+    icon: <AppstoreOutlined />,
     title: '组件库',
     content: <ComponentsLibraryPane />,
   },
   {
-    icon: <AppleOutlined />,
+    icon: <AppstoreAddOutlined />,
     title: '区块',
     content: <div />,
   },
   {
-    icon: <AppleOutlined />,
+    icon: <HistoryOutlined />,
     title: '操作历史',
     content: <OperationHistoryPane />,
   },
-  {
-    icon: <AppleOutlined />,
-    title: '提交历史',
-    content: <div />,
-  },
+  // {
+  //   icon: <AppleOutlined />,
+  //   title: '提交历史',
+  //   content: <div />,
+  // },
 ]
 
 const EditorMenuArea: React.FC = () => {

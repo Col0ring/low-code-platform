@@ -10,6 +10,7 @@ import { AppCreateDto } from './dto/create.dto'
 import { getWebpackConfig, WebpackConfigOptions } from './webpack.config'
 import { SearchAppStatus } from './constants'
 import { AppSearchDto } from './dto/search.dto'
+import { AppUpdateDto } from './dto/update.dto'
 
 const memFs = new MemoryFS()
 
@@ -21,6 +22,7 @@ function getZip(options: WebpackConfigOptions) {
   return new Promise<Buffer>((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err || (stats && stats.hasErrors())) {
+        console.log(stats.toString())
         reject({
           err,
           stats,
@@ -75,6 +77,9 @@ export class AppsService {
     const user = await this.userService.findOneById(userId)
     app.user = user
     return this.appsRepository.save(app)
+  }
+  async update(appId: number, appUpdateDto: AppUpdateDto) {
+    return this.appsRepository.update(appId, appUpdateDto)
   }
   async delete(appId: number) {
     return this.appsRepository.delete(appId)

@@ -11,14 +11,14 @@ export const AppRoutes: React.FC = () => {
 }
 
 export function getActiveKey(
-  tabs: { path: string; key: string }[],
+  tabs: { path: string; match?: string; key: string }[],
   pathname: string
 ) {
   return (
-    tabs.find(({ path }) =>
+    tabs.find(({ match, path }) =>
       matchPath(
         {
-          path,
+          path: match || path,
         },
         pathname
       )

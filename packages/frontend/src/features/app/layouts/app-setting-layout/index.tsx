@@ -1,25 +1,29 @@
-import MenuLayout, { menuLayoutProps } from '@/components/menu-layout'
+import MenuLayout, { MenuLayoutProps } from '@/components/menu-layout'
+import { App } from '@/features/main/type'
 import { Path } from '@/router/constants'
-import React from 'react'
-import { Outlet } from 'react-router'
-
-const menus: menuLayoutProps['menus'] = [
-  {
-    title: '基础设置',
-    key: Path.AppBasicSetting(':appId'),
-    path: Path.AppBasicSetting(':appId'),
-  },
-  {
-    title: '权限设置',
-    key: Path.AppAuthSetting(':appId'),
-    path: Path.AppAuthSetting(':appId'),
-  },
-]
+import React, { useMemo } from 'react'
+import { Outlet, useOutletContext } from 'react-router'
 
 const AppSettingLayout: React.FC = () => {
+  const app = useOutletContext<App>()
+  const menus = useMemo<MenuLayoutProps['menus']>(
+    () => [
+      {
+        title: '基础设置',
+        key: Path.AppBasicSetting(app.id),
+        path: Path.AppBasicSetting(app.id),
+      },
+      {
+        title: '权限设置',
+        key: Path.AppAuthSetting(app.id),
+        path: Path.AppAuthSetting(app.id),
+      },
+    ],
+    [app.id]
+  )
   return (
     <MenuLayout menus={menus}>
-      <Outlet />
+      <Outlet context={app} />
     </MenuLayout>
   )
 }

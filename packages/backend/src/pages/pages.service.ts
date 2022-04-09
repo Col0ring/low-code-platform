@@ -32,6 +32,7 @@ export class PagesService {
     })
   }
   async update(appId: number, pageId: number, pageUpdateDto: PageUpdateDto) {
+    console.log(pageUpdateDto)
     return this.pagesRepository.update(
       {
         id: pageId,

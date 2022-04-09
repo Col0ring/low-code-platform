@@ -21,6 +21,7 @@ import ModalButton from '@/components/modal-button'
 import { emptyValidator } from '@/utils/validators'
 import { MonacoEditor, MonacoEditorProps } from '@/components/monaco-editor'
 import EditorPreview from '../editor-preview'
+import { useEditorPropsContext } from '../../editor-props-context'
 const SimulatorToolbar: React.FC = () => {
   const [canScroll, setCanScroll] = useState(false)
   const [screen, setScreen] = useState('')
@@ -32,6 +33,8 @@ const SimulatorToolbar: React.FC = () => {
 
   const [addScreenForm] = Form.useForm()
   const monacoEditorRef: MonacoEditorProps['editor'] = useRef(null)
+
+  const { onSave } = useEditorPropsContext()
 
   const tools = useMemo(
     () => [
@@ -306,7 +309,11 @@ const SimulatorToolbar: React.FC = () => {
           >
             预览
           </ModalButton>
-          <Button size="small" type="primary">
+          <Button
+            size="small"
+            type="primary"
+            onClick={() => onSave(componentNodes)}
+          >
             保存
           </Button>
         </div>

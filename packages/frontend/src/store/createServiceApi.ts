@@ -54,7 +54,6 @@ const baseServiceQueryWithReAuth = retry(
 
     let result = await baseServiceQuery(args, api, extraOptions)
     const { error } = result
-
     if (error) {
       if (typeof args !== 'string') {
         if (args.meta?.notThrowError) {

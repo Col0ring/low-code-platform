@@ -8,22 +8,22 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 // 压缩 js
 import TerserWebpackPlugin from 'terser-webpack-plugin'
-
+import { safeJsonParser } from '../utils'
 export interface WebpackConfigOptions {
   title: string
-  nodes: any[]
+  pages: string[]
 }
 
 export function getWebpackConfig({
-  nodes,
+  pages,
   title,
 }: WebpackConfigOptions): webpack.Configuration {
   return {
     mode: 'production',
-    entry: path.resolve(__dirname, './templates/index.tsx'),
+    entry: path.resolve(__dirname, '../../templates/index.tsx'),
     output: {
       filename: `js/[name].js`,
-      path: path.resolve(__dirname, './dist'),
+      path: path.resolve(__dirname, '../../templates/dist'),
       publicPath: './',
     },
     optimization: {
@@ -58,21 +58,21 @@ export function getWebpackConfig({
       }),
       new ZipWebpackPlugin({
         extension: 'zip',
-        path: path.resolve(__dirname, './dist'),
+        path: path.resolve(__dirname, '../../templates/dist'),
         filename: 'dist.zip',
       }),
       new HtmlWebpackPlugin({
         minify: true,
         cache: false,
         filename: 'index.html',
-        template: path.resolve(__dirname, './templates/index.html'),
+        template: path.resolve(__dirname, '../../templates/index.html'),
         title,
       }),
       // 注入 json
       new webpack.DefinePlugin({
         process: {
           env: {
-            NODES: nodes,
+            PAGES: pages.map((page) => safeJsonParser(page, [])),
           },
         },
       }),
@@ -98,7 +98,7 @@ export function getWebpackConfig({
           ],
           // 指定范围
           exclude: /node_modules/,
-          include: path.resolve(__dirname, './templates'),
+          include: path.resolve(__dirname, '../../templates'),
         },
         {
           test: /\.css$/,

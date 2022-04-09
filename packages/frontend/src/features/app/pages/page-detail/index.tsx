@@ -55,7 +55,7 @@ const PageDetailPage: React.FC = () => {
   const designPath = useMemo(
     () => ({
       index: Path.DesignIndex(appId, pageId),
-      setting: Path.DesignIndex(appId, pageId),
+      setting: Path.DesignBasicSetting(appId, pageId),
     }),
     [appId, pageId]
   )

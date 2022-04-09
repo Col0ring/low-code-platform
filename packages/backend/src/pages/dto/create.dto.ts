@@ -9,6 +9,14 @@ export class PageCreateDto {
   })
   name: string
 
+  @IsNotEmpty({
+    message: "path can't be empty",
+  })
+  @IsString({
+    message: 'Please input correct path',
+  })
+  path: string
+
   @IsNumber(undefined, {
     message: 'Please input correct appId',
   })

@@ -16,6 +16,7 @@ import AppLayout from '@/features/app/layouts/app-layout'
 import MainLayout from '@/features/main/layouts/main-layout'
 import AppSettingLayout from '@/features/app/layouts/app-setting-layout'
 import PageIndexPage from '@/features/app/pages/page-index'
+import PageSettingLayout from '@/features/design/layouts/page-setting-layout'
 
 export const accessRoutes: RouteObject[] = [
   {
@@ -68,14 +69,25 @@ export const accessRoutes: RouteObject[] = [
         ),
       },
       {
-        element: <DesignLayout />,
+        path: 'setting',
+        element: <PageSettingLayout />,
         children: [
           {
-            path: 'setting',
+            path: 'basic',
             element: (
               <LazyRoute
                 component={React.lazy(
-                  () => import('@/features/design/pages/design-index')
+                  () => import('@/features/design/pages/basic-setting')
+                )}
+              />
+            ),
+          },
+          {
+            path: 'auth',
+            element: (
+              <LazyRoute
+                component={React.lazy(
+                  () => import('@/features/design/pages/auth-setting')
                 )}
               />
             ),
@@ -122,10 +134,27 @@ export const accessRoutes: RouteObject[] = [
               />
             ),
           },
+          {
+            path: 'auth',
+            element: (
+              <LazyRoute
+                component={React.lazy(
+                  () => import('@/features/app/pages/auth-setting')
+                )}
+              />
+            ),
+          },
         ],
       },
       {
         path: 'publish',
+        element: (
+          <LazyRoute
+            component={React.lazy(
+              () => import('@/features/app/pages/app-publish')
+            )}
+          />
+        ),
       },
     ],
   },

@@ -27,7 +27,12 @@ export class PageEntity {
   })
   status: number
 
-  // json
   @Column()
+  path: string
+
+  // json
+  @Column({
+    type: 'text',
+  })
   content: string
 }
