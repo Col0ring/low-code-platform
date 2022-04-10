@@ -1,5 +1,6 @@
 export enum DecoratorMetadata {
   Roles = 'roles',
+  Public = 'public',
 }
 
 export enum StrategyType {

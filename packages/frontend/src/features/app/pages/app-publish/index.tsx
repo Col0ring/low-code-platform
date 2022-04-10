@@ -1,5 +1,6 @@
 import { AppStatus } from '@/features/main/constants'
 import { App } from '@/features/main/type'
+import useCopyToClipboard from '@/hooks/useCopyToClipboard'
 import { isResolved, mergeBaseUrl } from '@/utils'
 import {
   CheckCircleFilled,
@@ -10,7 +11,7 @@ import {
   EyeOutlined,
 } from '@ant-design/icons'
 import { Button, Input, message, Space, Tooltip } from 'antd'
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect } from 'react'
 import { useOutletContext } from 'react-router'
 import { useLazyBuildAppQuery, useUpdateAppMutation } from '../../app.service'
 
@@ -30,10 +31,16 @@ const AppPublishPage: React.FC = () => {
   const app = useOutletContext<App>()
   const [reqUpdateApp, { isLoading }] = useUpdateAppMutation()
   const [reqBuildApp, { isFetching }] = useLazyBuildAppQuery()
+  const [state, copyToClipboard] = useCopyToClipboard()
   const visitUrl = useMemo(
     () => mergeBaseUrl(`/views/apps/${app.id}`),
     [app.id]
   )
+  useEffect(() => {
+    if (state.value) {
+      void message.success('复制成功')
+    }
+  }, [state])
   return (
     <div className="flex flex-col items-center">
       <div className="bg-white p-4 rounded-md w-6/7 mt-6">
@@ -118,7 +125,10 @@ const AppPublishPage: React.FC = () => {
           <Space className="mt-3">
             <Input value={visitUrl} disabled className="w-400px" />
             <Tooltip title="复制">
-              <Button icon={<CopyOutlined />} />
+              <Button
+                icon={<CopyOutlined />}
+                onClick={() => copyToClipboard(visitUrl)}
+              />
             </Tooltip>
             <Tooltip title="访问">
               <Button

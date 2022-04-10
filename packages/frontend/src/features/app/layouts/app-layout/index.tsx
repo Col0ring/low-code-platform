@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Layout, Row, Col, Breadcrumb, Tabs, Tag, Space } from 'antd'
+import { Layout, Row, Col, Breadcrumb, Tabs, Tag, Space, Button } from 'antd'
 import {
   Outlet,
   useLocation,
@@ -16,10 +16,12 @@ import NavigationDropdown from '../../components/navigation-dropdown'
 import { useGetAppDetailQuery } from '../../app.service'
 import RouteLoading from '@/router/route-loading'
 import { AppStatus } from '@/features/main/constants'
+import { mergeBaseUrl } from '@/utils'
 
 const AppLayout: React.FC = () => {
   const { appId } = useParams() as { appId: string }
   const { pathname } = useLocation()
+  const visitUrl = useMemo(() => mergeBaseUrl(`/views/apps/${appId}`), [appId])
   const tabPaths = useMemo(
     () => [
       {
@@ -89,6 +91,13 @@ const AppLayout: React.FC = () => {
           </Col>
           <Col span={7}>
             <div className="app-header-actions">
+              <Button
+                onClick={() => window.open(visitUrl, '_blank')}
+                type="primary"
+                className="mr-6"
+              >
+                访问
+              </Button>
               <UserActions />
             </div>
           </Col>

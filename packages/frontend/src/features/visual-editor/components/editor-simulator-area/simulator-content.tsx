@@ -1,25 +1,15 @@
 import React from 'react'
-import { DragArea } from '../dragging'
 import { useEditorContext } from '../../provider'
-import NodeContainer from '../node-container'
+import EditorPreview from '../editor-preview'
 
 const SimulatorContent: React.FC = () => {
-  const [{ currentScreen, componentNodes }] = useEditorContext()
+  const [{ page }] = useEditorContext()
   return (
     <div className="inline-flex justify-center min-w-full">
       <div className="simulator-content-container">
-        <DragArea className="simulator-content">
-          {componentNodes.map((node, index) => {
-            return currentScreen?.id === node.id ? (
-              <NodeContainer
-                index={index}
-                parentNodes={[]}
-                key={node.id}
-                node={node}
-              />
-            ) : null
-          })}
-        </DragArea>
+        <div className="simulator-content">
+          <EditorPreview editType="edit" page={page} />
+        </div>
       </div>
     </div>
   )

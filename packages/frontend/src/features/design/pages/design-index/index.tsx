@@ -5,7 +5,7 @@ import { useOutletContext } from 'react-router'
 import { Page } from '@/features/app/type'
 import { useUpdatePageMutation } from '@/features/app/app.service'
 import { isResolved, safeJsonParser } from '@/utils'
-import { ComponentRenderNode } from '@/features/visual-editor/type'
+import { PageRenderNode } from '@/features/visual-editor/type'
 import { useMount } from '@/hooks'
 import { App } from '@/features/main/type'
 import { message } from 'antd'
@@ -20,8 +20,8 @@ const DesignIndexPage: React.FC = () => {
   const [reqUpdatePage] = useUpdatePageMutation()
   useMount(() => {
     if (actions.current) {
-      const data = safeJsonParser<ComponentRenderNode[]>(page.content, [])
-      actions.current.init(data.length === 0 ? undefined : data)
+      const data = safeJsonParser<PageRenderNode | null>(page.content, null)
+      actions.current.init(data || undefined)
     }
   })
   return (

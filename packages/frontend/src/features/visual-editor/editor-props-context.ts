@@ -1,9 +1,9 @@
 import { noop } from '@/utils'
 import { createContext, useContext } from 'react'
-import { ComponentRenderNode } from './type'
+import { PageRenderNode } from './type'
 
 export interface EditorPropsContextState {
-  onSave: (data: ComponentRenderNode[]) => void
+  onSave: (data: PageRenderNode) => void
 }
 
 export const EditorPropsContext = createContext<EditorPropsContextState>({

@@ -4,7 +4,7 @@ import EditorOperatorArea from './components/editor-operator-area'
 import EditorSimulatorArea from './components/editor-simulator-area'
 import './style.less'
 import { useEditorContext, withEditorProvider } from './provider'
-import { ComponentRenderNode } from './type'
+import { ComponentRenderNode, PageRenderNode } from './type'
 import { createNewNode } from './components/node-components'
 import Screen, { ScreenProps } from './components/node-components/layout/screen'
 import { useClassName, useUpdateEffect } from '@/hooks'
@@ -16,19 +16,19 @@ import {
 import { noop } from '@/utils'
 
 export interface VisualEditorActions {
-  init: (data?: ComponentRenderNode[]) => void
+  init: (data?: PageRenderNode) => void
 }
 export interface VisualEditorProps {
   className?: string
-  onChange?: (data: ComponentRenderNode[]) => void
+  onChange?: (data: PageRenderNode) => void
   onSave?: EditorPropsContextState['onSave']
-  onPreview?: (data: ComponentRenderNode[]) => void
+  onPreview?: (data: PageRenderNode) => void
   actions: React.RefObject<VisualEditorActions>
 }
 const VisualEditor: React.FC<VisualEditorProps> = (props) => {
   const { className, onChange, onSave = noop, actions } = props
   const classes = useClassName([className, 'visual-editor-container'], [])
-  const [{ componentNodes }, { updateComponentNode, setCurrentScreen }] =
+  const [{ page }, { updateComponentNode, setCurrentScreen }] =
     useEditorContext()
   const [isInit, setIsInit] = useState(false)
   useImperativeHandle(
@@ -42,11 +42,16 @@ const VisualEditor: React.FC<VisualEditorProps> = (props) => {
           Screen.nodeName
         ) as ComponentRenderNode<ScreenProps>
         newScreen.props.title = '屏幕1'
-        const initialComponentNodes = data || [newScreen]
-        setCurrentScreen(initialComponentNodes[0])
+        const newPage: PageRenderNode = {
+          ...createNewNode(page.name),
+          js: '',
+          children: [newScreen],
+          modal: [],
+        }
+        setCurrentScreen(data?.children[0] || newScreen)
         updateComponentNode({
           type: 'init',
-          componentNodes: initialComponentNodes,
+          page: data || newPage,
         })
         setIsInit(true)
       },
@@ -57,8 +62,8 @@ const VisualEditor: React.FC<VisualEditorProps> = (props) => {
   const memoEditorValue = useMemo(() => ({ onSave }), [onSave])
 
   useUpdateEffect(() => {
-    onChange?.(componentNodes)
-  }, [componentNodes])
+    onChange?.(page)
+  }, [page])
 
   return (
     <EditorPropsContext.Provider value={memoEditorValue}>

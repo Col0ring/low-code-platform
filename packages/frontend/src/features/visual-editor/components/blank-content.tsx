@@ -22,7 +22,7 @@ const BlankContent: React.FC<BlankContent> = ({ node, disabled }) => {
   const classes = useMemo(
     () =>
       classnames(
-        'p-3 h-full flex flex-col text-gray-400 items-center justify-center border-dashed border-1 border-gray-600 border',
+        'p-3 h-full flex flex-col text-gray-400 items-center justify-center border-dashed border-1 border-gray-600 border flex-1',
         disabled
           ? 'bg-gray-300'
           : isHovering && isDragging
@@ -33,7 +33,7 @@ const BlankContent: React.FC<BlankContent> = ({ node, disabled }) => {
   )
 
   return (
-    <div className="p-1 h-full relative">
+    <div className="p-1 h-full relative flex-1 flex flex-col">
       <DragArea
         onChange={setIsHovering}
         onDrop={(e) => {

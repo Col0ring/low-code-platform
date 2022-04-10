@@ -1,4 +1,5 @@
 import React from 'react'
+import { ScreenProps } from './components/node-components/layout/screen'
 
 export interface ComponentNode<T extends object = any> {
   component: NodeComponent<T>
@@ -14,6 +15,12 @@ export interface ComponentRenderNode<T extends object = any>
   style: React.CSSProperties
   children?: ComponentRenderNode[]
   id: string
+}
+
+export interface PageRenderNode extends ComponentRenderNode {
+  children: ComponentRenderNode<ScreenProps>[]
+  js: string
+  modal: string[]
 }
 
 export interface ParentComponentRenderNode<T extends object = any>
@@ -41,7 +48,7 @@ export type UpdateComponentNodeOptions = {
 } & (
   | {
       type: 'init'
-      componentNodes: ComponentRenderNode[]
+      page: PageRenderNode
     }
   | {
       type: 'add'
@@ -60,7 +67,8 @@ export type UpdateComponentNodeOptions = {
   | {
       type: 'update'
       node: ComponentRenderNode
-      props: object
+      style?: React.CSSProperties
+      props?: object
       children?: ComponentRenderNode[]
     }
   | {
@@ -85,10 +93,12 @@ export interface NodeComponentProps<
 export type NodeComponent<T extends object = {}> = React.FC<
   NodeComponentProps<T>
 > & {
+  PropsForm?: React.ComponentType<{ node: ParentComponentRenderNode<T> }>
   getInitialProps: () => T
   getId: () => string
   nodeName: string
   title: string
   getInitialChildren?: () => ComponentRenderNode[]
   childActionDisabled?: boolean
+  getInitialStyle?: () => React.CSSProperties
 }

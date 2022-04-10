@@ -1,11 +1,10 @@
-import EditorPreview, {
-  EditorPreviewProps,
-} from '@/features/visual-editor/components/editor-preview'
+import EditorPreview from '@/features/visual-editor/components/editor-preview'
+import { PageRenderNode } from '@/features/visual-editor/type'
 import { Path } from '@/router/constants'
 import RouteLoading from '@/router/route-loading'
 import { safeJsonParser } from '@/utils'
 import { DeliveredProcedureOutlined, DownOutlined } from '@ant-design/icons'
-import { Button, Dropdown, Menu, Space, Tooltip } from 'antd'
+import { Dropdown, Menu, Tooltip } from 'antd'
 import React, { useState, useMemo } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useGetPageDetailQuery } from '../../app.service'
@@ -47,9 +46,7 @@ const PageDetailPage: React.FC = () => {
   })
   const pageContent = useMemo(
     () =>
-      data
-        ? safeJsonParser(data.content, [] as EditorPreviewProps['screens'])
-        : [],
+      data ? safeJsonParser<PageRenderNode | null>(data.content, null) : null,
     [data]
   )
   const designPath = useMemo(
@@ -88,10 +85,10 @@ const PageDetailPage: React.FC = () => {
               <Link to={designPath.index}>编辑自定义页</Link>
             </Dropdown.Button>
           </div>
-          {pageContent.length > 0 && (
+          {pageContent && (
             <div className="overflow-auto flex-1">
-              <div className="p-4 bg-white rounded-md m-4">
-                <EditorPreview screens={pageContent} />
+              <div className="p-4 bg-white rounded-md my-4 mx-1">
+                <EditorPreview page={pageContent} />
               </div>
             </div>
           )}

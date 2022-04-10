@@ -8,10 +8,9 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 // 压缩 js
 import TerserWebpackPlugin from 'terser-webpack-plugin'
-import { safeJsonParser } from '../utils'
 export interface WebpackConfigOptions {
   title: string
-  pages: string[]
+  pages: { content: string; path: string }[]
 }
 
 export function getWebpackConfig({
@@ -27,19 +26,7 @@ export function getWebpackConfig({
       publicPath: './',
     },
     optimization: {
-      splitChunks: {
-        // include all types of chunks
-        chunks: 'all',
-        name(module: Module, chunks: Chunk[], cacheGroupKey: string) {
-          const moduleFileName = module
-            .identifier()
-            .split('/')
-            .reduceRight((item) => item)
-          const allChunksNames = chunks.map((item) => item.name).join('~')
-          return `${cacheGroupKey}-${allChunksNames}-${moduleFileName}`
-        },
-      },
-      minimize: true,
+      minimize: false,
       minimizer: [
         new CssMinimizerPlugin(),
         new TerserWebpackPlugin({
@@ -72,13 +59,19 @@ export function getWebpackConfig({
       new webpack.DefinePlugin({
         process: {
           env: {
-            PAGES: pages.map((page) => safeJsonParser(page, [])),
+            PAGES: pages.map((page) => ({
+              content: page.content,
+              path: `"${page.path}"`,
+            })),
           },
         },
       }),
     ],
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+      alias: {
+        '@': path.resolve(__dirname, '../../../frontend/src'),
+      },
     },
     module: {
       rules: [
@@ -90,15 +83,15 @@ export function getWebpackConfig({
               options: {
                 presets: [
                   '@babel/preset-env',
-                  '@babel/preset-react',
                   '@babel/preset-typescript',
+                  '@babel/preset-react',
                 ],
+                plugins: ['@babel/plugin-transform-runtime'],
               },
             },
           ],
           // 指定范围
           exclude: /node_modules/,
-          include: path.resolve(__dirname, '../../templates'),
         },
         {
           test: /\.css$/,
@@ -123,7 +116,14 @@ export function getWebpackConfig({
                 importLoaders: 1,
               },
             },
-            'less-loader',
+            {
+              loader: 'less-loader',
+              options: {
+                lessOptions: {
+                  javascriptEnabled: true,
+                },
+              },
+            },
           ],
         },
         // 静态资源构建能力

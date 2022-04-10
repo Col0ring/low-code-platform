@@ -61,20 +61,20 @@ function generateData(
 
 const OutlineTreePane: React.FC = () => {
   const [
-    { componentNodes, menuSelectedKeys, currentScreen },
+    { page, menuSelectedKeys, currentScreen },
     { setActionNode, startDragging, finishDragging, updateComponentNode },
   ] = useEditorContext()
   const treeData = useMemo(
     () =>
       generateData(
         {
-          componentNodes,
+          componentNodes: page.children,
           draggable: false,
           parentNode: null,
         },
         currentScreen
       ),
-    [componentNodes, currentScreen]
+    [page.children, currentScreen]
   )
   const dragImage = useMemo(() => {
     const div = document.createElement('div')

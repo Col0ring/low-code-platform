@@ -11,12 +11,14 @@ import {
   Put,
   BadRequestException,
   Response,
+  ForbiddenException,
 } from '@nestjs/common'
 import { Response as ExpressResponse } from 'express'
-import { Auth, User } from '../auth/decorators'
+import { PageStatus } from 'src/pages/constants'
+import { Auth, Public, User } from '../auth/decorators'
 import { JwtUser } from '../auth/type'
 import { AppsService } from './apps.service'
-import { SearchAppStatus } from './constants'
+import { AppStatus, SearchAppStatus } from './constants'
 import { AppCreateDto } from './dto/create.dto'
 import { AppSearchDto } from './dto/search.dto'
 import { AppUpdateDto } from './dto/update.dto'
@@ -45,7 +47,6 @@ export class AppsController {
   }
   @Get('/build/:appId')
   async buildApp(
-    @Query('title') title: string,
     @Param('appId', ParseIntPipe) appId: number,
     @Response() res: ExpressResponse
   ) {
@@ -53,7 +54,12 @@ export class AppsController {
     if (app) {
       const buffer = await this.appsService.buildApp({
         title: app.name,
-        pages: app.pages.map((page) => page.content),
+        pages: app.pages
+          .filter((page) => page.status === PageStatus.Active)
+          .map((page) => ({
+            path: page.path,
+            content: page.content,
+          })),
       })
       res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition')
       res.setHeader('Content-Type', 'application/octet-stream')
@@ -88,5 +94,15 @@ export class AppsController {
   @Get('one/:id')
   one(@Param('id', ParseIntPipe) id: number) {
     return this.appsService.one(id)
+  }
+
+  @Get('view/:id')
+  @Public()
+  async view(@Param('id', ParseIntPipe) id: number) {
+    const app = await this.appsService.one(id)
+    if (app.status === AppStatus.Active) {
+      return app
+    }
+    throw new ForbiddenException()
   }
 }

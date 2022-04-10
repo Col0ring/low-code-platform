@@ -16,7 +16,7 @@ import { elementCanScroll } from '@/utils'
 import { useEditorContext } from '../../provider'
 import { copyNode, createNewNode } from '../node-components'
 import Screen, { ScreenProps } from '../node-components/layout/screen'
-import { ComponentRenderNode } from '../../type'
+import { ComponentRenderNode, PageRenderNode } from '../../type'
 import ModalButton from '@/components/modal-button'
 import { emptyValidator } from '@/utils/validators'
 import { MonacoEditor, MonacoEditorProps } from '@/components/monaco-editor'
@@ -27,9 +27,10 @@ const SimulatorToolbar: React.FC = () => {
   const [screen, setScreen] = useState('')
   const ref = useRef<HTMLDivElement>(null)
   const [
-    { currentScreen, snapshotIndex, snapshots, componentNodes },
+    { currentScreen, snapshotIndex, snapshots, page },
     { updateScreen, setActionNode, changeSnapShot, updateComponentNode },
   ] = useEditorContext()
+  const screens = useMemo(() => page.children, [page])
 
   const [addScreenForm] = Form.useForm()
   const monacoEditorRef: MonacoEditorProps['editor'] = useRef(null)
@@ -116,7 +117,7 @@ const SimulatorToolbar: React.FC = () => {
           element: (
             <Button
               onClick={() => {
-                if (componentNodes.length === 1) {
+                if (screens.length === 1) {
                   void message.error('至少保留一个屏幕')
                   return
                 }
@@ -184,15 +185,15 @@ const SimulatorToolbar: React.FC = () => {
                     if (!value) {
                       return Promise.reject()
                     }
-                    const nodes = JSON.parse(value)
+                    const newPage: PageRenderNode = JSON.parse(value)
                     updateScreen({
                       type: 'change',
-                      screen: nodes[0],
+                      screen: newPage.children[0],
                     })
                     setActionNode(null)
                     updateComponentNode({
                       type: 'init',
-                      componentNodes: nodes,
+                      page: newPage,
                     })
                   } catch (error) {
                     void message.error('导入失败，请检查格式是否正确')
@@ -215,7 +216,7 @@ const SimulatorToolbar: React.FC = () => {
                   <MonacoEditor
                     scrollBeyondLastLine={false}
                     readOnly
-                    value={JSON.stringify(componentNodes, null, 2)}
+                    value={JSON.stringify(page, null, 2)}
                     language="json"
                     minimap={{ enabled: false }}
                   />
@@ -232,8 +233,9 @@ const SimulatorToolbar: React.FC = () => {
     [
       addScreenForm,
       changeSnapShot,
-      componentNodes,
       currentScreen,
+      page,
+      screens.length,
       setActionNode,
       snapshotIndex,
       snapshots.length,
@@ -281,22 +283,20 @@ const SimulatorToolbar: React.FC = () => {
         <div className="flex items-center">
           {canScroll && <Divider type="vertical" className="h-7" />}
           <Radio.Group value={screen} size="small">
-            {componentNodes.map(
-              (screenNode: ComponentRenderNode<ScreenProps>) => (
-                <Radio.Button
-                  key={screenNode.id}
-                  value={screenNode.id}
-                  onClick={() =>
-                    updateScreen({
-                      type: 'change',
-                      screen: screenNode,
-                    })
-                  }
-                >
-                  {screenNode.props.title}
-                </Radio.Button>
-              )
-            )}
+            {screens.map((screenNode: ComponentRenderNode<ScreenProps>) => (
+              <Radio.Button
+                key={screenNode.id}
+                value={screenNode.id}
+                onClick={() =>
+                  updateScreen({
+                    type: 'change',
+                    screen: screenNode,
+                  })
+                }
+              >
+                {screenNode.props.title}
+              </Radio.Button>
+            ))}
           </Radio.Group>
           <Divider type="vertical" className="h-7" />
           <ModalButton
@@ -304,16 +304,12 @@ const SimulatorToolbar: React.FC = () => {
               width: '100vw',
             }}
             modalTitle="预览"
-            modal={<EditorPreview screens={componentNodes} />}
+            modal={<EditorPreview page={page} />}
             size="small"
           >
             预览
           </ModalButton>
-          <Button
-            size="small"
-            type="primary"
-            onClick={() => onSave(componentNodes)}
-          >
+          <Button size="small" type="primary" onClick={() => onSave(page)}>
             保存
           </Button>
         </div>

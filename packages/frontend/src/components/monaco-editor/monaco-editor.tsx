@@ -5,7 +5,6 @@ import { useMount, useUpdateEffect, usePersistFn } from '@/hooks'
 import { noop } from '@/utils'
 import { edit, format } from './utils'
 import { Monaco } from './type'
-import './env'
 import './index.less'
 
 export interface MonacoEditorProps

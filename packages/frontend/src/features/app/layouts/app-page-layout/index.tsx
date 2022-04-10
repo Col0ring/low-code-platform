@@ -62,7 +62,6 @@ const PageHoverItem: React.FC<PageHoverItemProps> = ({
             <Menu>
               <Menu.Item key="change">修改名称</Menu.Item>
               <Menu.Item key="copy">复制</Menu.Item>
-              <Menu.Item key="visit">访问</Menu.Item>
               <Menu.Divider />
               <Menu.Item
                 key="delete"

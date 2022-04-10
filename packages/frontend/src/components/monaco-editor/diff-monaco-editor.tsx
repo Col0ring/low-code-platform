@@ -5,7 +5,6 @@ import { useMount, useUpdateEffect, usePersistFn } from '@/hooks'
 import { noop } from '@/utils'
 import { editDiff, formatDiff } from './utils'
 import { Monaco } from './type'
-import './env'
 import './index.less'
 export interface DiffMonacoEditorProps
   extends monaco.editor.IStandaloneEditorConstructionOptions {

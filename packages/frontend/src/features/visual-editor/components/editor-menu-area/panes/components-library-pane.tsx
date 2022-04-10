@@ -1,5 +1,5 @@
 import { Col, Divider, Input, Row, Space } from 'antd'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Draggable } from '../../dragging'
 import { componentsLibrary } from '../../node-components'
 import { DraggingData } from '../../../constants'
@@ -7,6 +7,7 @@ import { useEditorContext } from '@/features/visual-editor/provider'
 
 const ComponentsLibraryPane: React.FC = () => {
   const [, { setEditorState }] = useEditorContext()
+  const [lib, setLib] = useState(componentsLibrary)
   const dragImage = useMemo(() => {
     const div = document.createElement('div')
     div.innerHTML = ''
@@ -17,12 +18,30 @@ const ComponentsLibraryPane: React.FC = () => {
     <div className="components-library-pane">
       <div className="search">
         <div className="search-input">
-          <Input.Search placeholder="搜索组件" allowClear />
+          <Input.Search
+            placeholder="搜索组件"
+            allowClear
+            onSearch={(value) => {
+              const newLib: typeof componentsLibrary = []
+              componentsLibrary.forEach(({ group, components }) => {
+                const newComponents = components.filter(({ name, title }) =>
+                  (title || name).toLowerCase().includes(value.toLowerCase())
+                )
+                if (newComponents.length > 0) {
+                  newLib.push({
+                    group,
+                    components: newComponents,
+                  })
+                }
+              })
+              setLib(newLib)
+            }}
+          />
         </div>
         <Divider className="my-3" />
       </div>
       <div className="components">
-        {componentsLibrary.map(({ group, components }) => {
+        {lib.map(({ group, components }) => {
           return (
             <div className="mb-5 text-sm px-3" key={group}>
               <h3>{group}</h3>

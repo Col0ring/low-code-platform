@@ -17,7 +17,7 @@ export class PagesService {
   async create(pageCreateDto: PageCreateDto) {
     const page = this.pagesRepository.create({
       ...pageCreateDto,
-      content: '[]',
+      content: '',
     })
     const app = await this.appsService.one(pageCreateDto.appId)
     page.app = app

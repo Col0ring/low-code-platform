@@ -172,8 +172,6 @@
   }
 
   .editor-operator-area {
-    @apply pb-12;
-
     position: relative;
     display: flex;
     flex-direction: column;
@@ -193,12 +191,19 @@
 
     .operator-content {
       flex: 1;
-      padding: 8px;
       overflow: auto;
     }
 
     .ant-tabs-nav {
       margin-bottom: 0;
+    }
+
+    .ant-collapse {
+      background-color: #fff;
+
+      .ant-collapse-header {
+        @apply bg-gray-100 p-1;
+      }
     }
 
     .ant-tab-stretch();

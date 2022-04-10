@@ -53,6 +53,10 @@ export const appApi = createServiceApi({
         },
       }),
     }),
+    getAppView: builder.query<App, number>({
+      query: (appId) => `/apps/view/${appId}`,
+      providesTags: (_result, _error, arg) => [{ type: 'App', id: arg }],
+    }),
     createApp: builder.mutation<void, StrictOmit<App, 'id'>>({
       query: (values) => ({
         method: 'post',
@@ -167,4 +171,5 @@ export const {
   useGetPageDetailQuery,
   useDeletePageMutation,
   useUpdatePageMutation,
+  useGetAppViewQuery,
 } = appApi

@@ -13,6 +13,13 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(
+      DecoratorMetadata.Public,
+      [context.getHandler(), context.getClass()]
+    )
+    if (isPublic) {
+      return true
+    }
     const requiredRoles = this.reflector.getAllAndOverride<Role[]>(
       DecoratorMetadata.Roles,
       [context.getHandler(), context.getClass()]

@@ -17,6 +17,7 @@ import MainLayout from '@/features/main/layouts/main-layout'
 import AppSettingLayout from '@/features/app/layouts/app-setting-layout'
 import PageIndexPage from '@/features/app/pages/page-index'
 import PageSettingLayout from '@/features/design/layouts/page-setting-layout'
+import AppView from '@/features/app/pages/app-view'
 
 export const accessRoutes: RouteObject[] = [
   {
@@ -164,6 +165,10 @@ export const routes: RouteObject[] = [
   {
     path: '/',
     element: <Navigate to={Path.Dashboard} replace />,
+  },
+  {
+    path: '/views/apps/:appId/*',
+    element: <AppView />,
   },
   {
     element: (

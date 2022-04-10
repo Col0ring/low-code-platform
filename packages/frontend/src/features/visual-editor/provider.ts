@@ -2,15 +2,20 @@ import { createMethodsContext } from 'react-use-methods'
 import { ArrayItem, StrictOmit } from 'types-kit'
 import { createDraft, Draft, finishDraft, isDraft } from 'immer'
 import {
+  PageRenderNode,
   ComponentRenderNode,
   ParentComponentRenderNode,
   UpdateComponentNodeOptions,
 } from './type'
-import { isParentComponentRenderNode } from './components/node-components'
+import {
+  createNewNode,
+  isParentComponentRenderNode,
+} from './components/node-components'
+import Page from './components/node-components/layout/page'
 
 export interface EditorState {
   menuSelectedKeys: (string | number)[]
-  componentNodes: ComponentRenderNode[]
+  page: PageRenderNode
   currentScreen: ComponentRenderNode | null
   componentNodesMap: Record<
     string,
@@ -19,7 +24,7 @@ export interface EditorState {
       parentNodes: ParentComponentRenderNode[]
     }
   >
-  immerComponentNodes: Draft<ComponentRenderNode[]>
+  immerPage: Draft<PageRenderNode>
   immerComponentNodesMap: Record<string, Draft<ComponentRenderNode>>
   snapshots: {
     type: UpdateComponentNodeOptions['type']
@@ -27,7 +32,7 @@ export interface EditorState {
     timestamp: number
     actionNode: ComponentRenderNode | null
     currentScreen: ComponentRenderNode | null
-    componentNodes: ComponentRenderNode[]
+    page: PageRenderNode
   }[]
   snapshotIndex: number
   isDragging: boolean
@@ -38,11 +43,12 @@ export interface EditorState {
 }
 
 function getComponentNodeMap(
-  componentNodes: ComponentRenderNode[],
+  componentNodes: PageRenderNode | ComponentRenderNode[],
   parentNodes: ParentComponentRenderNode[] = []
 ): EditorState['componentNodesMap'] {
   const componentNodesMap: EditorState['componentNodesMap'] = {}
-  componentNodes.forEach((node) => {
+  const isArray = Array.isArray(componentNodes)
+  ;(isArray ? componentNodes : [componentNodes]).forEach((node) => {
     componentNodesMap[node.id] = {
       node,
       parentNodes,
@@ -50,10 +56,10 @@ function getComponentNodeMap(
     if (node.children) {
       Object.assign(
         componentNodesMap,
-        getComponentNodeMap(node.children, [
-          ...parentNodes,
-          node as ParentComponentRenderNode,
-        ])
+        getComponentNodeMap(
+          node.children,
+          isArray ? [...parentNodes, node as ParentComponentRenderNode] : []
+        )
       )
     }
   })
@@ -61,10 +67,13 @@ function getComponentNodeMap(
 }
 
 function getImmerComponentNodeMap(
-  immerComponentNodes: Draft<ComponentRenderNode[]>
+  immerComponentNodes: PageRenderNode | Draft<ComponentRenderNode[]>
 ): EditorState['immerComponentNodesMap'] {
   const immerComponentNodesMap: EditorState['immerComponentNodesMap'] = {}
-  immerComponentNodes.forEach((node) => {
+  ;(Array.isArray(immerComponentNodes)
+    ? immerComponentNodes
+    : [immerComponentNodes]
+  ).forEach((node) => {
     immerComponentNodesMap[node.id] = node
     if (node.children) {
       Object.assign(
@@ -78,15 +87,20 @@ function getImmerComponentNodeMap(
 
 // TODO：初始化数据放在组件内部
 const initialState: () => EditorState = () => {
-  const componentNodes: ComponentRenderNode[] = []
-  const immerComponentNodes = createDraft(componentNodes)
+  const page: PageRenderNode = {
+    ...createNewNode(Page.nodeName),
+    children: [],
+    js: '',
+    modal: [],
+  }
+  const immerPage = createDraft(page)
   return {
     menuSelectedKeys: [],
-    componentNodes,
+    page,
     currentScreen: null,
-    immerComponentNodes,
-    immerComponentNodesMap: getImmerComponentNodeMap(immerComponentNodes),
-    componentNodesMap: getComponentNodeMap(componentNodes),
+    immerPage,
+    immerComponentNodesMap: getImmerComponentNodeMap(immerPage),
+    componentNodesMap: getComponentNodeMap(page),
     snapshots: [],
     snapshotIndex: -1,
     isDragging: false,
@@ -135,7 +149,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
       },
       addSnapshot({
         type,
-        componentNodes,
+        page,
         desc,
       }: StrictOmit<ArrayItem<EditorState['snapshots']>, 'timestamp'>) {
         return {
@@ -147,7 +161,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
                   ...state.snapshots.slice(0, state.snapshotIndex + 1),
                   {
                     type,
-                    componentNodes,
+                    page,
                     timestamp: Date.now(),
                     desc,
                     actionNode: state.actionNode,
@@ -158,7 +172,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
                   ...state.snapshots,
                   {
                     type,
-                    componentNodes,
+                    page,
                     timestamp: Date.now(),
                     desc,
                     actionNode: state.actionNode,
@@ -173,9 +187,9 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
         } else if (snapshotIndex >= state.snapshots.length) {
           return state
         }
-        const { componentNodes, currentScreen, actionNode } =
+        const { page, currentScreen, actionNode } =
           state.snapshots[snapshotIndex]
-        const changedState: EditorState = this.setComponentNodes(componentNodes)
+        const changedState: EditorState = this.setPage(page)
         return {
           ...state,
           ...changedState,
@@ -187,27 +201,17 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
       setCurrentScreen(currentScreen: ComponentRenderNode | null) {
         return { ...state, currentScreen }
       },
-      setComponentNodes(
-        componentNodesOrimmerComponentNodes?:
-          | ComponentRenderNode[]
-          | Draft<ComponentRenderNode[]>
-      ) {
-        const newComponentNodes = isDraft(
-          componentNodesOrimmerComponentNodes || state.immerComponentNodes
-        )
-          ? finishDraft(
-              componentNodesOrimmerComponentNodes || state.immerComponentNodes
-            )
-          : (componentNodesOrimmerComponentNodes as ComponentRenderNode[])
-        const newImmerComponentNodes = createDraft(newComponentNodes)
-        const newComponentNodesMap = getComponentNodeMap(newComponentNodes)
-        const newImmerComponentNodesMap = getImmerComponentNodeMap(
-          newImmerComponentNodes
-        )
+      setPage(pageOrImmerPage?: PageRenderNode | Draft<PageRenderNode>) {
+        const newPage = isDraft(pageOrImmerPage || state.immerPage)
+          ? finishDraft(pageOrImmerPage || state.immerPage)
+          : (pageOrImmerPage as PageRenderNode)
+        const newImmerPage = createDraft(newPage)
+        const newComponentNodesMap = getComponentNodeMap(newPage)
+        const newImmerComponentNodesMap = getImmerComponentNodeMap(newImmerPage)
         return {
           ...state,
-          componentNodes: newComponentNodes,
-          immerComponentNodes: newImmerComponentNodes,
+          page: newPage,
+          immerPage: newImmerPage,
           componentNodesMap: newComponentNodesMap,
           immerComponentNodesMap: newImmerComponentNodesMap,
         }
@@ -225,7 +229,9 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
         type: 'add' | 'change' | 'clear' | 'delete'
       }) {
         return ({ dispatch }) => {
-          const { immerComponentNodes, componentNodes } = state
+          const { page, immerPage } = state
+          const componentNodes = page.children
+          const immerComponentNodes = immerPage.children
           if (type === 'add') {
             immerComponentNodes.push(screen)
             dispatch({
@@ -233,7 +239,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
               payload: [screen],
             })
             dispatch({
-              type: 'setComponentNodes',
+              type: 'setPage',
             })
             dispatch({
               type: 'setActionNode',
@@ -244,7 +250,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
               payload: [
                 {
                   type: 'add',
-                  componentNodes: getState().componentNodes,
+                  page: getState().page,
                   desc: `add: ${screen.title || screen.name}`,
                 },
               ],
@@ -263,7 +269,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
               payload: [
                 {
                   type: 'update',
-                  componentNodes: getState().componentNodes,
+                  page: getState().page,
                   desc: `change: ${screen.title || screen.name}`,
                 },
               ],
@@ -290,7 +296,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
               payload: [
                 {
                   type: 'update',
-                  componentNodes: getState().componentNodes,
+                  page: getState().page,
                   desc: `clear: ${screen.title || screen.name}`,
                 },
               ],
@@ -312,14 +318,14 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
               payload: [nextScreen],
             })
             dispatch({
-              type: 'setComponentNodes',
+              type: 'setPage',
             })
             dispatch({
               type: 'addSnapshot',
               payload: [
                 {
                   type: 'delete',
-                  componentNodes: getState().componentNodes,
+                  page: getState().page,
                   desc: `delete: ${screen.title || screen.name}`,
                 },
               ],
@@ -331,13 +337,11 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
         return ({ dispatch }) => {
           const { currentScreen, immerComponentNodesMap } = state
           const { addSnapshot = true } = options
-          let immerComponentNodes = state.immerComponentNodes
           if (options.type === 'init') {
-            const { componentNodes: newComponentNodes } = options
-            immerComponentNodes = createDraft(newComponentNodes)
+            const { page } = options
             dispatch({
-              type: 'setComponentNodes',
-              payload: [immerComponentNodes],
+              type: 'setPage',
+              payload: [page],
             })
             addSnapshot &&
               dispatch({
@@ -345,7 +349,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
                 payload: [
                   {
                     type: 'init',
-                    componentNodes: getState().componentNodes,
+                    page: getState().page,
                     desc: 'init: init data',
                   },
                 ],
@@ -357,8 +361,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
               immerParentNode.children.splice(index, 0, newNode)
 
               dispatch({
-                type: 'setComponentNodes',
-                payload: [immerComponentNodes],
+                type: 'setPage',
               })
               addSnapshot &&
                 dispatch({
@@ -366,7 +369,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
                   payload: [
                     {
                       type: 'add',
-                      componentNodes: getState().componentNodes,
+                      page: getState().page,
                       desc: `${currentScreen?.props.title} add: ${
                         newNode.title || newNode.name
                       }`,
@@ -403,8 +406,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
                 immerParentNode.children.splice(nodeIndex, 0, moveNode)
               }
               dispatch({
-                type: 'setComponentNodes',
-                payload: [immerComponentNodes],
+                type: 'setPage',
               })
               addSnapshot &&
                 dispatch({
@@ -412,7 +414,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
                   payload: [
                     {
                       type: 'move',
-                      componentNodes: getState().componentNodes,
+                      page: getState().page,
                       desc: `move: ${
                         moveParentNode.title || moveParentNode.name
                       } > ${moveNode.title || moveNode.name} => ${
@@ -424,15 +426,23 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
             }
             // if type is update
           } else if (options.type === 'update') {
-            const { node, props, children } = options
+            const { node, props, style, children } = options
             const immerNode = immerComponentNodesMap[node.id]
-            immerNode.props = props
+            if (props) {
+              immerNode.props = props
+            }
+            if (style) {
+              immerNode.style = style
+            }
             if (children && isParentComponentRenderNode(immerNode)) {
               immerNode.children = children
             }
             dispatch({
-              type: 'setComponentNodes',
-              payload: [immerComponentNodes],
+              type: 'setPage',
+            })
+            dispatch({
+              type: 'setActionNode',
+              payload: [getState().componentNodesMap[node.id].node],
             })
             addSnapshot &&
               dispatch({
@@ -440,7 +450,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
                 payload: [
                   {
                     type: 'update',
-                    componentNodes: getState().componentNodes,
+                    page: getState().page,
                     desc: `update: ${node.title || node.name}`,
                   },
                 ],
@@ -451,8 +461,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
             if (isParentComponentRenderNode(immerParentNode)) {
               immerParentNode.children.splice(index, 1)
               dispatch({
-                type: 'setComponentNodes',
-                payload: [immerComponentNodes],
+                type: 'setPage',
               })
               addSnapshot &&
                 dispatch({
@@ -460,7 +469,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
                   payload: [
                     {
                       type: 'delete',
-                      componentNodes: getState().componentNodes,
+                      page: getState().page,
                       desc: `delete: ${node.title || node.name}`,
                     },
                   ],

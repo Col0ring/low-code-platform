@@ -11,12 +11,20 @@ import Container from './layout/container'
 import LayoutContainer from './layout/layout-container'
 import Layout from './layout/layout'
 import Screen from './layout/screen'
+import Page from './layout/page'
 import { safeJsonParser } from '@/utils'
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
     group: '布局',
     components: [
+      {
+        name: Page.nodeName,
+        title: Page.title,
+        hideInMenu: true,
+        component: Page,
+        icon: <ContainerOutlined />,
+      },
       {
         name: Screen.nodeName,
         title: Screen.title,
@@ -41,12 +49,6 @@ export const componentsLibrary: ComponentsGroup[] = [
       {
         name: LayoutContainer.nodeName,
         title: LayoutContainer.title,
-        component: LayoutContainer,
-        icon: <ContainerOutlined />,
-      },
-      {
-        name: 'layout-container2',
-        title: '布局容器2',
         component: LayoutContainer,
         icon: <ContainerOutlined />,
       },
@@ -91,7 +93,7 @@ export function createNewNode(name: string): ComponentRenderNode {
     return {
       title,
       name,
-      style: {},
+      style: component.getInitialStyle?.() || {},
       id: component.getId(),
       props: component.getInitialProps(),
       children: component.getInitialChildren(),
@@ -100,7 +102,7 @@ export function createNewNode(name: string): ComponentRenderNode {
   return {
     title,
     name,
-    style: {},
+    style: component.getInitialStyle?.() || {},
     id: component.getId(),
     props: component.getInitialProps(),
   }
@@ -126,15 +128,29 @@ export function copyNode(node: ComponentRenderNode): ComponentRenderNode {
     props: component.getInitialProps(),
   }
 }
-export function renderNode(node: ComponentRenderNode) {
+export function renderNode(
+  node: ComponentRenderNode,
+  editType: 'prod' | 'edit' = 'prod'
+) {
   return React.createElement(getComponentNode(node.name).component, {
     node: node as ParentComponentRenderNode,
     parentNodes: [],
     key: node.id,
-    editType: 'prod',
+    editType,
   })
 }
 
-export function renderNodes(nodes: ComponentRenderNode[]) {
-  return nodes.map((node) => renderNode(node))
+export function renderNodes(
+  nodes: ComponentRenderNode[],
+  editType: 'prod' | 'edit' = 'prod'
+) {
+  return nodes.map((node) => renderNode(node, editType))
+}
+
+export function propItemName(name: string) {
+  return ['props', name]
+}
+
+export function styleItemName(name: string) {
+  return ['style', name]
 }
