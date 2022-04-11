@@ -13,6 +13,7 @@ import Layout from './layout/layout'
 import Screen from './layout/screen'
 import Page from './layout/page'
 import { safeJsonParser } from '@/utils'
+import Button from './basic/button'
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
@@ -58,9 +59,15 @@ export const componentsLibrary: ComponentsGroup[] = [
     group: '基础',
     components: [
       {
-        name: 'text',
-        title: '文本',
+        name: Text.nodeName,
+        title: Text.title,
         component: Text,
+        icon: <FileTextOutlined />,
+      },
+      {
+        name: Button.nodeName,
+        title: Button.title,
+        component: Button,
         icon: <FileTextOutlined />,
       },
     ],

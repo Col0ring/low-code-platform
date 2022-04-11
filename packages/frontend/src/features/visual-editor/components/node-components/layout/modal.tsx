@@ -4,12 +4,17 @@ import { NodeComponent } from '@/features/visual-editor/type'
 import { useEditorContext } from '@/features/visual-editor/provider'
 import { renderNodes } from '..'
 import { useMount } from '@/hooks'
+import { getId } from '@/utils'
 
-const Modal: NodeComponent = ({ editType, node }) => {
+export interface ModalProps {
+  title: string
+}
+
+const Modal: NodeComponent<ModalProps> = ({ editType, node }) => {
   const { children } = node
-  const [, { updateComponentNode }] = useEditorContext()
+  const [, { updateComponentNode }] = useEditorContext(false) || [{}, {}]
   useMount(() => {
-    if (editType === 'prod') {
+    if (editType === 'edit') {
       //
     }
   })
@@ -18,5 +23,12 @@ const Modal: NodeComponent = ({ editType, node }) => {
   }
   return <AntdModal visible={false}>11</AntdModal>
 }
+
+Modal.nodeName = 'modal'
+Modal.title = '弹框'
+Modal.getId = () => getId('modal')
+Modal.getInitialChildren = () => []
+Modal.getInitialStyle = () => ({})
+Modal.getInitialProps = () => ({ title: '' })
 
 export default Modal

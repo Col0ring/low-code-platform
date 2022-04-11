@@ -91,7 +91,7 @@ const initialState: () => EditorState = () => {
     ...createNewNode(Page.nodeName),
     children: [],
     js: '',
-    modal: [],
+    modals: [],
   }
   const immerPage = createDraft(page)
   return {

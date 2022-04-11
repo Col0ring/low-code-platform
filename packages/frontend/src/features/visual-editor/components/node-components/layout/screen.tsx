@@ -57,8 +57,7 @@ const Screen: NodeComponent<ScreenProps> = ({
   )
 }
 
-const ScreenPropsForm: typeof Screen['PropsForm'] = ({ node }) => {
-  const { props } = node
+const ScreenPropsForm: typeof Screen['PropsForm'] = () => {
   return (
     <Collapse defaultActiveKey={['props', 'actions']} bordered={false}>
       <Collapse.Panel header="属性设置" key="props">

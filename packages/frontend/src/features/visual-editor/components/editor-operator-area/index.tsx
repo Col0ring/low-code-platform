@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react'
-import { Breadcrumb, Form, Space, Tabs } from 'antd'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
+import { Breadcrumb, Form, FormInstance, Space, Tabs } from 'antd'
 import { useEditorContext } from '../../provider'
 import { getComponentNode } from '../node-components'
 import { ParentComponentRenderNode } from '../../type'
@@ -35,10 +35,10 @@ const EditorOperatorArea: React.FC = () => {
           title: '样式',
           content: <StyleTab node={actionNode as ParentComponentRenderNode} />,
         },
-        {
-          title: '高级',
-          content: actionNode ? '高级' : null,
-        },
+        // {
+        //   title: '高级',
+        //   content: actionNode ? '高级' : null,
+        // },
       ]
     }
     return [
@@ -48,13 +48,14 @@ const EditorOperatorArea: React.FC = () => {
           <StyleTab node={actionNode as ParentComponentRenderNode} />
         ) : null,
       },
-      {
-        title: '高级',
-        content: actionNode ? '高级' : null,
-      },
+      // {
+      //   title: '高级',
+      //   content: actionNode ? '高级' : null,
+      // },
     ]
   }, [actionNode, renderActionNode])
   const [form] = Form.useForm()
+  const formRef = useRef<FormInstance<any>>(null)
   const formValues = useMemo(
     () =>
       actionNode
@@ -72,15 +73,23 @@ const EditorOperatorArea: React.FC = () => {
 
   // 如果改变了 snapshotIndex，自动更新 prevActionNode
   useEffect(() => {
+    if (!formRef.current) {
+      return
+    }
     setPrevFormValues(formValues)
+    form.resetFields()
     form.setFieldsValue(formValues)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snapshotIndex])
 
   // 如果改变了 actionNode 节点，自动更新 prevActionNode
   useEffect(() => {
+    if (!formRef.current) {
+      return
+    }
     if (actionNode?.id !== prevActionNode?.id) {
       setPrevFormValues(formValues)
+      form.resetFields()
       form.setFieldsValue(formValues)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,6 +115,7 @@ const EditorOperatorArea: React.FC = () => {
     >
       {actionNode ? (
         <Form
+          ref={formRef}
           form={form}
           size="small"
           onValuesChange={(_changedValues, allValues) => {

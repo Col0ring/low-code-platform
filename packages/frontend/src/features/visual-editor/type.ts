@@ -20,7 +20,7 @@ export interface ComponentRenderNode<T extends object = any>
 export interface PageRenderNode extends ComponentRenderNode {
   children: ComponentRenderNode<ScreenProps>[]
   js: string
-  modal: string[]
+  modals: string[]
 }
 
 export interface ParentComponentRenderNode<T extends object = any>

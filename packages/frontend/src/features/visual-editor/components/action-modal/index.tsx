@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Form, Input, Modal, ModalProps, Select, Switch, Tabs } from 'antd'
 import './style.less'
 export interface ActionModalProps
@@ -7,13 +7,32 @@ export interface ActionModalProps
     HTMLDivElement
   > {
   modalProps?: ModalProps
+  onOk?: (values: {
+    actionType: string
+    actionEvent: string
+    value: Record<string, any>
+  }) => void
 }
 const ActionModal: React.FC<ActionModalProps> = ({
   modalProps,
   children,
   onClick,
+  onOk,
   ...props
 }) => {
+  const [actionType, setActionType] = useState('internal')
+  const [actionEvent, setActionEvent] = useState('internal')
+
+  const [form] = Form.useForm()
+
+  useEffect(() => {
+    if (actionType === 'internal') {
+      setActionEvent('openUrl')
+    } else {
+      setActionEvent('addAction')
+    }
+  }, [actionType])
+
   const [visible, setVisible] = useState(false)
   return (
     <>
@@ -27,25 +46,43 @@ const ActionModal: React.FC<ActionModalProps> = ({
         {children}
       </div>
       <Modal
+        destroyOnClose
         style={{ top: 50 }}
         bodyStyle={{ padding: 10, height: 500 }}
         width={930}
         onCancel={() => setVisible(false)}
+        onOk={() => {
+          const values = form.getFieldsValue()
+          onOk?.({
+            actionType,
+            actionEvent,
+            value: values[actionType][actionEvent],
+          })
+          setVisible(false)
+        }}
         okButtonProps={{ size: 'middle' }}
         cancelButtonProps={{ size: 'middle' }}
         visible={visible}
         closable
         {...modalProps}
       >
-        <Form size="middle">
+        <Form size="middle" form={form} preserve={false}>
           <Tabs
+            activeKey={actionType}
+            onChange={setActionType}
             className="action-modal-tabs"
             tabPosition="left"
             size="small"
             animated={false}
           >
             <Tabs.TabPane key="internal" tab="内置动作">
-              <Tabs tabPosition="left" size="small" animated={false}>
+              <Tabs
+                activeKey={actionEvent}
+                onChange={setActionEvent}
+                tabPosition="left"
+                size="small"
+                animated={false}
+              >
                 <Tabs.TabPane key="openUrl" tab="打开 URL">
                   <Form.Item
                     name={['internal', 'openUrl', 'url']}
@@ -63,6 +100,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
                   <Form.Item
                     name={['internal', 'openUrl', 'openInNewWindow']}
                     label="外部链接"
+                    valuePropName="checked"
                   >
                     <Switch />
                   </Form.Item>
@@ -86,8 +124,14 @@ const ActionModal: React.FC<ActionModalProps> = ({
               </Tabs>
             </Tabs.TabPane>
             <Tabs.TabPane key="js" tab="页面 JS">
-              <Tabs tabPosition="left" size="small" animated={false}>
-                <Tabs.TabPane key="add-action" tab="添加新动作">
+              <Tabs
+                activeKey={actionEvent}
+                onChange={setActionEvent}
+                tabPosition="left"
+                size="small"
+                animated={false}
+              >
+                <Tabs.TabPane key="addAction" tab="添加新动作">
                   添加新动作
                 </Tabs.TabPane>
               </Tabs>
