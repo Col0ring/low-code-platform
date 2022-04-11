@@ -63,6 +63,7 @@ const EditorOperatorArea: React.FC = () => {
             style: actionNode.style,
             props: actionNode.props,
             children: actionNode.children,
+            actions: actionNode.actions,
           }
         : null,
     [actionNode]

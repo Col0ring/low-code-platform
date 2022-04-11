@@ -426,13 +426,16 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
             }
             // if type is update
           } else if (options.type === 'update') {
-            const { node, props, style, children } = options
+            const { node, props, actions, style, children } = options
             const immerNode = immerComponentNodesMap[node.id]
             if (props) {
               immerNode.props = props
             }
             if (style) {
               immerNode.style = style
+            }
+            if (actions) {
+              immerNode.actions = actions
             }
             if (children && isParentComponentRenderNode(immerNode)) {
               immerNode.children = children

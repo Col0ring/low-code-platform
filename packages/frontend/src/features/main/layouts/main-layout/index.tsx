@@ -34,7 +34,7 @@ const MainLayout: React.FC = () => {
               <span className="text-gray-700 ml-2">Low-Code-Platform</span>
             </Link>
           </h1>
-          <div className="float-right">
+          <div className="float-right h-full">
             <UserActions />
           </div>
           <div className="menu-tabs-container">

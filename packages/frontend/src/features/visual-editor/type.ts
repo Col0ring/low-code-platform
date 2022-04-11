@@ -1,6 +1,14 @@
 import React from 'react'
 import { ScreenProps } from './components/node-components/layout/screen'
 
+export interface Action {
+  actionType: 'js' | 'internal'
+  actionEvent: string
+  value: Record<string, any>
+}
+
+export type Actions<T extends string = string> = Record<T, Action[]>
+
 export interface ComponentNode<T extends object = any> {
   component: NodeComponent<T>
   hideInMenu?: boolean
@@ -12,6 +20,7 @@ export interface ComponentNode<T extends object = any> {
 export interface ComponentRenderNode<T extends object = any>
   extends Pick<ComponentNode, 'title' | 'name'> {
   props: T
+  actions?: Actions
   style: React.CSSProperties
   children?: ComponentRenderNode[]
   id: string
@@ -69,6 +78,7 @@ export type UpdateComponentNodeOptions = {
       node: ComponentRenderNode
       style?: React.CSSProperties
       props?: object
+      actions?: Actions
       children?: ComponentRenderNode[]
     }
   | {

@@ -158,6 +158,11 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   const classes = useClassName(
     [
       'relative border-2 border -m-2px',
+      ['inline-block', 'inline', 'inline-flex'].includes(
+        node.style.display as string
+      )
+        ? 'inline-block'
+        : 'block',
       {
         'border-transparent': !isHovering && !isActionNode,
         'border-blue-400 border-dashed': isHovering && !isActionNode,

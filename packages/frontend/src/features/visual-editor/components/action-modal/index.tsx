@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Input, Modal, ModalProps, Select, Switch, Tabs } from 'antd'
 import './style.less'
+import { Action } from '../../type'
 export interface ActionModalProps
   extends React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   > {
   modalProps?: ModalProps
-  onOk?: (values: {
-    actionType: string
-    actionEvent: string
-    value: Record<string, any>
-  }) => void
+  onOk?: (values: Action) => void
 }
 const ActionModal: React.FC<ActionModalProps> = ({
   modalProps,
@@ -20,8 +17,8 @@ const ActionModal: React.FC<ActionModalProps> = ({
   onOk,
   ...props
 }) => {
-  const [actionType, setActionType] = useState('internal')
-  const [actionEvent, setActionEvent] = useState('internal')
+  const [actionType, setActionType] = useState<'internal' | 'js'>('internal')
+  const [actionEvent, setActionEvent] = useState('openUrl')
 
   const [form] = Form.useForm()
 
@@ -69,7 +66,9 @@ const ActionModal: React.FC<ActionModalProps> = ({
         <Form size="middle" form={form} preserve={false}>
           <Tabs
             activeKey={actionType}
-            onChange={setActionType}
+            onChange={(activeKey) =>
+              setActionType(activeKey as 'internal' | 'js')
+            }
             className="action-modal-tabs"
             tabPosition="left"
             size="small"

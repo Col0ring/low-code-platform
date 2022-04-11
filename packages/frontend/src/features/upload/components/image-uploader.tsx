@@ -1,9 +1,8 @@
-// import React from 'react'
+// import React, { useEffect } from 'react'
 // import { Upload, Image } from 'antd'
 // import { UploadProps } from 'antd/es/upload'
 // import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
 // import { reqUploadFile } from '@/services/common'
-// import { useEffect } from 'react'
 
 // export interface ImageUploadProps extends Omit<UploadProps, 'onChange'> {
 //   value?: string
@@ -77,4 +76,5 @@
 // }
 
 // export default ImageUploader
+
 export default 1

@@ -1,6 +1,7 @@
 import React from 'react'
 import { FileTextOutlined, ContainerOutlined } from '@ant-design/icons'
 import {
+  Actions,
   ComponentNode,
   ComponentRenderNode,
   ComponentsGroup,
@@ -14,6 +15,7 @@ import Screen from './layout/screen'
 import Page from './layout/page'
 import { safeJsonParser } from '@/utils'
 import Button from './basic/button'
+import { EditorPreviewContextValue } from '../editor-preview/provider'
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
@@ -132,7 +134,7 @@ export function copyNode(node: ComponentRenderNode): ComponentRenderNode {
     name: node.name,
     style: node.style,
     id: component.getId(),
-    props: component.getInitialProps(),
+    props: safeJsonParser(JSON.stringify(node.props), node.props),
   }
 }
 export function renderNode(
@@ -152,6 +154,22 @@ export function renderNodes(
   editType: 'prod' | 'edit' = 'prod'
 ) {
   return nodes.map((node) => renderNode(node, editType))
+}
+
+export function parserActions(
+  actions: Actions,
+  contextActionsHandler: EditorPreviewContextValue['actions']
+) {
+  return Object.keys(actions).reduce((prev, next) => {
+    prev[next] = () => {
+      actions[next].forEach(({ actionType, actionEvent, value }) => {
+        ;(contextActionsHandler[actionType] as Record<string, any>)[
+          actionEvent
+        ](value)
+      })
+    }
+    return prev
+  }, {} as Record<string, () => void>)
 }
 
 export function propItemName(name: string) {

@@ -73,13 +73,13 @@ const UserActions: React.FC = () => {
   })
   return (
     <div className="user-actions">
-      <div className="action-tools">
+      {/* <div className="action-tools">
         <Space size="middle">
           <Badge dot>
             <BellOutlined />
           </Badge>
         </Space>
-      </div>
+      </div> */}
       <Dropdown
         visible={visible}
         arrow

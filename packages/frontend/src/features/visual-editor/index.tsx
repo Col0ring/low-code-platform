@@ -46,7 +46,7 @@ const VisualEditor: React.FC<VisualEditorProps> = (props) => {
           ...createNewNode(page.name),
           js: '',
           children: [newScreen],
-          modal: [],
+          modals: [],
         }
         setCurrentScreen(data?.children[0] || newScreen)
         updateComponentNode({
@@ -56,7 +56,7 @@ const VisualEditor: React.FC<VisualEditorProps> = (props) => {
         setIsInit(true)
       },
     }),
-    [isInit, setCurrentScreen, updateComponentNode]
+    [isInit, page.name, setCurrentScreen, updateComponentNode]
   )
 
   const memoEditorValue = useMemo(() => ({ onSave }), [onSave])
