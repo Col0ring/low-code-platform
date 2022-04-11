@@ -158,8 +158,12 @@ export function renderNodes(
 
 export function parserActions(
   actions: Actions,
-  contextActionsHandler: EditorPreviewContextValue['actions']
+  contextActionsHandler: EditorPreviewContextValue['actions'],
+  editType: 'prod' | 'edit' = 'prod'
 ) {
+  if (editType === 'edit') {
+    return {}
+  }
   return Object.keys(actions).reduce((prev, next) => {
     prev[next] = () => {
       actions[next].forEach(({ actionType, actionEvent, value }) => {

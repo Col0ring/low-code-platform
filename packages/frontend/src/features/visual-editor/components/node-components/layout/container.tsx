@@ -11,7 +11,7 @@ const Container: NodeComponent = ({
   disabled,
   editType,
 }) => {
-  const { children } = node
+  const { children, style } = node
 
   const childParentNodes = useMemo(
     () => [...parentNodes, node],
@@ -21,7 +21,7 @@ const Container: NodeComponent = ({
     return <>{renderNodes(children)}</>
   }
   return (
-    <div>
+    <div style={style}>
       {children.length === 0 ? (
         <BlankContent disabled={disabled} node={node} />
       ) : (

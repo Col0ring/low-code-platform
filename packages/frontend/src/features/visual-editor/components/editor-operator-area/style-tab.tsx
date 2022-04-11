@@ -34,6 +34,9 @@ const StyleTab: React.FC<StyleTabProps> = () => {
         <Form.Item name={styleItemName('margin')} label="外边距">
           <Input />
         </Form.Item>
+        <Form.Item name={styleItemName('padding')} label="内边距">
+          <Input />
+        </Form.Item>
       </Collapse.Panel>
     </Collapse>
   )

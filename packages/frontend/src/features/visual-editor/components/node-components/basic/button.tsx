@@ -21,13 +21,13 @@ export interface ButtonProps {
   actions?: Actions<'onClick'>
 }
 
-const Button: NodeComponent<ButtonProps> = ({ node }) => {
+const Button: NodeComponent<ButtonProps> = ({ node, editType }) => {
   const { props, actions: actionsProp, style } = node
   const { content, ...antdProps } = props
   const { actions } = useEditorPreviewContext()
   const events = useMemo(
-    () => parserActions(actionsProp || {}, actions),
-    [actions, actionsProp]
+    () => parserActions(actionsProp || {}, actions, editType),
+    [actions, actionsProp, editType]
   )
   return (
     <AntdButton style={style} {...antdProps} {...events}>

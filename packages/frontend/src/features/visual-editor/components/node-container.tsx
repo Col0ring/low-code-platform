@@ -158,11 +158,11 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   const classes = useClassName(
     [
       'relative border-2 border -m-2px',
-      ['inline-block', 'inline', 'inline-flex'].includes(
-        node.style.display as string
-      )
-        ? 'inline-block'
-        : 'block',
+      // ['inline-block', 'inline', 'inline-flex'].includes(
+      //   node.style.display as string
+      // )
+      //   ? 'inline-block'
+      //   : 'block',
       {
         'border-transparent': !isHovering && !isActionNode,
         'border-blue-400 border-dashed': isHovering && !isActionNode,
@@ -216,6 +216,10 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   )
   return (
     <div
+      style={{
+        display:
+          node.style.display === 'inline' ? 'inline-block' : node.style.display,
+      }}
       className={classes}
       onMouseOver={(e) => {
         e.stopPropagation()
@@ -315,6 +319,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
         </div>
       )}
       <Draggable
+        className="absolute left-0 top-0 w-full h-full z-1"
         draggable={hasAction && !isParentNodeAction}
         onDragStart={(_, e) => {
           e.dataTransfer.effectAllowed = 'move'
@@ -346,14 +351,13 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
             finishDragging()
           })
         }}
-      >
-        {React.createElement(getComponentNode(node.name).component, {
-          node: node as ParentComponentRenderNode,
-          disabled,
-          parentNodes: parentNodes,
-          editType: 'edit',
-        })}
-      </Draggable>
+      />
+      {React.createElement(getComponentNode(node.name).component, {
+        node: node as ParentComponentRenderNode,
+        disabled,
+        parentNodes: parentNodes,
+        editType: 'edit',
+      })}
     </div>
   )
 }
