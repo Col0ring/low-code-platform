@@ -21,6 +21,7 @@ import { AppsService } from './apps.service'
 import { AppStatus, SearchAppStatus } from './constants'
 import { AppCreateDto } from './dto/create.dto'
 import { AppSearchDto } from './dto/search.dto'
+import { AppCreateByTemplateDto } from './dto/templateCreate.dto'
 import { AppUpdateDto } from './dto/update.dto'
 
 @Controller('apps')
@@ -76,6 +77,14 @@ export class AppsController {
   @Post('create')
   create(@Body() appCreateDto: AppCreateDto, @User() user: JwtUser) {
     return this.appsService.create(user.id, appCreateDto)
+  }
+
+  @Post('createByTemplate')
+  createByTemplate(
+    @Body() appCreateByTemplateDto: AppCreateByTemplateDto,
+    @User() user: JwtUser
+  ) {
+    return this.appsService.createByTemplate(user.id, appCreateByTemplateDto)
   }
 
   @Put('update/:appId')

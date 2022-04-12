@@ -8,9 +8,11 @@ import { webpack } from 'webpack'
 import { AppEntity } from './app.entity'
 import { AppCreateDto } from './dto/create.dto'
 import { getWebpackConfig, WebpackConfigOptions } from './webpack.config'
-import { SearchAppStatus } from './constants'
+import { SearchAppStatus, TemplateStatus } from './constants'
 import { AppSearchDto } from './dto/search.dto'
 import { AppUpdateDto } from './dto/update.dto'
+import { PageEntity } from '../pages/page.entity'
+import { AppCreateByTemplateDto } from './dto/templateCreate.dto'
 
 const memFs = new MemoryFS()
 
@@ -22,7 +24,6 @@ function getZip(options: WebpackConfigOptions) {
   return new Promise<Buffer>((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err || (stats && stats.hasErrors())) {
-        console.log(stats.toString())
         reject({
           err,
           stats,
@@ -47,6 +48,8 @@ export class AppsService {
   constructor(
     @InjectRepository(AppEntity)
     private readonly appsRepository: Repository<AppEntity>,
+    @InjectRepository(PageEntity)
+    private readonly pagesRepository: Repository<PageEntity>,
     private readonly userService: UsersService
   ) {}
   buildApp(options: WebpackConfigOptions) {
@@ -66,6 +69,7 @@ export class AppsService {
         status: searchStatus === SearchAppStatus.All ? undefined : searchStatus,
         name: ILike(`%${search}%`),
         user: { id: userId },
+        isTemplate: TemplateStatus.No,
       },
       order: {
         [searchOrder === 'create' ? 'created_at' : 'updated_at']: 'DESC',
@@ -77,6 +81,27 @@ export class AppsService {
     const user = await this.userService.findOneById(userId)
     app.user = user
     return this.appsRepository.save(app)
+  }
+
+  async createByTemplate(
+    userId: number,
+    { templateAppId, ...appCreateDto }: AppCreateByTemplateDto
+  ) {
+    const { pages } = await this.one(templateAppId)
+    const app = this.appsRepository.create(appCreateDto)
+    const user = await this.userService.findOneById(userId)
+    app.user = user
+    const newApp = await this.appsRepository.save(app)
+    await this.pagesRepository.save(
+      this.pagesRepository.create(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        pages.map(({ id, ...pageProp }) => ({
+          ...pageProp,
+          app: newApp,
+        }))
+      )
+    )
+    return newApp
   }
   async update(appId: number, appUpdateDto: AppUpdateDto) {
     return this.appsRepository.update(appId, appUpdateDto)

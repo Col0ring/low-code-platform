@@ -13,6 +13,7 @@ import { AllExceptionsFilter } from './filters/all-exception.filter'
 import { ValidationPipe } from './pipes/validation.pipe'
 import { AppsModule } from './apps/apps.module'
 import { PagesModule } from './pages/pages.module'
+import { TemplatesModule } from './templates/templates.module'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PagesModule } from './pages/pages.module'
     UsersModule,
     PagesModule,
     AppsModule,
+    TemplatesModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: __DEV__ ? '.dev.env' : '.prod.env',

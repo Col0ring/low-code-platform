@@ -58,6 +58,9 @@ export const authSlice = createSlice({
     [logout.type]() {
       removeTokenStorage()
       removeRefreshTokenStorage()
+      setTimeout(() => {
+        window.location.reload()
+      }, 200)
       return initialState()
     },
   },

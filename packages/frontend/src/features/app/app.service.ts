@@ -65,6 +65,19 @@ export const appApi = createServiceApi({
       }),
       invalidatesTags: (result) => (result ? [{ type: 'App', id: LIST }] : []),
     }),
+    createAppByTemplate: builder.mutation<
+      void,
+      StrictOmit<App, 'id'> & {
+        templateAppId: number
+      }
+    >({
+      query: (values) => ({
+        method: 'post',
+        url: '/apps/createByTemplate',
+        body: values,
+      }),
+      invalidatesTags: (result) => (result ? [{ type: 'App', id: LIST }] : []),
+    }),
     updateApp: builder.mutation<void, { id: number } & Partial<App>>({
       query: ({ id, ...data }) => ({
         method: 'put',
@@ -172,4 +185,5 @@ export const {
   useDeletePageMutation,
   useUpdatePageMutation,
   useGetAppViewQuery,
+  useCreateAppByTemplateMutation,
 } = appApi

@@ -1,7 +1,10 @@
+import ModalButton from '@/components/modal-button'
 import { AppStatus } from '@/features/main/constants'
+import { useCreateTemplateMutation } from '@/features/main/main.service'
 import { App } from '@/features/main/type'
 import useCopyToClipboard from '@/hooks/useCopyToClipboard'
 import { isResolved, mergeBaseUrl } from '@/utils'
+import { emptyValidator } from '@/utils/validators'
 import {
   CheckCircleFilled,
   CheckCircleOutlined,
@@ -10,7 +13,7 @@ import {
   CopyOutlined,
   EyeOutlined,
 } from '@ant-design/icons'
-import { Button, Input, message, Space, Tooltip } from 'antd'
+import { Button, Form, Input, message, Space, Tooltip } from 'antd'
 import React, { useMemo, useEffect } from 'react'
 import { useOutletContext } from 'react-router'
 import { useLazyBuildAppQuery, useUpdateAppMutation } from '../../app.service'
@@ -31,7 +34,9 @@ const AppPublishPage: React.FC = () => {
   const app = useOutletContext<App>()
   const [reqUpdateApp, { isLoading }] = useUpdateAppMutation()
   const [reqBuildApp, { isFetching }] = useLazyBuildAppQuery()
+  const [reqCreateTemplate] = useCreateTemplateMutation()
   const [state, copyToClipboard] = useCopyToClipboard()
+  const [createTemplateForm] = Form.useForm()
   const visitUrl = useMemo(
     () => mergeBaseUrl(`/views/apps/${app.id}`),
     [app.id]
@@ -118,6 +123,50 @@ const AppPublishPage: React.FC = () => {
             >
               {isFetching ? '应用打包中' : '打包应用'}
             </Button>
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded-md mt-4">
+          <h3 className="font-bold text-base">发布为模板</h3>
+          <div className="mt-4">
+            <ModalButton
+              modal={
+                <Form
+                  layout="vertical"
+                  form={createTemplateForm}
+                  preserve={false}
+                >
+                  <Form.Item
+                    label="模板名称"
+                    name="name"
+                    rules={[emptyValidator('模板名称')]}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item label="模板图标" name="icon">
+                    <Input />
+                  </Form.Item>
+                  <Form.Item label="模板描述" name="desc">
+                    <Input.TextArea />
+                  </Form.Item>
+                </Form>
+              }
+              modalTitle="创建模板"
+              onModalOK={async () => {
+                const values = await createTemplateForm.validateFields()
+                const res = await reqCreateTemplate({
+                  ...values,
+                  appId: app.id,
+                })
+                if (isResolved(res)) {
+                  void message.success('发布成功')
+                  return
+                }
+                return Promise.reject()
+              }}
+              type="primary"
+            >
+              发布
+            </ModalButton>
           </div>
         </div>
         <div className="bg-white p-4 rounded-md mt-4">

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { AppsService } from 'src/apps/apps.service'
+import { AppsService } from '../apps/apps.service'
 import { Repository } from 'typeorm'
 import { PageCreateDto } from './dto/create.dto'
 import { PageUpdateDto } from './dto/update.dto'
@@ -21,6 +21,7 @@ export class PagesService {
     })
     const app = await this.appsService.one(pageCreateDto.appId)
     page.app = app
+    this.pagesRepository.create()
     return this.pagesRepository.save(page)
   }
   async delete(appId: number, pageId: number) {

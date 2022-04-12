@@ -214,7 +214,12 @@ const AppCenterPage: React.FC = () => {
                                       title: '删除应用',
                                       content: `确定删除应用${app.name}吗？`,
                                       onOk: async () => {
-                                        await reqDeleteApp(app.id)
+                                        const res = await reqDeleteApp(app.id)
+                                        if (isResolved(res)) {
+                                          void message.success('删除成功')
+                                          return
+                                        }
+                                        return Promise.reject()
                                       },
                                     })
                                   }}

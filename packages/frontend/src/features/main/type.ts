@@ -9,3 +9,11 @@ export interface App {
   status: AppStatus
   pages: Page[]
 }
+
+export interface Template {
+  id: number
+  name: string
+  icon: string
+  desc: string
+  app: App
+}

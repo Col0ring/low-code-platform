@@ -50,4 +50,11 @@ export class AppEntity {
 
   @UpdateDateColumn()
   updated_at: Date
+
+  // 1 是，0 否
+  @Column({
+    type: 'int',
+    default: 0,
+  })
+  isTemplate: number
 }

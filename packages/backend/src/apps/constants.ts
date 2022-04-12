@@ -8,3 +8,7 @@ export enum AppStatus {
   Active = 1,
   Inactive = 0,
 }
+export enum TemplateStatus {
+  No = 0,
+  Yes = 1,
+}
