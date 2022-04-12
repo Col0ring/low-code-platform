@@ -22,7 +22,11 @@ import { App } from '@/features/main/type'
 import { Page } from '../../type'
 import ModalButton from '@/components/modal-button'
 import { emptyValidator } from '@/utils/validators'
-import { useCreatePageMutation, useDeletePageMutation } from '../../app.service'
+import {
+  useCreatePageMutation,
+  useDeletePageMutation,
+  useUpdatePageMutation,
+} from '../../app.service'
 import { isResolved, stopPropagation } from '@/utils'
 import { ArrayItem } from 'types-kit'
 
@@ -37,9 +41,12 @@ const PageHoverItem: React.FC<PageHoverItemProps> = ({
   appId,
   menu,
 }) => {
+  const page = menu.page as Page
   const [visible, setVisible] = useState(false)
   const navigate = useNavigate()
   const [reqDeletePage] = useDeletePageMutation()
+  const [reqUpdatePage] = useUpdatePageMutation()
+  const [updatePageForm] = Form.useForm()
   return (
     <div
       onClick={stopPropagation}
@@ -60,7 +67,50 @@ const PageHoverItem: React.FC<PageHoverItemProps> = ({
         <Dropdown
           overlay={
             <Menu>
-              <Menu.Item key="change">修改名称</Menu.Item>
+              <Menu.Item key="change">
+                <ModalButton
+                  modalTitle={menu.title}
+                  modal={
+                    <Form
+                      form={updatePageForm}
+                      preserve={false}
+                      initialValues={{
+                        name: page.name,
+                        path: page.path,
+                      }}
+                    >
+                      <Form.Item
+                        label="页面名称"
+                        name="name"
+                        rules={[emptyValidator('页面名称')]}
+                      >
+                        <Input />
+                      </Form.Item>
+                      <Form.Item
+                        label="页面路径"
+                        name="path"
+                        rules={[emptyValidator('页面路径')]}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Form>
+                  }
+                  onModalOK={async () => {
+                    const values = await updatePageForm.validateFields()
+                    const res = await reqUpdatePage({
+                      data: values,
+                      pageId,
+                      appId: +appId,
+                    })
+                    if (isResolved(res)) {
+                      void message.success('修改成功')
+                      return
+                    }
+                    return Promise.reject()
+                  }}
+                  renderButton={(props) => <span {...props}>修改</span>}
+                />
+              </Menu.Item>
               <Menu.Item key="copy">复制</Menu.Item>
               <Menu.Divider />
               <Menu.Item
@@ -108,6 +158,7 @@ const AppPageLayout: React.FC = () => {
       pages.map((page) => ({
         id: page.id,
         icon: <ContainerOutlined className="text-yellow-500" />,
+        page,
         title: page.name,
         path: Path.AppPageDetail(appId, `${page.id}`),
         key: Path.AppPageDetail(appId, `${page.id}`),
@@ -194,7 +245,7 @@ const AppPageLayout: React.FC = () => {
       menus={pageMenus}
       render={(_, menu) => {
         return (
-          <PageHoverItem pageId={menu.id} appId={+appId} menu={menu}>
+          <PageHoverItem pageId={+menu.id} appId={+appId} menu={menu}>
             <Space>
               {menu.icon}
               {menu.title}

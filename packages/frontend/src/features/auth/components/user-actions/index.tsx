@@ -32,18 +32,18 @@ const UserActionsDropdown: React.FC = () => {
 
   return (
     <Menu selectable={false}>
+      <Menu.Item
+        key={Path.Dashboard}
+        icon={<HomeOutlined />}
+        onClick={() => {
+          navigate(Path.Dashboard)
+        }}
+      >
+        回到首页
+      </Menu.Item>
       {isAdmin && (
         <>
-          <Menu.Item
-            key={Path.Dashboard}
-            icon={<HomeOutlined />}
-            onClick={() => {
-              navigate(Path.Dashboard)
-            }}
-          >
-            回到首页
-          </Menu.Item>
-          <Menu.Item
+          {/* <Menu.Item
             key={Path.Admin}
             icon={<DashboardOutlined />}
             onClick={() => {
@@ -51,7 +51,7 @@ const UserActionsDropdown: React.FC = () => {
             }}
           >
             管理平台
-          </Menu.Item>
+          </Menu.Item> */}
         </>
       )}
       <Menu.Item

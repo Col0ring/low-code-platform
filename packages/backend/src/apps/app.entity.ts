@@ -36,12 +36,12 @@ export class AppEntity {
   })
   status: number
 
-  @OneToMany(() => PageEntity, (page) => page.app, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => PageEntity, (page) => page.app)
   pages: PageEntity[]
 
-  @ManyToOne(() => UserEntity, (user) => user.apps)
+  @ManyToOne(() => UserEntity, (user) => user.apps, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: UserEntity
 

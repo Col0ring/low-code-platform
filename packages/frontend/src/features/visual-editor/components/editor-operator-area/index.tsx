@@ -116,6 +116,7 @@ const EditorOperatorArea: React.FC = () => {
     >
       {actionNode ? (
         <Form
+          className="h-full flex flex-col"
           ref={formRef}
           form={form}
           size="small"

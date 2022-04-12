@@ -1,11 +1,13 @@
 import React, { useMemo, useEffect } from 'react'
-import { Row, Col } from 'antd'
+import { Row, Col, Collapse, Form } from 'antd'
 import { getId } from '@/utils'
 import { NodeComponent } from '../../../type'
-import { createNewNode, renderNode } from '..'
+import { createNewNode, parserActions, renderNode } from '..'
 import NodeContainer from '../../node-container'
 import { useEditorContext } from '@/features/visual-editor/provider'
 import Layout from './layout'
+import { useEditorPreviewContext } from '../../editor-preview/provider'
+import AddAction from '../../add-action/inidex'
 
 const layoutName = Layout.nodeName
 
@@ -30,7 +32,14 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
   const {
     children,
     props: { spans },
+    actions: actionsProp,
+    style,
   } = node
+  const { actions } = useEditorPreviewContext()
+  const events = useMemo(
+    () => parserActions(actionsProp || {}, actions, editType),
+    [actions, actionsProp, editType]
+  )
   const [, { updateComponentNode }] = useEditorContext(false) || [{}, {}]
   const childParentNodes = useMemo(
     () => [...parentNodes, node],
@@ -67,7 +76,7 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
     editType,
   ])
   return (
-    <Row>
+    <Row {...events} style={style}>
       {ColSpanArr &&
         ColSpanArr.map((span, index) => {
           const child = children[index]
@@ -91,6 +100,18 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
     </Row>
   )
 }
+const LayoutContainerPropsForm: typeof LayoutContainer['PropsForm'] = () => {
+  return (
+    <Collapse defaultActiveKey={['actions']} bordered={false}>
+      <Collapse.Panel header="动作设置" key="actions">
+        <Form.Item name="actions">
+          <AddAction menus={[{ event: 'onClick', title: '点击按钮' }]} />
+        </Form.Item>
+      </Collapse.Panel>
+    </Collapse>
+  )
+}
+LayoutContainer.PropsForm = LayoutContainerPropsForm
 LayoutContainer.nodeName = 'layout-container'
 LayoutContainer.title = '布局容器'
 LayoutContainer.childActionDisabled = true

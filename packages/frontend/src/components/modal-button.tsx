@@ -11,6 +11,7 @@ export interface ModalButtonProps extends ButtonProps {
   modalCancelButtonProps?: ButtonProps
   afterModalClose?: () => void
   modalProps?: ModalProps
+  renderButton?: (props: ButtonProps) => React.ReactNode
 }
 
 const ModalButton: React.FC<ModalButtonProps> = ({
@@ -23,19 +24,30 @@ const ModalButton: React.FC<ModalButtonProps> = ({
   modalCancelButtonProps,
   onModalOK,
   modalProps,
+  renderButton,
   ...buttonProps
 }) => {
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   return (
     <>
-      <Button
-        {...buttonProps}
-        onClick={(e) => {
-          setVisible(true)
-          buttonProps.onClick?.(e)
-        }}
-      />
+      {renderButton ? (
+        renderButton({
+          ...buttonProps,
+          onClick: (e) => {
+            setVisible(true)
+            buttonProps.onClick?.(e)
+          },
+        })
+      ) : (
+        <Button
+          {...buttonProps}
+          onClick={(e) => {
+            setVisible(true)
+            buttonProps.onClick?.(e)
+          }}
+        />
+      )}
       <Modal
         {...modalProps}
         destroyOnClose

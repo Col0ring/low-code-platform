@@ -18,7 +18,7 @@ import { DownOutlined } from '@ant-design/icons'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Path } from '@/router/constants'
-import { isResolved, stopPropagation } from '@/utils'
+import { isResolved, mergeBaseUrl, stopPropagation } from '@/utils'
 import DefaultAppIcon from '../../components/default-app-icon'
 import ModalButton from '@/components/modal-button'
 import { emptyValidator } from '@/utils/validators'
@@ -53,6 +53,7 @@ const AppCenterPage: React.FC = () => {
   const [pageSize, setPageSize] = useState(12)
   const [reqCreateApp] = useCreateAppMutation()
   const [reqDeleteApp] = useDeleteAppMutation()
+
   const { data: { data, count } = { data: [], count: 0 }, isFetching } =
     useGetAppListQuery({
       page,
@@ -189,8 +190,23 @@ const AppCenterPage: React.FC = () => {
                             trigger={['click', 'hover']}
                             overlay={
                               <Menu>
-                                <Menu.Item>应用设置</Menu.Item>
-                                <Menu.Item>访问应用</Menu.Item>
+                                <Menu.Item
+                                  onClick={() =>
+                                    navigate(Path.AppBasicSetting(app.id))
+                                  }
+                                >
+                                  应用设置
+                                </Menu.Item>
+                                <Menu.Item
+                                  onClick={() =>
+                                    window.open(
+                                      mergeBaseUrl(`/views/apps/${app.id}`),
+                                      '_blank'
+                                    )
+                                  }
+                                >
+                                  访问应用
+                                </Menu.Item>
                                 <Menu.Item>复制应用</Menu.Item>
                                 <Menu.Item
                                   onClick={() => {

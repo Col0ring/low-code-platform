@@ -31,11 +31,39 @@ const StyleTab: React.FC<StyleTabProps> = () => {
         <Form.Item name={styleItemName('minHeight')} label="最小高度">
           <Input />
         </Form.Item>
+
         <Form.Item name={styleItemName('margin')} label="外边距">
           <Input />
         </Form.Item>
         <Form.Item name={styleItemName('padding')} label="内边距">
           <Input />
+        </Form.Item>
+        <Form.Item name={styleItemName('border')} label="边框">
+          <Input />
+        </Form.Item>
+        <Form.Item name={styleItemName('fontSize')} label="文本尺寸">
+          <Input />
+        </Form.Item>
+        <Form.Item name={styleItemName('fontWeight')} label="字体粗细">
+          <Input />
+        </Form.Item>
+        <Form.Item name={styleItemName('lineHeight')} label="字体行高">
+          <Input />
+        </Form.Item>
+        <Form.Item name={styleItemName('background')} label="背景">
+          <Input />
+        </Form.Item>
+        <Form.Item name={styleItemName('shadow')} label="阴影">
+          <Input />
+        </Form.Item>
+        <Form.Item name={styleItemName('opacity')} label="不透明度">
+          <Input />
+        </Form.Item>
+        <Form.Item name={styleItemName('cursor')} label="鼠标手势">
+          <Select>
+            <Select.Option value="default">default</Select.Option>
+            <Select.Option value="pointer">pointer</Select.Option>
+          </Select>
         </Form.Item>
       </Collapse.Panel>
     </Collapse>

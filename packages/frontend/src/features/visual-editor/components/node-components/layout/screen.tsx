@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react'
-import { Input, Form, Collapse, Button, Dropdown, Menu } from 'antd'
+import { Input, Form, Collapse } from 'antd'
 import BlankContent from '../../blank-content'
 import { NodeComponent } from '../../../type'
 import { getId } from '@/utils'
 import NodeContainer from '../../node-container'
-import { propItemName, renderNodes } from '..'
-import ActionModal from '../../action-modal'
+import { parserActions, propItemName, renderNodes } from '..'
+import AddAction from '../../add-action/inidex'
+import { useEditorPreviewContext } from '../../editor-preview/provider'
 
 export interface ScreenProps {
   title: string
@@ -19,8 +20,12 @@ const Screen: NodeComponent<ScreenProps> = ({
   disabled,
   editType,
 }) => {
-  const { children, style } = node
-
+  const { children, actions: actionsProp, style } = node
+  const { actions } = useEditorPreviewContext()
+  const events = useMemo(
+    () => parserActions(actionsProp || {}, actions, editType),
+    [actions, actionsProp, editType]
+  )
   const childParentNodes = useMemo(
     () => [...parentNodes, node],
     [parentNodes, node]
@@ -29,7 +34,7 @@ const Screen: NodeComponent<ScreenProps> = ({
     return <>{renderNodes(children)}</>
   }
   return (
-    <div style={style}>
+    <div className="node-screen" style={style} {...events}>
       {children.length === 0 ? (
         <div
           className="flex flex-col"
@@ -72,22 +77,9 @@ const ScreenPropsForm: typeof Screen['PropsForm'] = () => {
         </Form.Item>
       </Collapse.Panel>
       <Collapse.Panel header="动作设置" key="actions">
-        <Dropdown
-          placement="bottom"
-          overlay={
-            <Menu>
-              <Menu.Item key="click">
-                <ActionModal modalProps={{ title: '当点击时' }}>
-                  当点击时
-                </ActionModal>
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <Button className="mt-3" type="primary" size="middle" block>
-            新建动作
-          </Button>
-        </Dropdown>
+        <Form.Item name="actions">
+          <AddAction menus={[{ event: 'onClick', title: '点击按钮' }]} />
+        </Form.Item>
       </Collapse.Panel>
     </Collapse>
   )
@@ -104,10 +96,8 @@ Screen.getInitialProps = () => ({
 Screen.getInitialChildren = () => []
 
 Screen.getInitialStyle = () => ({
-  width: 375,
-  height: 'auto',
-  minWidth: 0,
-  minHeight: 750,
+  minWidth: 375,
+  minHeight: 650,
 })
 
 export default Screen

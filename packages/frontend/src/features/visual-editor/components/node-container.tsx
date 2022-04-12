@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Dropdown, Space, Tooltip } from 'antd'
 import { SaveOutlined, DeleteOutlined, CopyOutlined } from '@ant-design/icons'
 import {
@@ -19,6 +19,7 @@ export interface NodeContainerProps
   extends StrictOmit<NodeComponentProps, 'node'> {
   index: number
   node: ComponentRenderNode
+  hasAction?: boolean
 }
 
 interface NodePathItemProps {
@@ -115,8 +116,8 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   disabled: disabledProp,
   parentNodes,
   index,
+  hasAction: hasActionProp = true,
 }) => {
-  const ref = useRef<HTMLDivElement>(null)
   const [
     { actionNode, hoveringNode, isDragging, moveNode, moveParentNode },
     {
@@ -146,9 +147,10 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   )
   const hasAction = useMemo(
     () =>
+      hasActionProp &&
       parentNode &&
       !getComponentNode(parentNode.name).component.childActionDisabled,
-    [parentNode]
+    [hasActionProp, parentNode]
   )
   const disabled = useMemo(
     () => disabledProp || node === moveNode,
@@ -214,12 +216,53 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
       index,
     ]
   )
+
+  const wrapperStyle = useMemo(() => {
+    const display = ['inline', 'inline-flex', 'inline-block'].includes(
+      node.style.display as string
+    )
+      ? 'inline-block'
+      : 'block'
+    return {
+      width: display === 'block' ? undefined : node.style.width,
+      height: node.style.height,
+      display,
+    }
+  }, [node.style.display, node.style.height, node.style.width])
   return (
-    <div
-      style={{
-        display:
-          node.style.display === 'inline' ? 'inline-block' : node.style.display,
+    <Draggable
+      draggable={hasAction && !isParentNodeAction}
+      onDragStart={(_, e) => {
+        e.dataTransfer.effectAllowed = 'move'
+        dragImage.innerHTML = node.title || node.name
+        document
+          .getElementById('editor-drag-image-container')
+          ?.appendChild(dragImage)
+        e.dataTransfer.setDragImage(dragImage, 10, 10)
+        e.stopPropagation()
+        e.dataTransfer.setData(
+          DraggingData.ComponentNode,
+          JSON.stringify({
+            type: 'move',
+            index,
+          })
+        )
+        startDragging({
+          moveNode: node,
+          moveParentNode: parentNode,
+        })
       }}
+      onDragEnd={(_, e) => {
+        document
+          .getElementById('editor-drag-image-container')
+          ?.removeChild(dragImage)
+        e.stopPropagation()
+        // mouseover 延迟问题
+        requestAnimationFrame(() => {
+          finishDragging()
+        })
+      }}
+      style={wrapperStyle}
       className={classes}
       onMouseOver={(e) => {
         e.stopPropagation()
@@ -237,7 +280,6 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
           })
         }
       }}
-      ref={ref}
       onClick={(e) => {
         e.stopPropagation()
         setActionNode(node)
@@ -318,47 +360,14 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
           )}
         </div>
       )}
-      <Draggable
-        className="absolute left-0 top-0 w-full h-full z-1"
-        draggable={hasAction && !isParentNodeAction}
-        onDragStart={(_, e) => {
-          e.dataTransfer.effectAllowed = 'move'
-          dragImage.innerHTML = node.title || node.name
-          document
-            .getElementById('editor-drag-image-container')
-            ?.appendChild(dragImage)
-          e.dataTransfer.setDragImage(dragImage, 10, 10)
-          e.stopPropagation()
-          e.dataTransfer.setData(
-            DraggingData.ComponentNode,
-            JSON.stringify({
-              type: 'move',
-              index,
-            })
-          )
-          startDragging({
-            moveNode: node,
-            moveParentNode: parentNode,
-          })
-        }}
-        onDragEnd={(_, e) => {
-          document
-            .getElementById('editor-drag-image-container')
-            ?.removeChild(dragImage)
-          e.stopPropagation()
-          // mouseover 延迟问题
-          requestAnimationFrame(() => {
-            finishDragging()
-          })
-        }}
-      />
+
       {React.createElement(getComponentNode(node.name).component, {
         node: node as ParentComponentRenderNode,
         disabled,
         parentNodes: parentNodes,
         editType: 'edit',
       })}
-    </div>
+    </Draggable>
   )
 }
 

@@ -3,7 +3,10 @@ import BlankContent from '../../blank-content'
 import { NodeComponent } from '../../../type'
 import { getId } from '@/utils'
 import NodeContainer from '../../node-container'
-import { renderNodes } from '..'
+import { parserActions, renderNodes } from '..'
+import { Collapse, Form } from 'antd'
+import AddAction from '../../add-action/inidex'
+import { useEditorPreviewContext } from '../../editor-preview/provider'
 
 const Container: NodeComponent = ({
   node,
@@ -11,7 +14,12 @@ const Container: NodeComponent = ({
   disabled,
   editType,
 }) => {
-  const { children, style } = node
+  const { children, style, actions: actionsProp } = node
+  const { actions } = useEditorPreviewContext()
+  const events = useMemo(
+    () => parserActions(actionsProp || {}, actions, editType),
+    [actions, actionsProp, editType]
+  )
 
   const childParentNodes = useMemo(
     () => [...parentNodes, node],
@@ -21,7 +29,7 @@ const Container: NodeComponent = ({
     return <>{renderNodes(children)}</>
   }
   return (
-    <div style={style}>
+    <div style={style} {...events}>
       {children.length === 0 ? (
         <BlankContent disabled={disabled} node={node} />
       ) : (
@@ -41,6 +49,19 @@ const Container: NodeComponent = ({
   )
 }
 
+const ContainerPropsForm: typeof Container['PropsForm'] = () => {
+  return (
+    <Collapse defaultActiveKey={['actions']} bordered={false}>
+      <Collapse.Panel header="动作设置" key="actions">
+        <Form.Item name="actions">
+          <AddAction menus={[{ event: 'onClick', title: '点击按钮' }]} />
+        </Form.Item>
+      </Collapse.Panel>
+    </Collapse>
+  )
+}
+
+Container.PropsForm = ContainerPropsForm
 Container.nodeName = 'container'
 Container.title = '容器'
 Container.getInitialProps = () => ({})

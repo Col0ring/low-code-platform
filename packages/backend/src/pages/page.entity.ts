@@ -13,7 +13,9 @@ export class PageEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @ManyToOne(() => AppEntity, (app) => app.pages)
+  @ManyToOne(() => AppEntity, (app) => app.pages, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'appId', referencedColumnName: 'id' })
   app: AppEntity
 
