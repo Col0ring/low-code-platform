@@ -19,6 +19,7 @@ import { EditorPreviewContextValue } from '../editor-preview/provider'
 import Image from './basic/image'
 import Link from './basic/link'
 import Tabs from './layout/tabs'
+import Alert from './feedback/alert'
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
@@ -91,6 +92,17 @@ export const componentsLibrary: ComponentsGroup[] = [
         name: Link.nodeName,
         title: Link.title,
         component: Link,
+        icon: <FileTextOutlined />,
+      },
+    ],
+  },
+  {
+    group: '反馈',
+    components: [
+      {
+        name: Alert.nodeName,
+        title: Alert.title,
+        component: Alert,
         icon: <FileTextOutlined />,
       },
     ],
