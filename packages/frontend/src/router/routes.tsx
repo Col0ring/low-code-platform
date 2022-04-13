@@ -25,13 +25,14 @@ export const accessRoutes: RouteObject[] = [
     children: [
       {
         path: 'dashboard',
-        element: (
-          <LazyRoute
-            component={React.lazy(
-              () => import('@/features/main/pages/dashboard')
-            )}
-          />
-        ),
+        // element: (
+        //   <LazyRoute
+        //     component={React.lazy(
+        //       () => import('@/features/main/pages/dashboard')
+        //     )}
+        //   />
+        // ),
+        element: <Navigate to={Path.AppCenter} replace />,
       },
       {
         path: 'app-center',
@@ -168,7 +169,7 @@ export const routes: RouteObject[] = [
   },
   {
     path: '/views/apps/:appId/*',
-    element: <AppView />,
+    element: <AppView className="w-full h-100vh" />,
   },
   {
     element: (

@@ -46,7 +46,9 @@ const PageHoverItem: React.FC<PageHoverItemProps> = ({
   const navigate = useNavigate()
   const [reqDeletePage] = useDeletePageMutation()
   const [reqUpdatePage] = useUpdatePageMutation()
+  const [reqCreatePage] = useCreatePageMutation()
   const [updatePageForm] = Form.useForm()
+  const [copyPageForm] = Form.useForm()
   return (
     <div
       onClick={stopPropagation}
@@ -111,7 +113,43 @@ const PageHoverItem: React.FC<PageHoverItemProps> = ({
                   renderButton={(props) => <span {...props}>修改</span>}
                 />
               </Menu.Item>
-              <Menu.Item key="copy">复制</Menu.Item>
+              <Menu.Item key="copy">
+                <ModalButton
+                  modalTitle="复制页面"
+                  modal={
+                    <Form form={copyPageForm} preserve={false}>
+                      <Form.Item
+                        label="页面名称"
+                        name="name"
+                        rules={[emptyValidator('页面名称')]}
+                      >
+                        <Input />
+                      </Form.Item>
+                      <Form.Item
+                        label="页面路径"
+                        name="path"
+                        rules={[emptyValidator('页面路径')]}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Form>
+                  }
+                  onModalOK={async () => {
+                    const values = await copyPageForm.validateFields()
+                    const res = await reqCreatePage({
+                      ...values,
+                      content: page.content,
+                      appId: +appId,
+                    })
+                    if (isResolved(res)) {
+                      void message.success('复制成功')
+                      return
+                    }
+                    return Promise.reject()
+                  }}
+                  renderButton={(props) => <span {...props}>复制</span>}
+                />
+              </Menu.Item>
               <Menu.Divider />
               <Menu.Item
                 key="delete"

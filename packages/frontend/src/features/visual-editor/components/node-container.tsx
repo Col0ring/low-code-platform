@@ -119,7 +119,14 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   hasAction: hasActionProp = true,
 }) => {
   const [
-    { actionNode, hoveringNode, isDragging, moveNode, moveParentNode },
+    {
+      disabledNodeAction,
+      actionNode,
+      hoveringNode,
+      isDragging,
+      moveNode,
+      moveParentNode,
+    },
     {
       updateComponentNode,
       startDragging,
@@ -159,12 +166,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   const isActionNode = useMemo(() => actionNode === node, [actionNode, node])
   const classes = useClassName(
     [
-      'relative border-2 border -m-2px',
-      // ['inline-block', 'inline', 'inline-flex'].includes(
-      //   node.style.display as string
-      // )
-      //   ? 'inline-block'
-      //   : 'block',
+      'relative border-2px border -m-2px',
       {
         'border-transparent': !isHovering && !isActionNode,
         'border-blue-400 border-dashed': isHovering && !isActionNode,
@@ -229,6 +231,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
       display,
     }
   }, [node.style.display, node.style.height, node.style.width])
+
   return (
     <Draggable
       draggable={hasAction && !isParentNodeAction}
@@ -326,9 +329,9 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
               className="bg-blue-500 px-1 ml-1 rounded-sm"
               onClick={stopPropagation}
             >
-              <Tooltip title={<span className="text-xs">保存为区块</span>}>
+              {/* <Tooltip title={<span className="text-xs">保存为区块</span>}>
                 <SaveOutlined />
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip title={<span className="text-xs">复制</span>}>
                 <CopyOutlined
                   className="mx-1"
@@ -359,6 +362,10 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
             </div>
           )}
         </div>
+      )}
+      {/* 占位防止触碰 */}
+      {disabledNodeAction && (
+        <div className="absolute w-full h-full left-0 top-0 z-1" />
       )}
 
       {React.createElement(getComponentNode(node.name).component, {

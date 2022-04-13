@@ -1,39 +1,26 @@
-import EditorPreview from '@/features/visual-editor/components/editor-preview'
-import { PageRenderNode } from '@/features/visual-editor/type'
-import { Path } from '@/router/constants'
-import RouteLoading from '@/router/route-loading'
-import { HttpStatus } from '@/store'
-import { safeJsonParser } from '@/utils'
-import React from 'react'
-import { Navigate, useParams, useRoutes } from 'react-router-dom'
-import { useGetAppViewQuery } from '../../app.service'
-
-const AppView: React.FC = () => {
-  const { appId } = useParams() as { appId: string }
-  const { data, error, isLoading } = useGetAppViewQuery(+appId)
-  const routesELement = useRoutes(
-    data?.pages.map((page) => {
-      const pageRenderNode = safeJsonParser<PageRenderNode | null>(
-        page.content,
-        null
-      )
-      return {
-        path: page.path,
-        element: pageRenderNode ? (
-          <EditorPreview page={pageRenderNode} />
-        ) : null,
-      }
-    }) || []
-  )
-
-  return isLoading ? (
-    <RouteLoading loadingFullScreen />
-  ) : error ? (
-    (error as any).status === HttpStatus.Forbidden ? (
-      <Navigate to={Path.Forbidden} replace />
-    ) : null
-  ) : (
-    <>{routesELement}</>
+import React, { useRef, useEffect } from 'react'
+import { useParams } from 'react-router'
+export interface AppViewProps {
+  appId?: number
+  style?: React.CSSProperties
+  className?: string
+}
+const AppView: React.FC<AppViewProps> = ({
+  appId: appIdProp,
+  className,
+  style,
+}) => {
+  const { appId: appIdParam } = useParams() as { appId: string }
+  const appId = appIdProp || appIdParam
+  const ref = useRef<HTMLIFrameElement | null>(null)
+  useEffect(() => {
+    if (ref.current && ref.current.contentWindow) {
+      ref.current.contentWindow.appViewId = +appId
+    }
+  }, [appId])
+  return (
+    // eslint-disable-next-line jsx-a11y/iframe-has-title
+    <iframe ref={ref} style={style} className={className} src="/" />
   )
 }
 

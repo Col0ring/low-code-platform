@@ -64,6 +64,7 @@ const ContainerPropsForm: typeof Container['PropsForm'] = () => {
 Container.PropsForm = ContainerPropsForm
 Container.nodeName = 'container'
 Container.title = '容器'
+Container.getInitialStyle = () => ({ display: 'block' })
 Container.getInitialProps = () => ({})
 Container.getInitialChildren = () => []
 Container.getId = () => getId('container')

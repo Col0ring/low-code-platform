@@ -66,7 +66,9 @@ export class AppsController {
       res.setHeader('Content-Type', 'application/octet-stream')
       res.setHeader(
         'Content-Disposition',
-        `attachment;filename=${app.name || 'dist'}.zip;filename*=UTF-8`
+        `attachment;filename=${encodeURIComponent(
+          app.name || 'dist'
+        )}.zip;filename*=UTF-8`
       )
       res.send(buffer)
       return

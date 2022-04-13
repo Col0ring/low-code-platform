@@ -24,6 +24,7 @@ function getZip(options: WebpackConfigOptions) {
   return new Promise<Buffer>((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err || (stats && stats.hasErrors())) {
+        console.log(stats.toString())
         reject({
           err,
           stats,

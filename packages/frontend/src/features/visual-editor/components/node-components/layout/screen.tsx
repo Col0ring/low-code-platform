@@ -96,8 +96,9 @@ Screen.getInitialProps = () => ({
 Screen.getInitialChildren = () => []
 
 Screen.getInitialStyle = () => ({
-  minWidth: 375,
-  minHeight: 650,
+  display: 'block',
+  minWidth: '375px',
+  minHeight: '650px',
 })
 
 export default Screen

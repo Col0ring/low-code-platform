@@ -16,6 +16,9 @@ import Page from './layout/page'
 import { safeJsonParser } from '@/utils'
 import Button from './basic/button'
 import { EditorPreviewContextValue } from '../editor-preview/provider'
+import Image from './basic/image'
+import Link from './basic/link'
+import Tabs from './layout/tabs'
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
@@ -55,6 +58,12 @@ export const componentsLibrary: ComponentsGroup[] = [
         component: LayoutContainer,
         icon: <ContainerOutlined />,
       },
+      {
+        name: Tabs.nodeName,
+        title: Tabs.title,
+        component: Tabs,
+        icon: <ContainerOutlined />,
+      },
     ],
   },
   {
@@ -70,6 +79,18 @@ export const componentsLibrary: ComponentsGroup[] = [
         name: Button.nodeName,
         title: Button.title,
         component: Button,
+        icon: <FileTextOutlined />,
+      },
+      {
+        name: Image.nodeName,
+        title: Image.title,
+        component: Image,
+        icon: <FileTextOutlined />,
+      },
+      {
+        name: Link.nodeName,
+        title: Link.title,
+        component: Link,
         icon: <FileTextOutlined />,
       },
     ],

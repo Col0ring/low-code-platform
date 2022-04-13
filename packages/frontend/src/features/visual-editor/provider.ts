@@ -17,6 +17,7 @@ export interface EditorState {
   menuSelectedKeys: (string | number)[]
   page: PageRenderNode
   currentScreen: ComponentRenderNode | null
+  disabledNodeAction: boolean
   componentNodesMap: Record<
     string,
     {
@@ -85,7 +86,6 @@ function getImmerComponentNodeMap(
   return immerComponentNodesMap
 }
 
-// TODO：初始化数据放在组件内部
 const initialState: () => EditorState = () => {
   const page: PageRenderNode = {
     ...createNewNode(Page.nodeName),
@@ -96,6 +96,7 @@ const initialState: () => EditorState = () => {
   const immerPage = createDraft(page)
   return {
     menuSelectedKeys: [],
+    disabledNodeAction: false,
     page,
     currentScreen: null,
     immerPage,

@@ -23,6 +23,7 @@ import DefaultAppIcon from '../../components/default-app-icon'
 import ModalButton from '@/components/modal-button'
 import { emptyValidator } from '@/utils/validators'
 import {
+  useCreateAppByTemplateMutation,
   useCreateAppMutation,
   useDeleteAppMutation,
   useGetAppListQuery,
@@ -53,6 +54,8 @@ const AppCenterPage: React.FC = () => {
   const [pageSize, setPageSize] = useState(12)
   const [reqCreateApp] = useCreateAppMutation()
   const [reqDeleteApp] = useDeleteAppMutation()
+  const [reqCreateAppByTemplate] = useCreateAppByTemplateMutation()
+  const [createAppByTemplateForm] = Form.useForm()
 
   const { data: { data, count } = { data: [], count: 0 }, isFetching } =
     useGetAppListQuery({
@@ -207,7 +210,50 @@ const AppCenterPage: React.FC = () => {
                                 >
                                   访问应用
                                 </Menu.Item>
-                                <Menu.Item>复制应用</Menu.Item>
+                                <Menu.Item>
+                                  <ModalButton
+                                    modal={
+                                      <Form
+                                        layout="vertical"
+                                        form={createAppByTemplateForm}
+                                        preserve={false}
+                                      >
+                                        <Form.Item
+                                          label="应用名称"
+                                          name="name"
+                                          rules={[emptyValidator('应用名称')]}
+                                        >
+                                          <Input />
+                                        </Form.Item>
+                                        <Form.Item label="应用图标" name="icon">
+                                          <Input />
+                                        </Form.Item>
+                                        <Form.Item label="应用描述" name="desc">
+                                          <Input.TextArea />
+                                        </Form.Item>
+                                      </Form>
+                                    }
+                                    modalTitle="应用"
+                                    onModalOK={async () => {
+                                      const values =
+                                        await createAppByTemplateForm.validateFields()
+                                      const res = await reqCreateAppByTemplate({
+                                        ...values,
+                                        templateAppId: app.id,
+                                      })
+                                      if (isResolved(res)) {
+                                        void message.success(
+                                          `已成功复制应用${app.name}`
+                                        )
+                                        return
+                                      }
+                                      return Promise.reject()
+                                    }}
+                                    renderButton={(props) => (
+                                      <span {...props}>复制应用</span>
+                                    )}
+                                  />
+                                </Menu.Item>
                                 <Menu.Item
                                   onClick={() => {
                                     Modal.confirm({

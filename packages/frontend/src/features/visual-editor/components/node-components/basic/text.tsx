@@ -26,7 +26,7 @@ const Text: NodeComponent<TextProps> = ({ node, editType }) => {
 
 const TextPropsForm: typeof Text['PropsForm'] = () => {
   return (
-    <Collapse defaultActiveKey={['props']} bordered={false}>
+    <Collapse defaultActiveKey={['props', 'actions']} bordered={false}>
       <Collapse.Panel header="属性" key="props">
         <Form.Item label="内容" name={propItemName('content')}>
           <Input />

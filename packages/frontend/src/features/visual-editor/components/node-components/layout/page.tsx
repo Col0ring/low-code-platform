@@ -76,7 +76,9 @@ const PagePropsForm: typeof Page['PropsForm'] = () => {
   )
 }
 Page.PropsForm = PagePropsForm
-Page.getInitialStyle = () => ({})
+Page.getInitialStyle = () => ({
+  display: 'block',
+})
 Page.getInitialProps = () => ({})
 Page.getInitialChildren = () => []
 Page.getId = () => getId('page')

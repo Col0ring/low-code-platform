@@ -9,10 +9,11 @@ import {
   MinusSquareOutlined,
   ClearOutlined,
   CopyOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons'
 import SvgIcon from '@/components/svg-icon'
-import { useMount, useResize } from '@/hooks'
-import { elementCanScroll } from '@/utils'
+import { useEventListener, useMount, useResize } from '@/hooks'
+import { elementCanScroll, isMac } from '@/utils'
 import { useEditorContext } from '../../provider'
 import { copyNode, createNewNode } from '../node-components'
 import Screen, { ScreenProps } from '../node-components/layout/screen'
@@ -28,7 +29,13 @@ const SimulatorToolbar: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null)
   const [
     { currentScreen, snapshotIndex, snapshots, page },
-    { updateScreen, setActionNode, changeSnapShot, updateComponentNode },
+    {
+      updateScreen,
+      setActionNode,
+      changeSnapShot,
+      updateComponentNode,
+      setEditorState,
+    },
   ] = useEditorContext()
   const screens = useMemo(() => page.children, [page])
 
@@ -147,7 +154,7 @@ const SimulatorToolbar: React.FC = () => {
               icon={<SvgIcon raw={undoSvg} />}
             />
           ),
-          title: '撤销 command + z',
+          title: `撤销 ${isMac ? 'command' : 'ctrl'} + z`,
         },
         {
           element: (
@@ -160,7 +167,7 @@ const SimulatorToolbar: React.FC = () => {
               icon={<SvgIcon raw={redoSvg} />}
             />
           ),
-          title: '重做 command + shift + z',
+          title: `重做 ${isMac ? 'command' : 'ctrl'} + shift + z`,
         },
       ],
       [
@@ -244,6 +251,34 @@ const SimulatorToolbar: React.FC = () => {
     ]
   )
 
+  useEventListener(document, 'keyup', () => {
+    setEditorState({
+      disabledNodeAction: false,
+    })
+  })
+
+  useEventListener(document, 'keydown', (e) => {
+    const metaKey = isMac ? e.metaKey : e.ctrlKey
+
+    if (metaKey) {
+      setEditorState({
+        disabledNodeAction: true,
+      })
+    }
+
+    if (metaKey && e.key.toLowerCase() === 's') {
+      e.preventDefault()
+      onSave(page)
+    } else if (metaKey && e.shiftKey && e.key.toLowerCase() === 'z') {
+      if (snapshotIndex < snapshots.length - 1) {
+        changeSnapShot(snapshotIndex + 1)
+      }
+    } else if (metaKey && e.key.toLowerCase() === 'z') {
+      if (snapshotIndex > 0) {
+        changeSnapShot(snapshotIndex - 1)
+      }
+    }
+  })
   useResize(ref, (el) => {
     setCanScroll(elementCanScroll(el))
   })
@@ -299,6 +334,18 @@ const SimulatorToolbar: React.FC = () => {
             ))}
           </Radio.Group>
           <Divider type="vertical" className="h-7" />
+          <Tooltip
+            title={`按下 ${
+              isMac ? 'command' : 'ctrl'
+            } 键操作可阻止自定义事件触发`}
+            placement="bottom"
+          >
+            <Button
+              size="small"
+              type="text"
+              icon={<QuestionCircleOutlined />}
+            />
+          </Tooltip>
           <ModalButton
             modalProps={{
               width: '100vw',
@@ -309,9 +356,14 @@ const SimulatorToolbar: React.FC = () => {
           >
             预览
           </ModalButton>
-          <Button size="small" type="primary" onClick={() => onSave(page)}>
-            保存
-          </Button>
+          <Tooltip
+            title={`${isMac ? 'command' : 'ctrl'} + s`}
+            placement="bottom"
+          >
+            <Button size="small" type="primary" onClick={() => onSave(page)}>
+              保存
+            </Button>
+          </Tooltip>
         </div>
       </div>
     </div>

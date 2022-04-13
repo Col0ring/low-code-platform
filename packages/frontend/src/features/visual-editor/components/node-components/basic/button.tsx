@@ -6,6 +6,7 @@ import {
   Input,
   Select,
   Switch,
+  ButtonProps as AntdButtonProps,
 } from 'antd'
 import { Actions, NodeComponent } from '@/features/visual-editor/type'
 import { getId } from '@/utils'
@@ -15,7 +16,7 @@ import AddAction from '../../add-action/inidex'
 
 const buttonTypes = ['primary', 'default', 'dashed', 'link', 'text'] as const
 
-export interface ButtonProps {
+export interface ButtonProps extends AntdButtonProps {
   type?: typeof buttonTypes[number]
   content?: string
   actions?: Actions<'onClick'>
@@ -70,13 +71,6 @@ const ButtonPropsForm: typeof Button['PropsForm'] = () => {
         <Form.Item
           name={propItemName('disabled')}
           label="失效按钮"
-          valuePropName="checked"
-        >
-          <Switch />
-        </Form.Item>
-        <Form.Item
-          name={propItemName('block')}
-          label="块级按钮"
           valuePropName="checked"
         >
           <Switch />

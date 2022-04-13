@@ -25,6 +25,7 @@ import ModalButton from '@/components/modal-button'
 import { emptyValidator } from '@/utils/validators'
 import { mainApi } from '../../main.service'
 import { useAppDispatch } from '@/store'
+import AppView from '@/features/app/pages/app-view'
 
 export interface TemplateModalProps {
   template: Template
@@ -37,9 +38,9 @@ const TemplateItem: React.FC<TemplateModalProps> = ({ template, self }) => {
   const dispatch = useAppDispatch()
   const [reqDeleteApp] = useDeleteAppMutation()
   const [reqCreateAppByTemplate] = useCreateAppByTemplateMutation()
-  const [reqCreateAppByTemplateForm] = Form.useForm()
+  const [createAppByTemplateForm] = Form.useForm()
   const createForm = (
-    <Form layout="vertical" form={reqCreateAppByTemplateForm} preserve={false}>
+    <Form layout="vertical" form={createAppByTemplateForm} preserve={false}>
       <Form.Item
         label="应用名称"
         name="name"
@@ -80,7 +81,7 @@ const TemplateItem: React.FC<TemplateModalProps> = ({ template, self }) => {
                     modalTitle="创建应用"
                     onModalOK={async () => {
                       const values =
-                        await reqCreateAppByTemplateForm.validateFields()
+                        await createAppByTemplateForm.validateFields()
                       const res = await reqCreateAppByTemplate({
                         ...values,
                         templateAppId: template.app.id,
@@ -123,6 +124,7 @@ const TemplateItem: React.FC<TemplateModalProps> = ({ template, self }) => {
         </div>
       </Card>
       <Modal
+        style={{ top: 30 }}
         width="100vw"
         visible={visible}
         onCancel={() => setVisible(false)}
@@ -137,7 +139,7 @@ const TemplateItem: React.FC<TemplateModalProps> = ({ template, self }) => {
             modal={createForm}
             modalTitle="创建应用"
             onModalOK={async () => {
-              const values = await reqCreateAppByTemplateForm.validateFields()
+              const values = await createAppByTemplateForm.validateFields()
               const res = await reqCreateAppByTemplate({
                 ...values,
                 templateAppId: template.app.id,
@@ -156,22 +158,23 @@ const TemplateItem: React.FC<TemplateModalProps> = ({ template, self }) => {
         ]}
       >
         {data ? (
-          <Tabs>
-            {data.pages.map((page) => {
-              const pageRenderNode = safeJsonParser<PageRenderNode | null>(
-                page.content,
-                null
-              )
-              return (
-                <Tabs.TabPane tab={page.name} key={page.id}>
-                  {pageRenderNode ? (
-                    <EditorPreview page={pageRenderNode} />
-                  ) : null}
-                </Tabs.TabPane>
-              )
-            })}
-          </Tabs>
+          <AppView className="w-full h-500px" appId={data.id} />
         ) : (
+          // <Tabs>
+          //   {data.pages.map((page) => {
+          //     const pageRenderNode = safeJsonParser<PageRenderNode | null>(
+          //       page.content,
+          //       null
+          //     )
+          //     return (
+          //       <Tabs.TabPane tab={page.name} key={page.id}>
+          //         {pageRenderNode ? (
+          //           <EditorPreview page={pageRenderNode} />
+          //         ) : null}
+          //       </Tabs.TabPane>
+          //     )
+          //   })}
+          // </Tabs>
           <RouteLoading />
         )}
       </Modal>

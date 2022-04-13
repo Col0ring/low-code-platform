@@ -24,11 +24,11 @@ const panes: (Pick<MenuPaneItemProps, 'icon' | 'title'> & {
     title: '组件库',
     content: <ComponentsLibraryPane />,
   },
-  {
-    icon: <AppstoreAddOutlined />,
-    title: '区块',
-    content: <div />,
-  },
+  // {
+  //   icon: <AppstoreAddOutlined />,
+  //   title: '区块',
+  //   content: <div />,
+  // },
   {
     icon: <HistoryOutlined />,
     title: '操作历史',

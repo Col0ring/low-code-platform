@@ -43,9 +43,9 @@ const MainLayout: React.FC = () => {
               mode="horizontal"
               selectedKeys={[activeKey]}
             >
-              <Menu.Item key={Path.Dashboard}>
+              {/* <Menu.Item key={Path.Dashboard}>
                 <Link to={Path.Dashboard}> 开始</Link>
-              </Menu.Item>
+              </Menu.Item> */}
               <Menu.Item key={Path.AppCenter}>
                 <Link to={Path.AppCenter}>我的应用</Link>
               </Menu.Item>

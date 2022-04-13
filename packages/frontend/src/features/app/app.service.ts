@@ -111,7 +111,9 @@ export const appApi = createServiceApi({
     createPage: builder.mutation<
       Page,
       {
+        path: string
         name: string
+        content?: string
         appId: number
       }
     >({

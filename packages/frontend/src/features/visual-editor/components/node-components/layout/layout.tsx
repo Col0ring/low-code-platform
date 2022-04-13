@@ -57,10 +57,8 @@ const LayoutPropsForm: typeof Layout['PropsForm'] = () => {
 Layout.PropsForm = LayoutPropsForm
 Layout.nodeName = 'layout'
 Layout.title = '布局'
-Layout.getInitialProps = () => ({
-  children: [],
-})
-
+Layout.getInitialProps = () => ({})
+Layout.getInitialStyle = () => ({ display: 'block' })
 Layout.getInitialChildren = () => []
 
 Layout.getId = () => getId('layout')

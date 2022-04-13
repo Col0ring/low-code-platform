@@ -1,3 +1,4 @@
+import { Optional } from '@nestjs/common'
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
 
 export class PageCreateDto {
@@ -16,6 +17,12 @@ export class PageCreateDto {
     message: 'Please input correct path',
   })
   path: string
+
+  @IsString({
+    message: 'Please input correct content',
+  })
+  @Optional()
+  content: string
 
   @IsNumber(undefined, {
     message: 'Please input correct appId',

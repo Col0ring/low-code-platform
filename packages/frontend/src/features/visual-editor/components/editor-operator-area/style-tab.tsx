@@ -50,6 +50,26 @@ const StyleTab: React.FC<StyleTabProps> = () => {
         <Form.Item name={styleItemName('lineHeight')} label="字体行高">
           <Input />
         </Form.Item>
+        <Form.Item name={styleItemName('textAlign')} label="文本水平对齐方式">
+          <Select>
+            <Select.Option value="left">left</Select.Option>
+            <Select.Option value="center">center</Select.Option>
+            <Select.Option value="right">right</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item
+          name={styleItemName('verticalAlign')}
+          label="文本水平对齐方式"
+        >
+          <Select>
+            <Select.Option value="baseline">baseline</Select.Option>
+            <Select.Option value="top">top</Select.Option>
+            <Select.Option value="middle">middle</Select.Option>
+
+            <Select.Option value="bottom">bottom</Select.Option>
+          </Select>
+        </Form.Item>
+
         <Form.Item name={styleItemName('background')} label="背景">
           <Input />
         </Form.Item>

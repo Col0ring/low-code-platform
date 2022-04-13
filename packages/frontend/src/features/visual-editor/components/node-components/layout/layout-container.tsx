@@ -1,8 +1,8 @@
 import React, { useMemo, useEffect } from 'react'
-import { Row, Col, Collapse, Form } from 'antd'
+import { Row, Col, Collapse, Form, Input } from 'antd'
 import { getId } from '@/utils'
 import { NodeComponent } from '../../../type'
-import { createNewNode, parserActions, renderNode } from '..'
+import { createNewNode, parserActions, propItemName, renderNode } from '..'
 import NodeContainer from '../../node-container'
 import { useEditorContext } from '@/features/visual-editor/provider'
 import Layout from './layout'
@@ -12,7 +12,7 @@ import AddAction from '../../add-action/inidex'
 const layoutName = Layout.nodeName
 
 function parseSpan(spans: string) {
-  const res = spans.split(':').map(Number)
+  const res = spans.split(':').map((v) => (v ? Number(v) : Number.NaN))
   if (res.some((v) => Number.isNaN(v))) {
     return null
   }
@@ -31,7 +31,7 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
 }) => {
   const {
     children,
-    props: { spans },
+    props: { spans, ...rowProps },
     actions: actionsProp,
     style,
   } = node
@@ -76,12 +76,12 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
     editType,
   ])
   return (
-    <Row {...events} style={style}>
+    <Row {...events} style={style} {...rowProps}>
       {ColSpanArr &&
         ColSpanArr.map((span, index) => {
           const child = children[index]
           return (
-            <Col span={span} key={child.id || index}>
+            <Col span={span} key={child?.id || index}>
               {child &&
                 (editType === 'edit' ? (
                   <NodeContainer
@@ -102,7 +102,15 @@ const LayoutContainer: NodeComponent<LayoutContainerProps> = ({
 }
 const LayoutContainerPropsForm: typeof LayoutContainer['PropsForm'] = () => {
   return (
-    <Collapse defaultActiveKey={['actions']} bordered={false}>
+    <Collapse defaultActiveKey={['props', 'actions']} bordered={false}>
+      <Collapse.Panel header="动作设置" key="props">
+        <Form.Item label="栅格比例" name={propItemName('spans')}>
+          <Input />
+        </Form.Item>
+        <Form.Item label="栅格间隔" name={propItemName('gutter')}>
+          <Input />
+        </Form.Item>
+      </Collapse.Panel>
       <Collapse.Panel header="动作设置" key="actions">
         <Form.Item name="actions">
           <AddAction menus={[{ event: 'onClick', title: '点击按钮' }]} />
@@ -115,6 +123,7 @@ LayoutContainer.PropsForm = LayoutContainerPropsForm
 LayoutContainer.nodeName = 'layout-container'
 LayoutContainer.title = '布局容器'
 LayoutContainer.childActionDisabled = true
+LayoutContainer.getInitialStyle = () => ({ display: 'flex' })
 LayoutContainer.getInitialProps = () => ({
   spans: '8:8:8',
 })
