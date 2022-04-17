@@ -198,15 +198,15 @@ export function parserActions(
     return {}
   }
   return Object.keys(actions).reduce((prev, next) => {
-    prev[next] = () => {
+    prev[next] = (e: React.UIEvent) => {
       actions[next].forEach(({ actionType, actionEvent, value }) => {
         ;(contextActionsHandler[actionType] as Record<string, any>)[
           actionEvent
-        ](value)
+        ](e, safeJsonParser(JSON.stringify(value), value))
       })
     }
     return prev
-  }, {} as Record<string, () => void>)
+  }, {} as Record<string, (e: React.UIEvent) => void>)
 }
 
 export function propItemName(name: string) {

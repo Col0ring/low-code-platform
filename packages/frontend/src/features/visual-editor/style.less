@@ -15,6 +15,14 @@
     position: relative;
     display: flex;
 
+    .data-source-pane {
+      padding: 8px;
+
+      .ant-collapse-header {
+        padding: 5px;
+      }
+    }
+
     .menu-pane {
       position: relative;
       width: 46px;
@@ -36,7 +44,8 @@
     }
 
     .menu-content {
-      width: 300px;
+      width: auto;
+      min-width: 300px;
       height: 100%;
 
       &.fixed-active {

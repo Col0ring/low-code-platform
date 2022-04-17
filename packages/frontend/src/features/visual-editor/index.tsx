@@ -14,6 +14,7 @@ import {
   EditorPropsContextState,
 } from './editor-props-context'
 import { noop } from '@/utils'
+import { EditorPreviewContextProvider } from './components/editor-preview/provider'
 
 export interface VisualEditorActions {
   init: (data?: PageRenderNode) => void
@@ -45,6 +46,7 @@ const VisualEditor: React.FC<VisualEditorProps> = (props) => {
         const newPage: PageRenderNode = {
           ...createNewNode(page.name),
           js: '',
+          dataSources: {},
           children: [newScreen],
           modals: [],
         }
@@ -67,23 +69,25 @@ const VisualEditor: React.FC<VisualEditorProps> = (props) => {
 
   return (
     <EditorPropsContext.Provider value={memoEditorValue}>
-      <Spin wrapperClassName={classes} spinning={!isInit}>
+      <EditorPreviewContextProvider>
+        <Spin wrapperClassName={classes} spinning={!isInit}>
+          <div
+            className="visual-editor"
+            onDragOver={(e) => {
+              e.preventDefault()
+              e.dataTransfer.dropEffect = 'move'
+            }}
+          >
+            <EditorMenuArea />
+            <EditorSimulatorArea />
+            <EditorOperatorArea />
+          </div>
+        </Spin>
         <div
-          className="visual-editor"
-          onDragOver={(e) => {
-            e.preventDefault()
-            e.dataTransfer.dropEffect = 'move'
-          }}
-        >
-          <EditorMenuArea />
-          <EditorSimulatorArea />
-          <EditorOperatorArea />
-        </div>
-      </Spin>
-      <div
-        className="fixed top-0 left-0 -z-1"
-        id="editor-drag-image-container"
-      />
+          className="fixed top-0 left-0 -z-1"
+          id="editor-drag-image-container"
+        />
+      </EditorPreviewContextProvider>
     </EditorPropsContext.Provider>
   )
 }

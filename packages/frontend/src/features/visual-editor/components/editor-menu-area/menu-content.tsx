@@ -9,7 +9,7 @@ import classnames from 'classnames'
 
 export interface MenuContentProps {
   className?: string
-  title: string
+  title: React.ReactNode
   fixed: boolean
   onFixedButtonClick: (fixed: boolean) => void
   onCloseButtonClick: () => void

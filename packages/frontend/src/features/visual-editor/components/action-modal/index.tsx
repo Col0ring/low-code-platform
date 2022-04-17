@@ -1,7 +1,21 @@
-import React, { useState, useEffect } from 'react'
-import { Form, Input, Modal, ModalProps, Select, Switch, Tabs } from 'antd'
+import React, { useEffect, useMemo, useState } from 'react'
+import {
+  Form,
+  Input,
+  message,
+  Modal,
+  ModalProps,
+  Select,
+  Switch,
+  Tabs,
+} from 'antd'
 import './style.less'
 import { Action } from '../../type'
+import { useEditorPreviewContext } from '../editor-preview/provider'
+import { MonacoEditor } from '@/components/monaco-editor'
+import ModalButton from '@/components/modal-button'
+import { emptyValidator } from '@/utils/validators'
+import { useEditorContext } from '../../provider'
 export interface ActionModalProps
   extends React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLDivElement>,
@@ -9,26 +23,51 @@ export interface ActionModalProps
   > {
   modalProps?: ModalProps
   onOk?: (values: Action) => void
+  action?: Action
 }
 const ActionModal: React.FC<ActionModalProps> = ({
   modalProps,
   children,
   onClick,
   onOk,
+  action,
   ...props
 }) => {
-  const [actionType, setActionType] = useState<'internal' | 'js'>('internal')
-  const [actionEvent, setActionEvent] = useState('openUrl')
-
+  const {
+    actionEvent: actionEventProp = 'openUrl',
+    actionType: actionTypeProp = 'internal',
+    value: valueProp,
+  } = action || {}
+  const [actionType, setActionType] = useState<'internal' | 'js'>(
+    actionTypeProp
+  )
+  const [actionEvent, setActionEvent] = useState(actionEventProp)
+  const [search, setSearch] = useState('')
+  const [{ page }, { updatePageData }] = useEditorContext()
+  const {
+    actions: { js },
+  } = useEditorPreviewContext()
+  const jsActions = useMemo(
+    () => Object.keys(js).map((k) => ({ name: k, action: js[k] })),
+    [js]
+  )
   const [form] = Form.useForm()
+  const [newActionForm] = Form.useForm()
+  const searchJsActions = useMemo(
+    () =>
+      jsActions.filter(({ name }) =>
+        name.toLowerCase().includes(search.toLowerCase())
+      ),
+    [search, jsActions]
+  )
 
   useEffect(() => {
     if (actionType === 'internal') {
       setActionEvent('openUrl')
     } else {
-      setActionEvent('addAction')
+      setActionEvent(searchJsActions[0]?.name)
     }
-  }, [actionType])
+  }, [actionType, searchJsActions])
 
   const [visible, setVisible] = useState(false)
   return (
@@ -63,7 +102,16 @@ const ActionModal: React.FC<ActionModalProps> = ({
         closable
         {...modalProps}
       >
-        <Form size="middle" form={form} preserve={false}>
+        <Form
+          initialValues={{
+            [actionType]: {
+              [actionEvent]: valueProp,
+            },
+          }}
+          size="middle"
+          form={form}
+          preserve={false}
+        >
           <Tabs
             activeKey={actionType}
             onChange={(activeKey) =>
@@ -123,6 +171,38 @@ const ActionModal: React.FC<ActionModalProps> = ({
               </Tabs>
             </Tabs.TabPane>
             <Tabs.TabPane key="js" tab="页面 JS">
+              <div className="m-2 flex items-center">
+                <Input.Search allowClear onSearch={setSearch} />
+                <ModalButton
+                  modalTitle="添加新动作"
+                  modal={
+                    <Form form={newActionForm} preserve={false}>
+                      <Form.Item
+                        label="动作名"
+                        name="name"
+                        rules={[emptyValidator('动作名')]}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Form>
+                  }
+                  onModalOK={async () => {
+                    const { name } = await newActionForm.validateFields()
+                    if (js[name]) {
+                      void message.error(`动作 ${name} 已存在`)
+                      return Promise.reject()
+                    }
+                    updatePageData({
+                      js: `${page.js}\n\nexport const ${name} = (e, value) => {}`,
+                    })
+                    void message.success(`动作 ${name} 创建成功`)
+                  }}
+                  className="ml-2"
+                  type="primary"
+                >
+                  添加新动作
+                </ModalButton>
+              </div>
               <Tabs
                 activeKey={actionEvent}
                 onChange={setActionEvent}
@@ -130,9 +210,21 @@ const ActionModal: React.FC<ActionModalProps> = ({
                 size="small"
                 animated={false}
               >
-                <Tabs.TabPane key="addAction" tab="添加新动作">
-                  添加新动作
-                </Tabs.TabPane>
+                {searchJsActions.map(({ name }) => {
+                  return (
+                    <Tabs.TabPane key={name} tab={name}>
+                      <Form.Item label="参数" name={['js', name]}>
+                        <MonacoEditor
+                          style={{ height: 400 }}
+                          className="border"
+                          language="json"
+                          defaultValue={'{}'}
+                          minimap={{ enabled: false }}
+                        />
+                      </Form.Item>
+                    </Tabs.TabPane>
+                  )
+                })}
               </Tabs>
             </Tabs.TabPane>
           </Tabs>

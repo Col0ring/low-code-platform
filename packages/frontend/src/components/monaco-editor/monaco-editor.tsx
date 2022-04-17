@@ -15,6 +15,7 @@ export interface MonacoEditorProps
   overrideServices?: monaco.editor.IEditorOverrideServices
   className?: string
   style?: React.CSSProperties
+  onSave?: (value: string) => void
   onChange?: (
     value: string,
     event?: monaco.editor.IModelContentChangedEvent
@@ -35,6 +36,7 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
     onMounted,
     onUnmounted,
     defaultValue,
+    onSave,
     formatOnSave = false,
     value = defaultValue || '',
     overrideServices,
@@ -46,6 +48,8 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
   const safeChangeRef = useRef(false)
   const formatOnSaveRef = useRef(formatOnSave)
   formatOnSaveRef.current = formatOnSave
+  const onSaveRef = useRef(onSave)
+  onSaveRef.current = onSave
   const editorClassName = useMemo(
     () => classnames('monaco-editor-container', className),
     [className]
@@ -69,6 +73,7 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
         }
       })
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+        onSaveRef.current?.(editor.getValue())
         if (!formatOnSaveRef.current) {
           return
         }

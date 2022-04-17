@@ -1,6 +1,13 @@
 import React from 'react'
 import { ScreenProps } from './components/node-components/layout/screen'
 
+export interface DataSource<T = any> {
+  type: 'remote' | 'var'
+  defaultValue: T
+}
+
+export type DataSources<T extends string = string> = Record<T, DataSource>
+
 export interface Action {
   actionType: 'js' | 'internal'
   actionEvent: string
@@ -29,6 +36,7 @@ export interface ComponentRenderNode<T extends object = any>
 export interface PageRenderNode extends ComponentRenderNode {
   children: ComponentRenderNode<ScreenProps>[]
   js: string
+  dataSources: DataSources
   modals: string[]
 }
 

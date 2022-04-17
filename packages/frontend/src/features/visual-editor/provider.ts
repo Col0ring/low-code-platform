@@ -91,6 +91,7 @@ const initialState: () => EditorState = () => {
     ...createNewNode(Page.nodeName),
     children: [],
     js: '',
+    dataSources: {},
     modals: [],
   }
   const immerPage = createDraft(page)
@@ -480,6 +481,22 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
                 })
             }
           }
+        }
+      },
+      updatePageData(
+        options: Partial<Pick<PageRenderNode, 'js' | 'dataSources' | 'modals'>>
+      ) {
+        return ({ dispatch }) => {
+          const { immerPage } = state
+          for (const key in options) {
+            if (options[key as keyof typeof options]) {
+              ;(immerPage as Record<string, any>)[key] =
+                options[key as keyof typeof options]
+            }
+          }
+          dispatch({
+            type: 'setPage',
+          })
         }
       },
     },

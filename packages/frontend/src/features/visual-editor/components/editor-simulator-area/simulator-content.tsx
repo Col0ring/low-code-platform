@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEditorContext } from '../../provider'
-import EditorPreview from '../editor-preview'
+import EditEditorPreview from '../editor-preview/edit-editor-preview.'
 
 const SimulatorContent: React.FC = () => {
   const [{ page }] = useEditorContext()
@@ -8,7 +8,7 @@ const SimulatorContent: React.FC = () => {
     <div className="inline-flex justify-center min-w-full">
       <div className="simulator-content-container">
         <div className="simulator-content">
-          <EditorPreview editType="edit" page={page} />
+          <EditEditorPreview editType="edit" page={page} />
         </div>
       </div>
     </div>

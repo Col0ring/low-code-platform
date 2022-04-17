@@ -1,5 +1,4 @@
-import { Optional } from '@nestjs/common'
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class PageCreateDto {
   @IsNotEmpty({
@@ -21,7 +20,7 @@ export class PageCreateDto {
   @IsString({
     message: 'Please input correct content',
   })
-  @Optional()
+  @IsOptional()
   content: string
 
   @IsNumber(undefined, {

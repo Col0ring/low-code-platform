@@ -2,36 +2,47 @@ import React, { useMemo, useState } from 'react'
 import {
   ApartmentOutlined,
   AppstoreOutlined,
-  AppstoreAddOutlined,
   HistoryOutlined,
+  DatabaseOutlined,
+  BugOutlined,
 } from '@ant-design/icons'
 import MenuPaneItem, { MenuPaneItemProps } from './menu-pane-item'
 import MenuContent from './menu-content'
 import ComponentsLibraryPane from './panes/components-library-pane'
 import OutlineTreePane from './panes/outline-tree-pane'
 import OperationHistoryPane from './panes/operation-history-pane'
+import DataSourcePane from './panes/data-source-pane'
+import ActionPane from './panes/action-pane'
 
-const panes: (Pick<MenuPaneItemProps, 'icon' | 'title'> & {
+const panes: {
+  icon: React.ReactNode
+  title?: React.ReactNode
+  name: string
   content: React.ReactNode
-})[] = [
+}[] = [
   {
     icon: <ApartmentOutlined />,
-    title: '大纲树',
+    name: '大纲树',
     content: <OutlineTreePane />,
   },
   {
     icon: <AppstoreOutlined />,
-    title: '组件库',
+    name: '组件库',
     content: <ComponentsLibraryPane />,
   },
-  // {
-  //   icon: <AppstoreAddOutlined />,
-  //   title: '区块',
-  //   content: <div />,
-  // },
+  {
+    icon: <DatabaseOutlined />,
+    name: '数据源',
+    content: <DataSourcePane />,
+  },
+  {
+    icon: <BugOutlined />,
+    name: '动作面板',
+    content: <ActionPane />,
+  },
   {
     icon: <HistoryOutlined />,
-    title: '操作历史',
+    name: '操作历史',
     content: <OperationHistoryPane />,
   },
   // {
@@ -62,8 +73,9 @@ const EditorMenuArea: React.FC = () => {
       <div className="menu-pane">
         {panes.map((pane, index) => (
           <MenuPaneItem
-            key={pane.title}
+            key={pane.name}
             {...pane}
+            title={pane.name}
             index={index}
             onClick={onPaneClick}
             isActive={active === index}
@@ -75,9 +87,9 @@ const EditorMenuArea: React.FC = () => {
         (pane, index) =>
           visited[index] && (
             <MenuContent
-              key={pane.title}
+              key={pane.name}
               className={activePane === pane ? '' : 'hidden'}
-              title={pane.title}
+              title={pane.title || pane.name}
               fixed={fixed}
               onFixedButtonClick={setFixed}
               onCloseButtonClick={onCloseButtonClick}
