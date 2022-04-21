@@ -24,6 +24,7 @@ import Link from './basic/link'
 import Tabs from './layout/tabs'
 import Alert from './feedback/alert'
 import { isBindVariable } from '../variable-binding'
+import { compileBindingValue } from '../../utils'
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
@@ -188,7 +189,7 @@ export function transformNode(
       const data = v[key]
       if (isBindVariable(data)) {
         if (data.type === 'binding') {
-          acc[key] = dataSources[data.value]
+          acc[key] = compileBindingValue(dataSources, data.value)
         } else if (data.type === 'normal') {
           acc[key] = data.value
         }
@@ -231,7 +232,7 @@ export function renderNode(
   node: ComponentRenderNode,
   editType: 'prod' | 'edit' = 'prod'
 ) {
-  return <RenderComponent node={node} editType={editType} />
+  return <RenderComponent key={node.id} node={node} editType={editType} />
 }
 
 export function renderNodes(
@@ -260,7 +261,7 @@ export function parserActions(
                 actionParams: safeJsonParser(value, value),
                 external: v,
               }
-            : safeJsonParser(JSON.stringify(value), value),
+            : safeJsonParser(value, value),
           e
         )
       })

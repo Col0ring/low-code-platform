@@ -1,9 +1,8 @@
 import React, { useMemo, useState } from 'react'
-import { Modal, Button, Form, Select, Tooltip } from 'antd'
+import { Modal, Button, Form, Select, Tooltip, Input } from 'antd'
 import { ForkOutlined } from '@ant-design/icons'
 import { useEditorPreviewContext } from '../editor-preview/provider'
 import { BindingValue } from '../../type'
-import { emptyValidator } from '@/utils/validators'
 
 export function isBindVariable(v: any): v is BindingValue {
   return !!v?.__BINDING__
@@ -101,11 +100,11 @@ const VariableBinding: React.FC<VariableBindingProps> = ({
                   className="ml-2"
                   onClick={async () => {
                     try {
-                      const { name } = await form.validateFields()
+                      const { expr } = await form.validateFields()
                       props[trigger]({
                         __BINDING__: true,
                         type: 'binding',
-                        value: name,
+                        value: expr,
                       })
                     } catch (error) {
                       //
@@ -119,35 +118,52 @@ const VariableBinding: React.FC<VariableBindingProps> = ({
             </div>
           }
         >
-          <Form form={form} preserve={false} size="middle">
+          <Select
+            className="w-full"
+            size="middle"
+            showSearch
+            allowClear
+            value=""
+            onSelect={(val: string) => {
+              form.setFieldsValue({
+                expr:
+                  ((form.getFieldValue('expr') as string) || '') +
+                  ` state.${val}`,
+              })
+            }}
+            placeholder="选择数据源快速绑定"
+            filterOption={(input, option) =>
+              option
+                ? `${option.value}`
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                : false
+            }
+          >
+            {dataSourcesArr.map((key) => {
+              return (
+                <Select.Option value={key} key={key}>
+                  {key}
+                </Select.Option>
+              )
+            })}
+          </Select>
+          <Form
+            className="mt-2"
+            layout="vertical"
+            form={form}
+            preserve={false}
+            size="middle"
+            initialValues={{
+              expr: isBinding ? props[valuePropName].value : '',
+            }}
+          >
             <Form.Item
-              label="变量名称"
-              name="name"
-              rules={[
-                emptyValidator('变量名称', {
-                  message: '请选择变量名称',
-                }),
-              ]}
+              label="变量表达式"
+              name="expr"
+              tooltip="可以输入任意 JS 表达式，返回值会作为值绑定"
             >
-              <Select
-                showSearch
-                placeholder="请选择数据源"
-                filterOption={(input, option) =>
-                  option
-                    ? `${option.value}`
-                        .toLowerCase()
-                        .indexOf(input.toLowerCase()) >= 0
-                    : false
-                }
-              >
-                {dataSourcesArr.map((key) => {
-                  return (
-                    <Select.Option value={key} key={key}>
-                      {key}
-                    </Select.Option>
-                  )
-                })}
-              </Select>
+              <Input.TextArea />
             </Form.Item>
           </Form>
         </Modal>

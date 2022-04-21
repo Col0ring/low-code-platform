@@ -45,3 +45,8 @@ export function compileDataSources(dataSources: DataSources) {
     }
   })
 }
+
+export function compileBindingValue(dataSources: DataSources, code: string) {
+  const str = `const compiledValue = ${code}`
+  return new Function('state', `${str}\n return compiledValue`)(dataSources)
+}

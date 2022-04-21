@@ -1,5 +1,5 @@
 import React from 'react'
-import { Alert } from 'antd'
+import { Alert, Button } from 'antd'
 
 export interface ErrorBoundaryProps {
   fallback?: React.ReactNode
@@ -34,7 +34,22 @@ export class ErrorBoundary extends React.PureComponent<
         fallback || (
           <Alert
             message={message}
-            description={description}
+            description={
+              <div>
+                {description}
+                <div className="flex justify-end mt-2">
+                  <Button
+                    danger
+                    type="primary"
+                    onClick={() => {
+                      this.setState(initialState)
+                    }}
+                  >
+                    Reload
+                  </Button>
+                </div>
+              </div>
+            }
             type="error"
             showIcon
           />
@@ -72,7 +87,22 @@ export function WithErrorBoundary<P = {}>(props: ErrorBoundaryProps = {}) {
             fallback || (
               <Alert
                 message={message}
-                description={description}
+                description={
+                  <div>
+                    {description}
+                    <div className="flex justify-end mt-2">
+                      <Button
+                        danger
+                        type="primary"
+                        onClick={() => {
+                          this.setState(initialState)
+                        }}
+                      >
+                        Reload
+                      </Button>
+                    </div>
+                  </div>
+                }
                 type="error"
                 showIcon
               />

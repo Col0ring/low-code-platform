@@ -31,6 +31,7 @@ const Button: NodeComponent<ButtonProps> = ({ node, editType }) => {
     () => parserActions(actionsProp || {}, actions, editType),
     [actions, actionsProp, editType]
   )
+
   return (
     <AntdButton style={style} {...antdProps} {...events}>
       {content}
@@ -49,34 +50,42 @@ const ButtonPropsForm: typeof Button['PropsForm'] = () => {
         </Form.Item>
 
         <Form.Item name={propItemName('type')} label="按钮类型">
-          <Select allowClear>
-            {buttonTypes.map((type) => (
-              <Select.Option key={type} value={type}>
-                {type}
-              </Select.Option>
-            ))}
-          </Select>
+          <VariableBinding>
+            <Select allowClear>
+              {buttonTypes.map((type) => (
+                <Select.Option key={type} value={type}>
+                  {type}
+                </Select.Option>
+              ))}
+            </Select>
+          </VariableBinding>
         </Form.Item>
         <Form.Item
           name={propItemName('danger')}
           label="危险按钮"
           valuePropName="checked"
         >
-          <Switch />
+          <VariableBinding valuePropName="checked">
+            <Switch />
+          </VariableBinding>
         </Form.Item>
         <Form.Item
           name={propItemName('ghost')}
           label="幽灵按钮"
           valuePropName="checked"
         >
-          <Switch />
+          <VariableBinding valuePropName="checked">
+            <Switch />
+          </VariableBinding>
         </Form.Item>
         <Form.Item
           name={propItemName('disabled')}
           label="失效按钮"
           valuePropName="checked"
         >
-          <Switch />
+          <VariableBinding valuePropName="checked">
+            <Switch />
+          </VariableBinding>
         </Form.Item>
       </Collapse.Panel>
       <Collapse.Panel header="动作设置" key="actions">

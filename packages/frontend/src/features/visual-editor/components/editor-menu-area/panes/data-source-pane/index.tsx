@@ -34,8 +34,11 @@ const DataSourcePane: React.FC = () => {
     ]
   }, [varDataSources, remoteDataSources])
   const searchDataSources = useMemo(() => {
-    return dataSources.filter((item) => item.name.includes(search))
-  }, [dataSources, search])
+    return dataSources.filter(
+      (item) =>
+        (select === 'all' || item.type === select) && item.name.includes(search)
+    )
+  }, [dataSources, search, select])
 
   return (
     <div className="data-source-pane">

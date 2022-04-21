@@ -5,7 +5,7 @@ import { stopPropagation } from '@/utils'
 import { emptyValidator } from '@/utils/validators'
 import { EditOutlined } from '@ant-design/icons'
 import { Form, Input, message } from 'antd'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 export type VariableFormButtonProps =
   | {
       type: 'add'

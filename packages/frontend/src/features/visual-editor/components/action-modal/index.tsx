@@ -92,7 +92,10 @@ const ActionModal: React.FC<ActionModalProps> = ({
           onOk?.({
             actionType,
             actionEvent,
-            value: values[actionType][actionEvent],
+            value:
+              actionType === 'js'
+                ? values[actionType][actionEvent] || '{}'
+                : values[actionType][actionEvent],
           })
           setVisible(false)
         }}
@@ -193,7 +196,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
                       return Promise.reject()
                     }
                     updatePageData({
-                      js: `${page.js}\n\nexport const ${name} = (e, value) => {}`,
+                      js: `${page.js}\n\nexport const ${name} = (value, e) => {}`,
                     })
                     void message.success(`动作 ${name} 创建成功`)
                   }}

@@ -1,5 +1,5 @@
 import useSetState from '@/hooks/useSetState'
-import { noop } from '@/utils'
+import { noop, paramsToObject } from '@/utils'
 import React, {
   useContext,
   createContext,
@@ -9,6 +9,7 @@ import React, {
   useRef,
 } from 'react'
 import { useNavigate } from 'react-router'
+import { useSearchParams } from 'react-router-dom'
 import { useEditorContext } from '../../provider'
 import { PageRenderNode } from '../../type'
 import { compileActions, compileDataSources } from '../../utils'
@@ -51,9 +52,15 @@ export const EditorPreviewContextProvider: React.FC<
   const page = pageProp || (contextPage as PageRenderNode)
   const [hasCompiled, setHasCompiled] = useState(false)
   const [load, setLoad] = useState(false)
+  const [params] = useSearchParams()
+
   const navigate = useNavigate()
   const [jsAction, setJsAction] = useState({})
-  const [dataSources, setDataSources] = useSetState<Record<string, any>>({})
+  const [dataSources, setDataSources] = useSetState<Record<string, any>>(
+    () => ({
+      urlParams: paramsToObject(params.entries()),
+    })
+  )
   const dataSourcesRef = useRef<Record<string, any>>({})
   const memoEditorPreviewContextValue = useMemo<EditorPreviewContextValue>(
     () => ({
@@ -81,7 +88,7 @@ export const EditorPreviewContextProvider: React.FC<
   useEffect(() => {
     compileDataSources(page.dataSources)
       .then((res) => {
-        setDataSources(res, true)
+        setDataSources((prev) => ({ ...res, urlParams: prev.urlParams }), true)
       })
       .catch(() => {
         setDataSources({})

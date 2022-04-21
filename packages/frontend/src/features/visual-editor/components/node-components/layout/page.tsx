@@ -5,21 +5,13 @@ import {
 } from '@/features/visual-editor/type'
 import { ScreenProps } from './screen'
 import { parserActions, renderNode } from '..'
-import { getId } from '@/utils'
+import { getId, paramsToObject } from '@/utils'
 import { useEditorContext } from '@/features/visual-editor/provider'
 import NodeContainer from '../../node-container'
 import { Collapse, Form } from 'antd'
 import AddAction from '../../add-action/inidex'
 import { useEditorPreviewContext } from '../../editor-preview/provider'
 import { useSearchParams } from 'react-router-dom'
-function paramsToObject(entries: IterableIterator<[string, string]>) {
-  const result: Record<string, any> = {}
-  for (const [key, value] of entries) {
-    // each 'entry' is a [key, value] tupple
-    result[key] = value
-  }
-  return result
-}
 
 const Page: NodeComponent = ({ node, editType }) => {
   const { children, actions: actionsProp, style } = node

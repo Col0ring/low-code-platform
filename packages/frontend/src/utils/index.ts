@@ -27,10 +27,20 @@ export function safeJsonParser<T>(str: string, defaultValue: T): T {
   try {
     return JSON.parse(str)
   } catch (error) {
+    console.log(error)
     return defaultValue
   }
 }
 
 export function getId(prefix: string) {
   return `${prefix}_${nanoid(10)}`
+}
+
+export function paramsToObject(entries: IterableIterator<[string, string]>) {
+  const result: Record<string, any> = {}
+  for (const [key, value] of entries) {
+    // each 'entry' is a [key, value] tupple
+    result[key] = value
+  }
+  return result
 }
