@@ -13,6 +13,7 @@ import { getId } from '@/utils'
 import { parserActions, propItemName } from '..'
 import { useEditorPreviewContext } from '../../editor-preview/provider'
 import AddAction from '../../add-action/inidex'
+import VariableBinding from '../../variable-binding'
 
 const buttonTypes = ['primary', 'default', 'dashed', 'link', 'text'] as const
 
@@ -42,7 +43,9 @@ const ButtonPropsForm: typeof Button['PropsForm'] = () => {
     <Collapse defaultActiveKey={['props', 'actions']} bordered={false}>
       <Collapse.Panel header="属性设置" key="props">
         <Form.Item name={propItemName('content')} label="内容">
-          <Input />
+          <VariableBinding>
+            <Input />
+          </VariableBinding>
         </Form.Item>
 
         <Form.Item name={propItemName('type')} label="按钮类型">

@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom'
 import { AppRouter, AppRoutes } from './router'
 import AppProvider from './provider'
 import '@/styles/index.less'
-import 'virtual:windi.css'
 import '@/components/monaco-editor/env'
+import 'virtual:windi.css'
 
 ReactDOM.render(
   <React.StrictMode>

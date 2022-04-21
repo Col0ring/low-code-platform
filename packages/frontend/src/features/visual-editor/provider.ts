@@ -1,5 +1,5 @@
 import { createMethodsContext } from 'react-use-methods'
-import { ArrayItem, StrictOmit } from 'types-kit'
+import type { ArrayItem, StrictOmit } from 'types-kit'
 import { createDraft, Draft, finishDraft, isDraft } from 'immer'
 import {
   PageRenderNode,
@@ -361,7 +361,6 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
             const immerParentNode = immerComponentNodesMap[parentNode.id]
             if (isParentComponentRenderNode(immerParentNode)) {
               immerParentNode.children.splice(index, 0, newNode)
-
               dispatch({
                 type: 'setPage',
               })

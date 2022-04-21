@@ -1,3 +1,4 @@
+import useSetState from '@/hooks/useSetState'
 import { noop } from '@/utils'
 import React, {
   useContext,
@@ -5,19 +6,15 @@ import React, {
   useState,
   useMemo,
   useEffect,
+  useRef,
 } from 'react'
 import { useNavigate } from 'react-router'
 import { useEditorContext } from '../../provider'
-import { compile } from '../../utils'
+import { PageRenderNode } from '../../type'
+import { compileActions, compileDataSources } from '../../utils'
 
 export interface EditorPreviewContextValue {
-  dataSources: Record<
-    string,
-    {
-      type: 'remote' | 'var'
-      value: any
-    }
-  >
+  dataSources: Record<string, any>
   modal: Record<string, boolean>
   actions: {
     js: Record<string, any>
@@ -44,11 +41,20 @@ export const EditorPreviewContext = createContext<EditorPreviewContextValue>({
     },
   },
 })
-
-export const EditorPreviewContextProvider: React.FC = ({ children }) => {
-  const [{ page }] = useEditorContext()
+export interface EditorPreviewContextProviderProps {
+  page?: PageRenderNode
+}
+export const EditorPreviewContextProvider: React.FC<
+  EditorPreviewContextProviderProps
+> = ({ children, page: pageProp }) => {
+  const [{ page: contextPage }] = useEditorContext(false) || [{}, {}]
+  const page = pageProp || (contextPage as PageRenderNode)
+  const [hasCompiled, setHasCompiled] = useState(false)
+  const [load, setLoad] = useState(false)
   const navigate = useNavigate()
   const [jsAction, setJsAction] = useState({})
+  const [dataSources, setDataSources] = useSetState<Record<string, any>>({})
+  const dataSourcesRef = useRef<Record<string, any>>({})
   const memoEditorPreviewContextValue = useMemo<EditorPreviewContextValue>(
     () => ({
       actions: {
@@ -67,23 +73,41 @@ export const EditorPreviewContextProvider: React.FC = ({ children }) => {
         },
         js: jsAction,
       },
-      dataSources: {},
+      dataSources,
       modal: {},
     }),
-    [jsAction, navigate]
+    [jsAction, navigate, dataSources]
   )
   useEffect(() => {
-    compile(page.js)
+    compileDataSources(page.dataSources)
       .then((res) => {
+        setDataSources(res, true)
+      })
+      .catch(() => {
+        setDataSources({})
+      })
+  }, [page.dataSources, setDataSources])
+  useEffect(() => {
+    Object.assign(dataSourcesRef.current, dataSources)
+  }, [dataSources])
+  useEffect(() => {
+    compileActions(page.js, dataSourcesRef.current, setDataSources)
+      .then((res) => {
+        setHasCompiled(true)
         setJsAction(res || {})
       })
       .catch(() => {
         setJsAction({})
       })
-  }, [page.js])
+  }, [page.js, setDataSources])
+  useEffect(() => {
+    if (hasCompiled) {
+      setLoad(true)
+    }
+  }, [hasCompiled])
   return (
     <EditorPreviewContext.Provider value={memoEditorPreviewContextValue}>
-      {children}
+      {load && children}
     </EditorPreviewContext.Provider>
   )
 }

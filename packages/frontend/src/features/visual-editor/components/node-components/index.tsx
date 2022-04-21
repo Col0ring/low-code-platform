@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { FileTextOutlined, ContainerOutlined } from '@ant-design/icons'
 import {
   Actions,
@@ -15,11 +15,15 @@ import Screen from './layout/screen'
 import Page from './layout/page'
 import { safeJsonParser } from '@/utils'
 import Button from './basic/button'
-import { EditorPreviewContextValue } from '../editor-preview/provider'
+import {
+  EditorPreviewContextValue,
+  useEditorPreviewContext,
+} from '../editor-preview/provider'
 import Image from './basic/image'
 import Link from './basic/link'
 import Tabs from './layout/tabs'
 import Alert from './feedback/alert'
+import { isBindVariable } from '../variable-binding'
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
@@ -128,7 +132,6 @@ export function isParentComponentRenderNode(
 export function getComponentNode(name: string) {
   return componentsMap[name] || null
 }
-
 export function createNewNode(name: string): ComponentRenderNode {
   const { component, title } = getComponentNode(name)
   if (component.getInitialChildren) {
@@ -170,16 +173,65 @@ export function copyNode(node: ComponentRenderNode): ComponentRenderNode {
     props: safeJsonParser(JSON.stringify(node.props), node.props),
   }
 }
+
+interface RenderComponentProps {
+  node: ComponentRenderNode
+  editType: 'prod' | 'edit'
+}
+
+export function transformNode(
+  dataSources: Record<string, any>,
+  node: ComponentRenderNode
+) {
+  const transform = (v: Record<string, any>) => {
+    return Object.keys(v).reduce((acc, key) => {
+      const data = v[key]
+      if (isBindVariable(data)) {
+        if (data.type === 'binding') {
+          acc[key] = dataSources[data.value]
+        } else if (data.type === 'normal') {
+          acc[key] = data.value
+        }
+      } else {
+        acc[key] = data
+      }
+      return acc
+    }, {} as Record<string, any>)
+  }
+
+  return {
+    ...node,
+    props: transform(node.props),
+    style: transform(node.style),
+  }
+}
+
+const RenderComponent: React.FC<RenderComponentProps> = ({
+  node,
+  editType,
+}) => {
+  const { dataSources } = useEditorPreviewContext()
+  const transformedNode = useMemo(
+    () => transformNode(dataSources, node),
+    [dataSources, node]
+  )
+  return (
+    <>
+      {React.createElement(getComponentNode(node.name).component, {
+        node: transformedNode as ParentComponentRenderNode,
+        parentNodes: [],
+        key: node.id,
+        editType,
+      })}
+    </>
+  )
+}
+
 export function renderNode(
   node: ComponentRenderNode,
   editType: 'prod' | 'edit' = 'prod'
 ) {
-  return React.createElement(getComponentNode(node.name).component, {
-    node: node as ParentComponentRenderNode,
-    parentNodes: [],
-    key: node.id,
-    editType,
-  })
+  return <RenderComponent node={node} editType={editType} />
 }
 
 export function renderNodes(
@@ -198,15 +250,23 @@ export function parserActions(
     return {}
   }
   return Object.keys(actions).reduce((prev, next) => {
-    prev[next] = (e: React.UIEvent) => {
+    prev[next] = (e?: React.UIEvent, v?: any) => {
       actions[next].forEach(({ actionType, actionEvent, value }) => {
         ;(contextActionsHandler[actionType] as Record<string, any>)[
           actionEvent
-        ](e, safeJsonParser(JSON.stringify(value), value))
+        ]?.(
+          v
+            ? {
+                actionParams: safeJsonParser(value, value),
+                external: v,
+              }
+            : safeJsonParser(JSON.stringify(value), value),
+          e
+        )
       })
     }
     return prev
-  }, {} as Record<string, (e: React.UIEvent) => void>)
+  }, {} as Record<string, (e?: React.UIEvent, v?: any) => void>)
 }
 
 export function propItemName(name: string) {

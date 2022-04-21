@@ -1,4 +1,4 @@
-import webpack, { Chunk, Module } from 'webpack'
+import webpack from 'webpack'
 import path from 'path'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ZipWebpackPlugin from 'zip-webpack-plugin'
@@ -86,7 +86,7 @@ export function getWebpackConfig({
                   '@babel/preset-typescript',
                   '@babel/preset-react',
                 ],
-                plugins: ['@babel/plugin-transform-runtime'],
+                plugins: [['@babel/plugin-transform-runtime']],
               },
             },
           ],

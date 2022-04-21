@@ -1,17 +1,34 @@
 import React from 'react'
 import { ScreenProps } from './components/node-components/layout/screen'
 
-export interface DataSource<T = any> {
-  type: 'remote' | 'var'
+export interface VarDataSource<T = any> {
+  type: 'var'
   defaultValue: T
+  name: string
+  desc: string
 }
+
+export interface RemoteDataSource<T = any> {
+  type: 'remote'
+  defaultValue: T
+  name: string
+  desc: string
+  method: 'get' | 'post' | 'put' | 'delete'
+  query?: { name: string; value: string }[]
+  body?: { name: string; value: string }[]
+  headers?: { name: string; value: string }[]
+  autoLoad: boolean
+}
+
+export type DataSource = VarDataSource | RemoteDataSource
 
 export type DataSources<T extends string = string> = Record<T, DataSource>
 
 export interface Action {
   actionType: 'js' | 'internal'
   actionEvent: string
-  value: Record<string, any>
+  // json payload
+  value: string
 }
 
 export type Actions<T extends string = string> = Record<T, Action[]>
@@ -22,6 +39,12 @@ export interface ComponentNode<T extends object = any> {
   name: string
   icon?: React.ReactNode
   title?: string
+}
+
+export interface BindingValue<T = any> {
+  __BINDING__?: boolean
+  type: 'normal' | 'binding'
+  value: T
 }
 
 export interface ComponentRenderNode<T extends object = any>

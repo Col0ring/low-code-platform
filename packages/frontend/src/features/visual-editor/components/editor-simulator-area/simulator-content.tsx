@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEditorContext } from '../../provider'
-import EditEditorPreview from '../editor-preview/edit-editor-preview.'
+import EditEditorPreview from '../editor-preview/edit-editor-preview'
 
 const SimulatorContent: React.FC = () => {
   const [{ page }] = useEditorContext()

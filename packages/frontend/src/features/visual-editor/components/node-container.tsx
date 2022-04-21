@@ -9,11 +9,17 @@ import {
 } from '../type'
 import { useEditorContext } from '../provider'
 import { useClassName } from '@/hooks'
-import { copyNode, createNewNode, getComponentNode } from './node-components'
+import {
+  copyNode,
+  createNewNode,
+  getComponentNode,
+  transformNode,
+} from './node-components'
 import { safeJsonParser, stopPropagation } from '@/utils'
 import { DraggingData } from '../constants'
 import { DragArea, Draggable } from './dragging'
 import { StrictOmit } from 'types-kit'
+import { useEditorPreviewContext } from './editor-preview/provider'
 
 export interface NodeContainerProps
   extends StrictOmit<NodeComponentProps, 'node'> {
@@ -118,6 +124,12 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   index,
   hasAction: hasActionProp = true,
 }) => {
+  const { dataSources } = useEditorPreviewContext()
+  const transformedNode = useMemo(
+    () => transformNode(dataSources, node),
+    [dataSources, node]
+  )
+
   const [
     {
       disabledNodeAction,
@@ -221,16 +233,20 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
 
   const wrapperStyle = useMemo(() => {
     const display = ['inline', 'inline-flex', 'inline-block'].includes(
-      node.style.display as string
+      transformedNode.style.display as string
     )
       ? 'inline-block'
       : 'block'
     return {
-      width: display === 'block' ? undefined : node.style.width,
-      height: node.style.height,
+      width: display === 'block' ? undefined : transformedNode.style.width,
+      height: transformedNode.style.height,
       display,
     }
-  }, [node.style.display, node.style.height, node.style.width])
+  }, [
+    transformedNode.style.display,
+    transformedNode.style.height,
+    transformedNode.style.width,
+  ])
 
   return (
     <Draggable
@@ -369,7 +385,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
       )}
 
       {React.createElement(getComponentNode(node.name).component, {
-        node: node as ParentComponentRenderNode,
+        node: transformedNode as ParentComponentRenderNode,
         disabled,
         parentNodes: parentNodes,
         editType: 'edit',
