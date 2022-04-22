@@ -21,7 +21,9 @@ export class AppEntity {
   @Column()
   name: string
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   desc: string
 
   @Column({

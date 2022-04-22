@@ -26,6 +26,7 @@ import { emptyValidator } from '@/utils/validators'
 import { mainApi } from '../../main.service'
 import { useAppDispatch } from '@/store'
 import AppView from '@/features/app/pages/app-view'
+import ImageUploader from '@/features/upload/components/image-uploader'
 
 export interface TemplateModalProps {
   template: Template
@@ -49,7 +50,7 @@ const TemplateItem: React.FC<TemplateModalProps> = ({ template, self }) => {
         <Input />
       </Form.Item>
       <Form.Item label="应用图标" name="icon">
-        <Input />
+        <ImageUploader />
       </Form.Item>
       <Form.Item label="应用描述" name="desc">
         <Input.TextArea />
@@ -65,7 +66,7 @@ const TemplateItem: React.FC<TemplateModalProps> = ({ template, self }) => {
         }}
       >
         <div className="flex items-center">
-          <DefaultAppIcon size={44} />
+          <DefaultAppIcon size={44} src={template.icon} />
           <div className="text-lg ml-3">{template.name}</div>
         </div>
         <div className="text-gray-500 mt-5">{template.desc}</div>

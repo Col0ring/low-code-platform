@@ -14,6 +14,7 @@ import { ValidationPipe } from './pipes/validation.pipe'
 import { AppsModule } from './apps/apps.module'
 import { PagesModule } from './pages/pages.module'
 import { TemplatesModule } from './templates/templates.module'
+import { CommonModule } from './common/common.module'
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { TemplatesModule } from './templates/templates.module'
     UsersModule,
     PagesModule,
     AppsModule,
+    CommonModule,
     TemplatesModule,
     ConfigModule.forRoot({
       isGlobal: true,

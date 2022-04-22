@@ -4,11 +4,14 @@ import helmet from 'helmet'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { __DEV__ } from './constants'
+import { NestExpressApplication } from '@nestjs/platform-express'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create<NestExpressApplication>(AppModule)
   app.setGlobalPrefix('/api')
-
+  app.useStaticAssets('uploads', {
+    prefix: '/uploads',
+  })
   // development
   if (__DEV__) {
     app.enableCors()

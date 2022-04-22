@@ -7,6 +7,7 @@ export const Path = {
   Dashboard: '/dashboard',
   AppCenter: '/app-center',
   TemplatesCenter: '/templates-center',
+  UserCenter: '/user-center',
   // app
   AppPage: (appId: string | number) => `/app/${appId}/page`,
   MatchedAppPage: (appId: string | number) => `/app/${appId}/page/*`,

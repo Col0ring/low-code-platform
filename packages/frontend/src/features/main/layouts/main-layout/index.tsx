@@ -20,6 +20,10 @@ const tabPaths = [
     path: Path.TemplatesCenter,
     key: Path.TemplatesCenter,
   },
+  {
+    path: Path.UserCenter,
+    key: Path.UserCenter,
+  },
 ]
 const MainLayout: React.FC = () => {
   const { pathname } = useLocation()
@@ -51,6 +55,9 @@ const MainLayout: React.FC = () => {
               </Menu.Item>
               <Menu.Item key={Path.TemplatesCenter}>
                 <Link to={Path.TemplatesCenter}>模板中心</Link>
+              </Menu.Item>
+              <Menu.Item key={Path.UserCenter}>
+                <Link to={Path.UserCenter}>个人中心</Link>
               </Menu.Item>
             </Menu>
           </div>

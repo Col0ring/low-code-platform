@@ -8,5 +8,5 @@ export function withPayloadType<T>() {
 export function isResolved<D extends ResultData, E extends ResultError>(
   result: D | E
 ): result is D {
-  return !!(result as D).data
+  return !(result as E).error
 }

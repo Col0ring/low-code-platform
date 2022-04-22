@@ -54,6 +54,16 @@ export const accessRoutes: RouteObject[] = [
           />
         ),
       },
+      {
+        path: 'user-center',
+        element: (
+          <LazyRoute
+            component={React.lazy(
+              () => import('@/features/main/pages/user-center')
+            )}
+          />
+        ),
+      },
     ],
   },
   {

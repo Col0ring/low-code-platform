@@ -61,7 +61,7 @@ export const authSlice = createSlice({
       setTimeout(() => {
         window.location.reload()
       }, 200)
-      return initialState()
+      // return initialState()
     },
   },
 })

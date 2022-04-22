@@ -60,7 +60,7 @@ const AuthRoute: React.FC<AuthRouteProps> = (props) => {
   const { hasToken } = auth
   // 登出或者没有登录过 hasToken 为 false
   const { isLoading, data } = useGetUserInfoQuery(
-    !hasToken || auth.user ? skipToken : !needAuth
+    !hasToken ? skipToken : !needAuth
   )
 
   const user = hasToken ? data || auth.user : auth.user

@@ -22,6 +22,11 @@ export class UserEntity {
   avatar: string
 
   @Column({
+    unique: true,
+  })
+  email: string
+
+  @Column({
     transformer: {
       to(value: string) {
         return bcrypt.hashSync(value, 10)

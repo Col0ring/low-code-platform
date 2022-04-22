@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class TemplateCreateDto {
   @IsNotEmpty({
@@ -12,11 +12,13 @@ export class TemplateCreateDto {
   @IsString({
     message: 'Please input correct content',
   })
+  @IsOptional()
   icon: string
 
   @IsString({
     message: 'Please input correct content',
   })
+  @IsOptional()
   desc: string
 
   @IsNumber(undefined, {

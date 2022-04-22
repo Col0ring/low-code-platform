@@ -70,7 +70,7 @@ const DesignLayout: React.FC = () => {
                   className="cursor-pointer"
                 >
                   <Space>
-                    <DefaultAppIcon size={24} />
+                    <DefaultAppIcon size={24} src={data.app.icon} />
                     {data.app.name}
                     <Tag
                       color={

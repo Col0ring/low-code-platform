@@ -5,6 +5,7 @@ import { useOutletContext } from 'react-router'
 import { App } from '@/features/main/type'
 import { useUpdateAppMutation } from '../../app.service'
 import { isResolved } from '@/utils'
+import ImageUploader from '@/features/upload/components/image-uploader'
 
 const BasicSettingPage = () => {
   const app = useOutletContext<App>()
@@ -32,7 +33,7 @@ const BasicSettingPage = () => {
               <Input />
             </Form.Item>
             <Form.Item name="icon" label="应用图标">
-              <Input />
+              <ImageUploader />
             </Form.Item>
             <Form.Item name="desc" label="应用描述">
               <Input.TextArea />

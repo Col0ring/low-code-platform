@@ -9,6 +9,7 @@ import { LocalAuthGuard } from './local-auth.guard'
 import { RefreshTokenJwtAuthGuard } from './refresh-token-jwt-auth.guard'
 import { JwtUser, LocalUser, RefreshTokenJwtUser } from './type'
 import { ResetPasswordDto } from './dto/reset-password.dto'
+import { UserUpdateDto } from './dto/user-update.dto'
 
 @Controller('auth')
 export class AuthController {
@@ -22,6 +23,12 @@ export class AuthController {
   @Post('/resetPassword')
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto)
+  }
+
+  @Auth()
+  @Post('/updateUser')
+  updateUser(@Body() dto: UserUpdateDto, @User() user: JwtUser) {
+    return this.authService.updateUser(user.id, dto)
   }
 
   @UseGuards(LocalAuthGuard)

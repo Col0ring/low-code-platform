@@ -11,6 +11,7 @@ import {
   emptyValidator,
   phoneValidator,
 } from '@/utils/validators'
+import ImageUploader from '@/features/upload/components/image-uploader'
 
 export interface RegisterFormProps {
   onRegister: (values: any) => void
@@ -38,6 +39,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
           autoComplete="phone"
         />
       </Form.Item>
+
       <Form.Item
         name="username"
         label="用户名"
@@ -48,6 +50,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
           placeholder="Username"
           autoComplete="username"
         />
+      </Form.Item>
+      <Form.Item name="avatar" label="头像">
+        <ImageUploader />
       </Form.Item>
       <Form.Item name="email" label="邮 箱" rules={[emailValidator()]}>
         <Input

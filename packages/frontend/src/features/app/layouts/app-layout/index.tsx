@@ -57,7 +57,7 @@ const AppLayout: React.FC = () => {
               <Breadcrumb separator=">">
                 <Breadcrumb.Item>
                   <Space>
-                    <DefaultAppIcon size={24} />
+                    <DefaultAppIcon size={24} src={data.icon} />
                     {data.name}
                     <Tag
                       color={

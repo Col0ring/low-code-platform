@@ -2,6 +2,7 @@ import ModalButton from '@/components/modal-button'
 import { AppStatus } from '@/features/main/constants'
 import { useCreateTemplateMutation } from '@/features/main/main.service'
 import { App } from '@/features/main/type'
+import ImageUploader from '@/features/upload/components/image-uploader'
 import useCopyToClipboard from '@/hooks/useCopyToClipboard'
 import { isResolved, mergeBaseUrl } from '@/utils'
 import { emptyValidator } from '@/utils/validators'
@@ -143,7 +144,7 @@ const AppPublishPage: React.FC = () => {
                     <Input />
                   </Form.Item>
                   <Form.Item label="模板图标" name="icon">
-                    <Input />
+                    <ImageUploader />
                   </Form.Item>
                   <Form.Item label="模板描述" name="desc">
                     <Input.TextArea />

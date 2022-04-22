@@ -9,6 +9,7 @@ import { userApi } from '@/features/user/user.service'
 import { rtkQueryErrorLogger } from './rtk-query-error-logger-middleware'
 import { mainApi } from '@/features/main/main.service'
 import { appApi } from '@/features/app/app.service'
+import { uploadApi } from '@/features/upload/upload.service'
 
 function setupStore() {
   const devMiddlewares: Middleware[] = []
@@ -18,6 +19,7 @@ function setupStore() {
     userApi.middleware,
     mainApi.middleware,
     appApi.middleware,
+    uploadApi.middleware,
   ]
   const store = configureStore({
     reducer: {
@@ -25,6 +27,7 @@ function setupStore() {
       [userApi.reducerPath]: userApi.reducer,
       [mainApi.reducerPath]: mainApi.reducer,
       [appApi.reducerPath]: appApi.reducer,
+      [uploadApi.reducerPath]: uploadApi.reducer,
       [authSlice.name]: authSlice.reducer,
     },
     middleware: (getDefaultMiddleware) => {

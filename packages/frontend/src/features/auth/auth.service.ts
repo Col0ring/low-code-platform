@@ -53,6 +53,24 @@ export const authApi = createServiceApi({
       },
       invalidatesTags: (result) => (result ? ['Auth'] : []),
     }),
+    updateUser: builder.mutation<
+      void,
+      {
+        username: string
+        avatar: string
+      }
+    >({
+      query(data) {
+        return {
+          url: '/auth/updateUser',
+          method: 'post',
+          body: data,
+        }
+      },
+      invalidatesTags: (_result, error) => {
+        return !error ? ['Auth'] : []
+      },
+    }),
     // TODO
     getAuthCode: builder.mutation<
       {
@@ -172,4 +190,5 @@ export const {
   useGetAuthCodeMutation,
   useLoginMutation,
   useLogoutMutation,
+  useUpdateUserMutation,
 } = authApi

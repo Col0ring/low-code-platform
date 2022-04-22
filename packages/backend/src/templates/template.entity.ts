@@ -19,7 +19,9 @@ export class TemplateEntity {
   @Column()
   name: string
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   desc: string
 
   @Column({

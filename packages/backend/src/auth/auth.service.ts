@@ -12,6 +12,7 @@ import { LocalUser, TokenPayload, Tokens } from './type'
 import { RegisterDto } from './dto/register.dto'
 import { Role } from './constants'
 import { ResetPasswordDto } from './dto/reset-password.dto'
+import { UserUpdateDto } from './dto/user-update.dto'
 
 const fakeRoles = [Role.Admin, Role.User]
 @Injectable()
@@ -67,6 +68,9 @@ export class AuthService {
       password: dto.password,
       refreshToken: null,
     })
+  }
+  async updateUser(id: number, dto: UserUpdateDto) {
+    await this.usersService.updateOneById(id, dto)
   }
 
   async register(dto: RegisterDto) {

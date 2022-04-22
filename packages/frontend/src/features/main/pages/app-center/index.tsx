@@ -29,6 +29,7 @@ import {
   useGetAppListQuery,
 } from '@/features/app/app.service'
 import { SearchAppStatus, AppStatus } from '../../constants'
+import ImageUploader from '@/features/upload/components/image-uploader'
 
 const appStatus = {
   [SearchAppStatus.All]: '全部状态',
@@ -84,7 +85,7 @@ const AppCenterPage: React.FC = () => {
                 <Input />
               </Form.Item>
               <Form.Item label="应用图标" name="icon">
-                <Input />
+                <ImageUploader />
               </Form.Item>
               <Form.Item label="应用描述" name="desc">
                 <Input.TextArea />
@@ -171,7 +172,7 @@ const AppCenterPage: React.FC = () => {
                       }}
                     >
                       <div className="flex items-center">
-                        <DefaultAppIcon size={44} />
+                        <DefaultAppIcon src={app.icon} size={44} />
                         <div className="text-lg ml-3">{app.name}</div>
                       </div>
                       <div className="text-gray-500 mt-5">{app.desc}</div>
@@ -226,7 +227,7 @@ const AppCenterPage: React.FC = () => {
                                           <Input />
                                         </Form.Item>
                                         <Form.Item label="应用图标" name="icon">
-                                          <Input />
+                                          <ImageUploader />
                                         </Form.Item>
                                         <Form.Item label="应用描述" name="desc">
                                           <Input.TextArea />

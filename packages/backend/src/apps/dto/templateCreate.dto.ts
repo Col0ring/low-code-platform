@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class AppCreateByTemplateDto {
   @IsNotEmpty({
@@ -12,11 +12,13 @@ export class AppCreateByTemplateDto {
   @IsString({
     message: 'Please input correct icon',
   })
+  @IsOptional()
   icon: string
 
   @IsString({
     message: 'Please input correct desc',
   })
+  @IsOptional()
   desc: string
   @IsNotEmpty({
     message: "templateAppId can't be empty",
