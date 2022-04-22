@@ -1,4 +1,4 @@
-import EditorPreview from '@/features/visual-editor/components/editor-preview'
+import PageView from '@/features/design/components/page-view'
 import { PageRenderNode } from '@/features/visual-editor/type'
 import { Path } from '@/router/constants'
 import RouteLoading from '@/router/route-loading'
@@ -86,9 +86,9 @@ const PageDetailPage: React.FC = () => {
             </Dropdown.Button>
           </div>
           {pageContent && (
-            <div className="overflow-auto flex-1">
-              <div className="p-4 bg-white rounded-md my-4 mx-1">
-                <EditorPreview page={pageContent} />
+            <div className="overflow-auto flex-1 flex flex-col">
+              <div className="p-4 bg-white rounded-md my-4 mx-1 flex-1">
+                <PageView page={pageContent} />
               </div>
             </div>
           )}

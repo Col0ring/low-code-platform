@@ -24,6 +24,7 @@ import { AppSearchDto } from './dto/search.dto'
 import { AppCreateByTemplateDto } from './dto/templateCreate.dto'
 import { AppUpdateDto } from './dto/update.dto'
 
+// TODO: user => app
 @Controller('apps')
 @Auth()
 export class AppsController {

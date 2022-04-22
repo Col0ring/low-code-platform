@@ -21,12 +21,12 @@ export interface EditorPreviewContextValue {
     js: Record<string, any>
     internal: {
       openUrl: (
-        e: React.UIEvent,
         options: {
           url: string
           openInNewTab: boolean
           openInNewWindow: boolean
-        }
+        },
+        e: React.UIEvent
       ) => void
     }
   }
@@ -66,7 +66,7 @@ export const EditorPreviewContextProvider: React.FC<
     () => ({
       actions: {
         internal: {
-          openUrl: (_e, { openInNewTab, openInNewWindow, url }) => {
+          openUrl: ({ openInNewTab, openInNewWindow, url }) => {
             if (openInNewTab) {
               window.open(url, '_blank')
             } else {

@@ -3,7 +3,7 @@ import { useEditorPropsContext } from '@/features/visual-editor/editor-props-con
 import { useEditorContext } from '@/features/visual-editor/provider'
 import { Button, message } from 'antd'
 import * as monaco from 'monaco-editor'
-import React, { useRef, useEffect, useMemo } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { useEditorPreviewContext } from '../../editor-preview/provider'
 
 const ActionPane: React.FC = () => {

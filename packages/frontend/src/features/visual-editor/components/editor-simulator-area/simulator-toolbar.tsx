@@ -21,8 +21,8 @@ import { ComponentRenderNode, PageRenderNode } from '../../type'
 import ModalButton from '@/components/modal-button'
 import { emptyValidator } from '@/utils/validators'
 import { MonacoEditor, MonacoEditorProps } from '@/components/monaco-editor'
-import EditorPreview from '../editor-preview'
 import { useEditorPropsContext } from '../../editor-props-context'
+import PageView from '@/features/design/components/page-view'
 const SimulatorToolbar: React.FC = () => {
   const [canScroll, setCanScroll] = useState(false)
   const [screen, setScreen] = useState('')
@@ -349,9 +349,15 @@ const SimulatorToolbar: React.FC = () => {
           <ModalButton
             modalProps={{
               width: '100vw',
+              style: {
+                top: 10,
+              },
+              bodyStyle: {
+                height: '80vh',
+              },
             }}
             modalTitle="预览"
-            modal={<EditorPreview page={page} />}
+            modal={<PageView page={page} />}
             size="small"
           >
             预览

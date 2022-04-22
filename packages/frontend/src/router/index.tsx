@@ -1,4 +1,5 @@
 import AppShowView from '@/features/app/pages/app-show-view'
+import PageShowView from '@/features/design/pages/page-show-view'
 import React from 'react'
 import {
   BrowserRouter,
@@ -12,9 +13,10 @@ import { routes } from './routes'
 export const AppRouter: React.FC = ({ children }) => {
   return (
     <>
-      {window.appViewId ? (
+      {window.appViewId || window.page ? (
         <BrowserRouter>
           <Routes>
+            <Route path="/page-view" element={<PageShowView />} />
             <Route path="/*" element={<AppShowView />} />
           </Routes>
         </BrowserRouter>
