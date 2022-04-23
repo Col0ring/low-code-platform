@@ -1,11 +1,12 @@
 import ModalButton from '@/components/modal-button'
+import { MonacoEditor } from '@/components/monaco-editor'
 import { useEditorContext } from '@/features/visual-editor/provider'
 import { DataSources, RemoteDataSource } from '@/features/visual-editor/type'
-import { stopPropagation } from '@/utils'
 import { emptyValidator } from '@/utils/validators'
 import { EditOutlined } from '@ant-design/icons'
-import { Form, Input, message } from 'antd'
+import { Form, Input, message, Radio, Switch } from 'antd'
 import React, { useState } from 'react'
+import VariableBinding from '../../../variable-binding'
 export type RemoteFormButtonProps =
   | {
       type: 'add'
@@ -22,8 +23,13 @@ const RemoteFormButton: React.FC<RemoteFormButtonProps> = (props) => {
 
   return (
     <ModalButton
-      modalTitle={type === 'add' ? '新增变量' : '编辑变量'}
-      onClick={type === 'edit' ? stopPropagation : undefined}
+      modalProps={{
+        width: '80%',
+        style: {
+          top: 10,
+        },
+      }}
+      modalTitle={type === 'add' ? '新增远程 API' : '编辑远程 API'}
       type="text"
       icon={type === 'edit' ? <EditOutlined /> : undefined}
       afterModalClose={() => {
@@ -35,10 +41,37 @@ const RemoteFormButton: React.FC<RemoteFormButtonProps> = (props) => {
       }}
       modal={
         <Form
-          initialValues={type === 'edit' ? props.initialValues : undefined}
+          initialValues={
+            type === 'edit'
+              ? props.initialValues
+              : {
+                  fetch: {
+                    data: `{
+"params": {},
+"body": {},
+"headers": {}
+}`,
+                  },
+                  hooks: `/*
+  发送请求前
+*/
+export const beforeFetch = (config) => {
+  // config 为请求前的配置项，可通过 config.url = xx 来修改配置
+};
+
+/*
+  发送请求后
+*/
+export const afterFetch = (data, error) => {
+  // data 为获取的数据，error 为 fetch 失败后的错误，data 与 error 有且只有一个有值，另一个值为 null
+  // 必须要返回值
+  return data;
+};`,
+                }
+          }
           form={form}
-          layout="vertical"
           preserve={false}
+          labelCol={{ span: 3 }}
         >
           <Form.Item
             label="名称"
@@ -51,10 +84,71 @@ const RemoteFormButton: React.FC<RemoteFormButtonProps> = (props) => {
             <Input />
           </Form.Item>
           <Form.Item
+            label="自动加载"
+            name="autoLoad"
+            valuePropName="checked"
+            tooltip="当页面首次加载时自动执行"
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item
+            label="发送请求"
+            name="doFetch"
+            valuePropName="checked"
+            tooltip="每次调用请求时都会进行判断"
+          >
+            <VariableBinding valuePropName="checked">
+              <Switch />
+            </VariableBinding>
+          </Form.Item>
+          <Form.Item
+            label="请求地址"
+            name={['fetch', 'url']}
+            rules={[emptyValidator('请求地址')]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="请求方法"
+            name={['fetch', 'method']}
+            rules={[
+              emptyValidator('请求方法', {
+                message: '请选择请求方法',
+              }),
+            ]}
+          >
+            <Radio.Group>
+              <Radio.Button value="GET">GET</Radio.Button>
+              <Radio.Button value="POST">POST</Radio.Button>
+              <Radio.Button value="PUT">PUT</Radio.Button>
+              <Radio.Button value="DELETE">DELETE</Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item label="请求参数" name={['fetch', 'data']}>
+            <MonacoEditor
+              className="h-200px border"
+              language="json"
+              scrollBeyondLastLine={false}
+              minimap={{
+                enabled: false,
+              }}
+            />
+          </Form.Item>
+          <Form.Item label="数据处理" name="hooks">
+            <MonacoEditor
+              className="h-300px border"
+              formatOnSave
+              scrollBeyondLastLine={false}
+              minimap={{
+                enabled: false,
+              }}
+            />
+          </Form.Item>
+          <Form.Item
             label={
-              <div>
-                <p>数据</p>
-                <p className="text-gray-400 text-xs">请输入 JS 标准数据</p>
+              <div className="whitespace-normal">
+                <p>默认数据</p>
+                <p className="text-gray-400 text-xs text">请输入 JS 标准数据</p>
               </div>
             }
             name="defaultValue"
@@ -74,7 +168,7 @@ const RemoteFormButton: React.FC<RemoteFormButtonProps> = (props) => {
             dataSources: {
               ...page.dataSources,
               [values.name]: {
-                type: 'var',
+                type: 'remote',
                 ...values,
               },
             },
@@ -102,7 +196,7 @@ const RemoteFormButton: React.FC<RemoteFormButtonProps> = (props) => {
             setEditData({
               ...dataSources,
               [values.name]: {
-                type: 'var',
+                type: 'remote',
                 ...values,
               },
             })
@@ -110,7 +204,9 @@ const RemoteFormButton: React.FC<RemoteFormButtonProps> = (props) => {
         }
       }}
       renderButton={
-        type === 'add' ? (btnProps) => <div {...btnProps}>变量</div> : undefined
+        type === 'add'
+          ? (btnProps) => <div {...btnProps}>远程 API</div>
+          : undefined
       }
     />
   )

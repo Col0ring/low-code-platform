@@ -4,10 +4,12 @@ import { ForkOutlined } from '@ant-design/icons'
 import { useEditorPreviewContext } from '../editor-preview/provider'
 import { BindingValue } from '../../type'
 
-export function isBindVariable(v: any): v is BindingValue {
+export function isWrapperValue(v: any): v is BindingValue {
   return !!v?.__BINDING__
 }
-
+export function isBindVariable(v: any): v is BindingValue<any, 'binding'> {
+  return isWrapperValue(v) && v.type === 'binding'
+}
 export interface VariableBindingProps {
   trigger?: string
   valuePropName?: string
@@ -21,13 +23,13 @@ const VariableBinding: React.FC<VariableBindingProps> = ({
   ...props
 }) => {
   const [visible, setVisible] = useState(false)
-  const isWrapperValue = useMemo(
-    () => isBindVariable(props[valuePropName]),
+  const isWrapper = useMemo(
+    () => isWrapperValue(props[valuePropName]),
     [props, valuePropName]
   )
   const isBinding = useMemo(
-    () => isWrapperValue && props[valuePropName].type === 'binding',
-    [isWrapperValue, props, valuePropName]
+    () => isWrapper && props[valuePropName].type === 'binding',
+    [isWrapper, props, valuePropName]
   )
   const [form] = Form.useForm()
   const { dataSources } = useEditorPreviewContext()
@@ -42,7 +44,7 @@ const VariableBinding: React.FC<VariableBindingProps> = ({
             disabled: isBinding,
             [valuePropName]: isBinding
               ? undefined
-              : isWrapperValue
+              : isWrapper
               ? props[valuePropName].value
               : props[valuePropName],
             [trigger]: (e: any) => {

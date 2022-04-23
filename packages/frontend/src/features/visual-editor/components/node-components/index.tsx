@@ -23,8 +23,7 @@ import Image from './basic/image'
 import Link from './basic/link'
 import Tabs from './layout/tabs'
 import Alert from './feedback/alert'
-import { isBindVariable } from '../variable-binding'
-import { compileBindingValue } from '../../utils'
+import { getBindingValue } from '../../utils'
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
@@ -186,16 +185,7 @@ export function transformNode(
 ) {
   const transform = (v: Record<string, any>) => {
     return Object.keys(v).reduce((acc, key) => {
-      const data = v[key]
-      if (isBindVariable(data)) {
-        if (data.type === 'binding') {
-          acc[key] = compileBindingValue(dataSources, data.value)
-        } else if (data.type === 'normal') {
-          acc[key] = data.value
-        }
-      } else {
-        acc[key] = data
-      }
+      acc[key] = getBindingValue(dataSources, v[key])
       return acc
     }, {} as Record<string, any>)
   }

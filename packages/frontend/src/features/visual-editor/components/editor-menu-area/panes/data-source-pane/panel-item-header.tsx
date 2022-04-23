@@ -1,9 +1,10 @@
 import { DeleteOutlined } from '@ant-design/icons'
 import { Modal, Space, Tooltip } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 import { useEditorContext } from '@/features/visual-editor/provider'
 import VariableFormButton from './variable-form-button'
-import { VarDataSource } from '@/features/visual-editor/type'
+import RemoteFormButton from './remote-form-button'
+import { RemoteDataSource, VarDataSource } from '@/features/visual-editor/type'
 
 export interface PageHoverItemProps {
   type: 'params' | 'var' | 'remote'
@@ -32,6 +33,7 @@ const PanelItemHeader: React.FC<PageHoverItemProps> = ({
   hideAction,
 }) => {
   const [{ page }, { updatePageData }] = useEditorContext()
+  const [tooltipVisible, setTooltipVisible] = useState(false)
   return (
     <div className="flex justify-between w-full">
       <Space className="font-bold">
@@ -40,13 +42,30 @@ const PanelItemHeader: React.FC<PageHoverItemProps> = ({
       </Space>
       {!hideAction && (
         <Space>
-          <Tooltip title="编辑">
-            {type === 'var' && (
-              <VariableFormButton
-                type="edit"
-                initialValues={page.dataSources[name] as VarDataSource}
-              />
-            )}
+          <Tooltip
+            visible={tooltipVisible}
+            title="编辑"
+            onVisibleChange={setTooltipVisible}
+          >
+            <div
+              onClick={(e) => {
+                e.stopPropagation()
+                setTooltipVisible(false)
+              }}
+            >
+              {type === 'var' && (
+                <VariableFormButton
+                  type="edit"
+                  initialValues={page.dataSources[name] as VarDataSource}
+                />
+              )}
+              {type === 'remote' && (
+                <RemoteFormButton
+                  type="edit"
+                  initialValues={page.dataSources[name] as RemoteDataSource}
+                />
+              )}
+            </div>
           </Tooltip>
           <Tooltip title="删除">
             <DeleteOutlined

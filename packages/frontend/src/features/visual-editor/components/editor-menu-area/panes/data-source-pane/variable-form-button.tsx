@@ -1,7 +1,6 @@
 import ModalButton from '@/components/modal-button'
 import { useEditorContext } from '@/features/visual-editor/provider'
 import { DataSources, VarDataSource } from '@/features/visual-editor/type'
-import { stopPropagation } from '@/utils'
 import { emptyValidator } from '@/utils/validators'
 import { EditOutlined } from '@ant-design/icons'
 import { Form, Input, message } from 'antd'
@@ -23,7 +22,6 @@ const VariableFormButton: React.FC<VariableFormButtonProps> = (props) => {
   return (
     <ModalButton
       modalTitle={type === 'add' ? '新增变量' : '编辑变量'}
-      onClick={type === 'edit' ? stopPropagation : undefined}
       type="text"
       icon={type === 'edit' ? <EditOutlined /> : undefined}
       afterModalClose={() => {
@@ -53,7 +51,7 @@ const VariableFormButton: React.FC<VariableFormButtonProps> = (props) => {
           <Form.Item
             label={
               <div>
-                <p>数据</p>
+                <p>默认数据</p>
                 <p className="text-gray-400 text-xs">请输入 JS 标准数据</p>
               </div>
             }

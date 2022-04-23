@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-implied-eval */
 import { transform } from '@babel/standalone'
-import { DataSources } from './type'
-export function compileActions(
+import { isWrapperValue } from './components/variable-binding'
+import { BindingValue, DataSources } from './type'
+export function compileExports(
   code: string,
-  state: Record<string, any>,
-  setState: (state: Record<string, any>) => void
+  // utils
+  lc: {
+    state: Record<string, any>
+    setState: (state: Record<string, any>) => void
+    reloadRemoteDataSources: (...args: string[]) => void
+  }
 ) {
   return new Promise<Record<string, any>>((resolve, reject) => {
     try {
@@ -16,10 +21,9 @@ export function compileActions(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { __esModule, ...exports } = new Function(
         'exports',
-        'state',
-        'setState',
+        'lc',
         `${transformCode}\nreturn exports`
-      )({}, state, setState)
+      )({}, lc)
       resolve(exports)
     } catch (error) {
       reject(error)
@@ -49,4 +53,22 @@ export function compileDataSources(dataSources: DataSources) {
 export function compileBindingValue(dataSources: DataSources, code: string) {
   const str = `const compiledValue = ${code}`
   return new Function('state', `${str}\n return compiledValue`)(dataSources)
+}
+
+export type ParerBindingValue<T> = T extends BindingValue<infer V> ? V : T
+
+export function getBindingValue<T>(
+  dataSources: DataSources,
+  data: T
+): ParerBindingValue<T> {
+  if (isWrapperValue(data)) {
+    if (data.type === 'normal') {
+      return data.value
+    } else if (data.type === 'binding') {
+      return compileBindingValue(dataSources, data.value)
+    }
+    return data as ParerBindingValue<T>
+  } else {
+    return data as ParerBindingValue<T>
+  }
 }

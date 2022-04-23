@@ -13,11 +13,21 @@ export interface RemoteDataSource<T = any> {
   defaultValue: T
   name: string
   desc: string
-  method: 'get' | 'post' | 'put' | 'delete'
-  query?: { name: string; value: string }[]
-  body?: { name: string; value: string }[]
-  headers?: { name: string; value: string }[]
+  fetch: {
+    url: string
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE'
+    /**
+     * {
+      params?: Record<string, any>
+      body?: Record<string, any>
+      headers?: Record<string, any>
+    }
+     */
+    data: string
+  }
+  hooks: string
   autoLoad: boolean
+  doFetch: BindingValue
 }
 
 export type DataSource = VarDataSource | RemoteDataSource
@@ -41,10 +51,13 @@ export interface ComponentNode<T extends object = any> {
   title?: string
 }
 
-export interface BindingValue<T = any> {
+export interface BindingValue<
+  V = any,
+  T extends 'normal' | 'binding' = 'normal' | 'binding'
+> {
   __BINDING__?: boolean
-  type: 'normal' | 'binding'
-  value: T
+  type: T
+  value: V
 }
 
 export interface ComponentRenderNode<T extends object = any>

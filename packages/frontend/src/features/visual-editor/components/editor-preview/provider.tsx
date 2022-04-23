@@ -1,5 +1,6 @@
+import axios from 'axios'
 import useSetState from '@/hooks/useSetState'
-import { noop, paramsToObject } from '@/utils'
+import { noop, paramsToObject, safeJsonParser } from '@/utils'
 import React, {
   useContext,
   createContext,
@@ -7,12 +8,17 @@ import React, {
   useMemo,
   useEffect,
   useRef,
+  useCallback,
 } from 'react'
 import { useNavigate } from 'react-router'
 import { useSearchParams } from 'react-router-dom'
 import { useEditorContext } from '../../provider'
-import { PageRenderNode } from '../../type'
-import { compileActions, compileDataSources } from '../../utils'
+import { PageRenderNode, RemoteDataSource } from '../../type'
+import {
+  compileExports,
+  compileDataSources,
+  getBindingValue,
+} from '../../utils'
 
 export interface EditorPreviewContextValue {
   dataSources: Record<string, any>
@@ -56,12 +62,31 @@ export const EditorPreviewContextProvider: React.FC<
 
   const navigate = useNavigate()
   const [jsAction, setJsAction] = useState({})
+  const pageRemoteDataSources = useMemo(() => {
+    return Object.values(page.dataSources || {})
+      .filter((item) => item.type === 'remote')
+      .map((item) => ({
+        ...item,
+        fetchData: safeJsonParser((item as RemoteDataSource).fetch.data, {}),
+      })) as (RemoteDataSource & {
+      fetchData: {
+        params?: Record<string, any>
+        body?: Record<string, any>
+        headers?: Record<string, any>
+      }
+    })[]
+  }, [page.dataSources])
+  const [remoteFetchFns, setRemoteFetchFns] = useState<
+    Record<string, () => void>
+  >({})
+
   const [dataSources, setDataSources] = useSetState<Record<string, any>>(
     () => ({
       urlParams: paramsToObject(params.entries()),
     })
   )
   const dataSourcesRef = useRef<Record<string, any>>({})
+  const remoteFetchFnsRef = useRef<Record<string, () => void>>({})
   const memoEditorPreviewContextValue = useMemo<EditorPreviewContextValue>(
     () => ({
       actions: {
@@ -85,20 +110,107 @@ export const EditorPreviewContextProvider: React.FC<
     }),
     [jsAction, navigate, dataSources]
   )
+
+  const reloadRemoteDataSources = useCallback((...args: string[]) => {
+    if (args.length === 0) {
+      Object.keys(remoteFetchFnsRef.current).forEach((key) => {
+        remoteFetchFnsRef.current[key]()
+      })
+    } else {
+      ;[...new Set(args)].forEach((arg) => {
+        remoteFetchFnsRef.current[arg] && remoteFetchFnsRef.current[arg]()
+      })
+    }
+  }, [])
+
   useEffect(() => {
     compileDataSources(page.dataSources)
       .then((res) => {
         setDataSources((prev) => ({ ...res, urlParams: prev.urlParams }), true)
+        Object.assign(dataSourcesRef.current, res)
+        Promise.all(
+          pageRemoteDataSources.map((remote) =>
+            compileExports(remote.hooks, {
+              state: dataSourcesRef.current,
+              setState: setDataSources,
+              reloadRemoteDataSources,
+            })
+          )
+        )
+          .then((resArr) => {
+            const currentRemoteFetchFns = resArr.reduce((prev, next, i) => {
+              const remoteDataSource = pageRemoteDataSources[i]
+              const fetchConfig = remoteDataSource.fetch
+              prev[remoteDataSource.name] = async () => {
+                if (
+                  getBindingValue(
+                    dataSourcesRef.current,
+                    remoteDataSource.doFetch
+                  )
+                ) {
+                  const config = {
+                    ...fetchConfig,
+                    data: remoteDataSource.fetchData,
+                  }
+                  await next.beforeFetch(config)
+                  axios({
+                    url: config.url,
+                    method: config.method,
+                    headers: config.data.headers,
+                    params: config.data.params,
+                    data: config.data.body,
+                  })
+                    .then((resData) => {
+                      const value = next.afterFetch(resData, null)
+                      setDataSources({
+                        [remoteDataSource.name]: value,
+                      })
+                    })
+                    .catch((err) => {
+                      const value = next.afterFetch(null, err)
+                      setDataSources({
+                        [remoteDataSource.name]: value,
+                      })
+                    })
+                }
+              }
+              return prev
+            }, {} as Record<string, () => void>)
+            setRemoteFetchFns(currentRemoteFetchFns)
+            // autoLoad
+            pageRemoteDataSources.forEach((pageRemoteDataSource) => {
+              if (pageRemoteDataSource.autoLoad) {
+                currentRemoteFetchFns[pageRemoteDataSource.name]()
+              }
+            })
+          })
+          .catch(() => {
+            // do nothing
+          })
       })
       .catch(() => {
         setDataSources({})
       })
-  }, [page.dataSources, setDataSources])
+  }, [
+    page.dataSources,
+    pageRemoteDataSources,
+    reloadRemoteDataSources,
+    setDataSources,
+  ])
   useEffect(() => {
     Object.assign(dataSourcesRef.current, dataSources)
   }, [dataSources])
+
   useEffect(() => {
-    compileActions(page.js, dataSourcesRef.current, setDataSources)
+    Object.assign(remoteFetchFnsRef.current, remoteFetchFns)
+  }, [remoteFetchFns])
+
+  useEffect(() => {
+    compileExports(page.js, {
+      state: dataSourcesRef.current,
+      setState: setDataSources,
+      reloadRemoteDataSources,
+    })
       .then((res) => {
         setHasCompiled(true)
         setJsAction(res || {})
@@ -106,7 +218,7 @@ export const EditorPreviewContextProvider: React.FC<
       .catch(() => {
         setJsAction({})
       })
-  }, [page.js, setDataSources])
+  }, [page.js, reloadRemoteDataSources, setDataSources])
   useEffect(() => {
     if (hasCompiled) {
       setLoad(true)

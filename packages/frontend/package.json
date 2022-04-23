@@ -17,6 +17,7 @@
     "@babel/standalone": "^7.17.8",
     "@reduxjs/toolkit": "^1.8.0",
     "antd": "^4.19.5",
+    "axios": "^0.26.1",
     "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.1",
     "dayjs": "^1.11.0",

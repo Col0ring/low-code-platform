@@ -4,6 +4,7 @@ import VariableFormButton from './variable-form-button'
 import PanelItemHeader from './panel-item-header'
 import { useEditorContext } from '@/features/visual-editor/provider'
 import { RemoteDataSource, VarDataSource } from '@/features/visual-editor/type'
+import RemoteFormButton from './remote-form-button'
 
 const DataSourcePane: React.FC = () => {
   const [{ page }] = useEditorContext()
@@ -57,7 +58,9 @@ const DataSourcePane: React.FC = () => {
             <Menu.Item key="var">
               <VariableFormButton type="add" />
             </Menu.Item>
-            <Menu.Item key="remote">远程 API</Menu.Item>
+            <Menu.Item key="remote">
+              <RemoteFormButton type="add" />
+            </Menu.Item>
           </Menu>
         }
       >
@@ -65,8 +68,8 @@ const DataSourcePane: React.FC = () => {
           添加
         </Button>
       </Dropdown>
-      <div className="overflow-auto flex-1">
-        <Collapse>
+      <div className="overflow-auto flex-1 w-full break-all">
+        <Collapse className="w-full">
           {searchDataSources.map((item) => {
             if (item.type === 'params') {
               return (
@@ -117,10 +120,42 @@ const DataSourcePane: React.FC = () => {
                   key={item.name}
                 >
                   <div className="text-xs">
-                    <Space className="mt-2">
-                      <span className="text-gray-500">描述</span>
-                      当前页面地址的参数
-                    </Space>
+                    <div className="mt-2">
+                      <Space>
+                        <span className="text-gray-500">描述</span>
+                        {item.desc}
+                      </Space>
+                    </div>
+                    <div className="mt-2">
+                      <Space>
+                        <span className="text-gray-500">请求路径</span>
+                        {item.fetch.url}
+                      </Space>
+                    </div>
+                    <div className="mt-2">
+                      <Space>
+                        <span className="text-gray-500">请求方法</span>
+                        {item.fetch.method}
+                      </Space>
+                    </div>
+                    <div className="mt-2">
+                      <Space>
+                        <span className="text-gray-500">请求参数</span>
+                        {item.fetch.data}
+                      </Space>
+                    </div>
+                    <div className="mt-2">
+                      <Space>
+                        <span className="text-gray-500">自动加载</span>
+                        {item.autoLoad ? '是' : '否'}
+                      </Space>
+                    </div>
+                    <div className="mt-2">
+                      <Space>
+                        <span className="text-gray-500">默认值</span>
+                        {item.defaultValue}
+                      </Space>
+                    </div>
                   </div>
                 </Collapse.Panel>
               )
