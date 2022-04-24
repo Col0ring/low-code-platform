@@ -38,7 +38,7 @@ const VariableBinding: React.FC<VariableBindingProps> = ({
   if (React.Children.only(children) && React.isValidElement(children)) {
     return (
       <>
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           {React.cloneElement(children, {
             ...props,
             disabled: isBinding,

@@ -13,6 +13,7 @@ import { parserActions, propItemName } from '..'
 import { NodeComponent } from '../../../type'
 import AddAction from '../../add-action/inidex'
 import { useEditorPreviewContext } from '../../editor-preview/provider'
+import VariableBinding from '../../variable-binding'
 
 export type AlertProps = AntdAlertProps
 
@@ -31,7 +32,9 @@ const AlertPropsForm: typeof Alert['PropsForm'] = () => {
     <Collapse defaultActiveKey={['props', 'actions']} bordered={false}>
       <Collapse.Panel header="属性" key="props">
         <Form.Item label="提示内容" name={propItemName('message')}>
-          <Input />
+          <VariableBinding>
+            <Input />
+          </VariableBinding>
         </Form.Item>
         <Form.Item label="辅助内容" name={propItemName('description')}>
           <Input />

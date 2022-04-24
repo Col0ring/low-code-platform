@@ -59,12 +59,23 @@ export interface BindingValue<
   type: T
   value: V
 }
-
+export interface Advanced {
+  condition: {
+    isRender: BindingValue
+  }
+  cycle?: {
+    data?: BindingValue
+    item?: BindingValue
+    index?: BindingValue
+    key?: BindingValue
+  }
+}
 export interface ComponentRenderNode<T extends object = any>
   extends Pick<ComponentNode, 'title' | 'name'> {
   props: T
   actions?: Actions
   style: React.CSSProperties
+  advanced: Advanced
   children?: ComponentRenderNode[]
   id: string
 }
@@ -122,6 +133,7 @@ export type UpdateComponentNodeOptions = {
       node: ComponentRenderNode
       style?: React.CSSProperties
       props?: object
+      advanced?: Advanced
       actions?: Actions
       children?: ComponentRenderNode[]
     }

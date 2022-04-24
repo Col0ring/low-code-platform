@@ -6,6 +6,7 @@ import { ParentComponentRenderNode } from '../../type'
 import StyleTab from './style-tab'
 import isEqual from 'lodash/isEqual'
 import usePrevious from '@/hooks/usePrevious'
+import AdvancedTab from './advanced-tab'
 
 const EditorOperatorArea: React.FC = () => {
   const [
@@ -35,23 +36,23 @@ const EditorOperatorArea: React.FC = () => {
           title: '样式',
           content: <StyleTab node={actionNode as ParentComponentRenderNode} />,
         },
-        // {
-        //   title: '高级',
-        //   content: actionNode ? '高级' : null,
-        // },
+        {
+          title: '高级',
+          content: (
+            <AdvancedTab node={actionNode as ParentComponentRenderNode} />
+          ),
+        },
       ]
     }
     return [
       {
         title: '样式',
-        content: actionNode ? (
-          <StyleTab node={actionNode as ParentComponentRenderNode} />
-        ) : null,
+        content: <StyleTab node={actionNode as ParentComponentRenderNode} />,
       },
-      // {
-      //   title: '高级',
-      //   content: actionNode ? '高级' : null,
-      // },
+      {
+        title: '高级',
+        content: <AdvancedTab node={actionNode as ParentComponentRenderNode} />,
+      },
     ]
   }, [actionNode, renderActionNode])
   const [form] = Form.useForm()
@@ -62,6 +63,7 @@ const EditorOperatorArea: React.FC = () => {
         ? {
             style: actionNode.style,
             props: actionNode.props,
+            advanced: actionNode.advanced,
             children: actionNode.children,
             actions: actionNode.actions,
           }

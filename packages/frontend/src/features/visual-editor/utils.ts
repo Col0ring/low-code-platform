@@ -50,8 +50,34 @@ export function compileDataSources(dataSources: DataSources) {
   })
 }
 
-export function compileBindingValue(dataSources: DataSources, code: string) {
+export function compileNormalValue(code: string) {
   const str = `const compiledValue = ${code}`
+  return new Function(`${str}\n return compiledValue`)()
+}
+
+export function compileBindingValue(
+  dataSources: DataSources,
+  code: string,
+  cycleData?: {
+    item: {
+      name: string
+      value: any
+    }
+    index: {
+      name: string
+      value: any
+    }
+  }
+) {
+  const str = `const compiledValue = ${code}`
+  if (cycleData) {
+    return new Function(
+      'state',
+      cycleData.item.name,
+      cycleData.index.name,
+      `${str}\n return compiledValue`
+    )(dataSources, cycleData.item.value, cycleData.index.value)
+  }
   return new Function('state', `${str}\n return compiledValue`)(dataSources)
 }
 
@@ -59,13 +85,23 @@ export type ParerBindingValue<T> = T extends BindingValue<infer V> ? V : T
 
 export function getBindingValue<T>(
   dataSources: DataSources,
-  data: T
+  data: T,
+  cycleData?: {
+    item: {
+      name: string
+      value: any
+    }
+    index: {
+      name: string
+      value: any
+    }
+  }
 ): ParerBindingValue<T> {
   if (isWrapperValue(data)) {
     if (data.type === 'normal') {
       return data.value
     } else if (data.type === 'binding') {
-      return compileBindingValue(dataSources, data.value)
+      return compileBindingValue(dataSources, data.value, cycleData)
     }
     return data as ParerBindingValue<T>
   } else {

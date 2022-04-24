@@ -23,10 +23,12 @@ function generateData(
     componentNodes,
     parentNode,
     draggable,
+    disabled,
   }: {
     componentNodes: ComponentRenderNode[]
     parentNode: ParentComponentRenderNode | null
     draggable: boolean
+    disabled?: boolean
   },
   currentScreen?: ComponentRenderNode | null
 ): DataNode[] {
@@ -37,7 +39,10 @@ function generateData(
       nodeIndex: index,
       name,
       node,
-      disabled: !!(currentScreen && currentScreen.id !== id),
+      disabled:
+        typeof disabled === 'undefined'
+          ? !!(currentScreen && currentScreen.id !== id)
+          : disabled,
       draggable,
       parentNode,
       title:
@@ -54,6 +59,7 @@ function generateData(
             draggable: getComponentNode(name).component.childActionDisabled
               ? false
               : true,
+            disabled: !!(currentScreen && currentScreen.id !== id),
           }),
     }
   })

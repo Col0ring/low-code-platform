@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { FileTextOutlined, ContainerOutlined } from '@ant-design/icons'
 import {
   Actions,
+  BindingValue,
   ComponentNode,
   ComponentRenderNode,
   ComponentsGroup,
@@ -23,7 +24,8 @@ import Image from './basic/image'
 import Link from './basic/link'
 import Tabs from './layout/tabs'
 import Alert from './feedback/alert'
-import { getBindingValue } from '../../utils'
+import { compileNormalValue, getBindingValue } from '../../utils'
+import { isBindVariable } from '../variable-binding'
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
@@ -132,12 +134,26 @@ export function isParentComponentRenderNode(
 export function getComponentNode(name: string) {
   return componentsMap[name] || null
 }
+
+export function createBindingValue<T>(value: T): BindingValue<T> {
+  return {
+    __BINDING__: true,
+    type: 'normal',
+    value,
+  }
+}
+
 export function createNewNode(name: string): ComponentRenderNode {
   const { component, title } = getComponentNode(name)
   if (component.getInitialChildren) {
     return {
       title,
       name,
+      advanced: {
+        condition: {
+          isRender: createBindingValue(true),
+        },
+      },
       style: component.getInitialStyle?.() || {},
       id: component.getId(),
       props: component.getInitialProps(),
@@ -147,6 +163,11 @@ export function createNewNode(name: string): ComponentRenderNode {
   return {
     title,
     name,
+    advanced: {
+      condition: {
+        isRender: createBindingValue(true),
+      },
+    },
     style: component.getInitialStyle?.() || {},
     id: component.getId(),
     props: component.getInitialProps(),
@@ -160,6 +181,7 @@ export function copyNode(node: ComponentRenderNode): ComponentRenderNode {
       title: node.title,
       name: node.name,
       style: node.style,
+      advanced: node.advanced,
       id: component.getId(),
       props: safeJsonParser(JSON.stringify(node.props), node.props),
       children: node.children.map((child) => copyNode(child)),
@@ -169,6 +191,7 @@ export function copyNode(node: ComponentRenderNode): ComponentRenderNode {
     title: node.title,
     name: node.name,
     style: node.style,
+    advanced: node.advanced,
     id: component.getId(),
     props: safeJsonParser(JSON.stringify(node.props), node.props),
   }
@@ -177,15 +200,27 @@ export function copyNode(node: ComponentRenderNode): ComponentRenderNode {
 interface RenderComponentProps {
   node: ComponentRenderNode
   editType: 'prod' | 'edit'
+  disabled?: boolean
+  parentNodes?: ParentComponentRenderNode[]
 }
 
 export function transformNode(
   dataSources: Record<string, any>,
-  node: ComponentRenderNode
+  node: ComponentRenderNode,
+  cycleData?: {
+    item: {
+      name: string
+      value: any
+    }
+    index: {
+      name: string
+      value: any
+    }
+  }
 ) {
   const transform = (v: Record<string, any>) => {
     return Object.keys(v).reduce((acc, key) => {
-      acc[key] = getBindingValue(dataSources, v[key])
+      acc[key] = getBindingValue(dataSources, v[key], cycleData)
       return acc
     }, {} as Record<string, any>)
   }
@@ -200,17 +235,97 @@ export function transformNode(
 const RenderComponent: React.FC<RenderComponentProps> = ({
   node,
   editType,
+  disabled,
+  parentNodes,
 }) => {
   const { dataSources } = useEditorPreviewContext()
-  const transformedNode = useMemo(
-    () => transformNode(dataSources, node),
-    [dataSources, node]
+  const canRender = useMemo(
+    () => getBindingValue(dataSources, node.advanced.condition.isRender),
+    [dataSources, node.advanced.condition.isRender]
   )
+  const cycleData = useMemo(() => {
+    if (!node.advanced.cycle) {
+      return {
+        item: 'item',
+        index: 'index',
+        data: [],
+      }
+    }
+    const item = getBindingValue(
+      dataSources,
+      node.advanced.cycle.item || 'item'
+    )
+    const index = getBindingValue(
+      dataSources,
+      node.advanced.cycle.index || 'index'
+    )
+
+    let data: any[] = []
+    if (node.advanced.cycle?.data) {
+      if (isBindVariable(node.advanced.cycle.data)) {
+        data = getBindingValue(dataSources, node.advanced.cycle.data)
+      } else {
+        data = compileNormalValue(node.advanced.cycle.data?.value)
+      }
+    }
+    return {
+      item,
+      index,
+      data,
+    }
+  }, [dataSources, node.advanced.cycle])
+
+  if (!canRender && editType === 'prod') {
+    return null
+  }
+  if (!cycleData.data) {
+    return null
+  }
+  if (cycleData.data.length !== 0) {
+    return (
+      <>
+        {cycleData.data.map((item, index) => {
+          const transformedNode = transformNode(dataSources, node, {
+            item: {
+              name: cycleData.item,
+              value: item,
+            },
+            index: {
+              name: cycleData.index,
+              value: index,
+            },
+          }) as ParentComponentRenderNode
+          const key = getBindingValue(
+            dataSources,
+            node.advanced.cycle?.key || index,
+            {
+              item: {
+                name: cycleData.item,
+                value: item,
+              },
+              index: {
+                name: cycleData.index,
+                value: index,
+              },
+            }
+          )
+          return React.createElement(getComponentNode(node.name).component, {
+            node: transformedNode,
+            parentNodes: parentNodes || [],
+            disabled,
+            key: node.id + `_${key}`,
+            editType,
+          })
+        })}
+      </>
+    )
+  }
   return (
     <>
       {React.createElement(getComponentNode(node.name).component, {
-        node: transformedNode as ParentComponentRenderNode,
-        parentNodes: [],
+        node: transformNode(dataSources, node) as ParentComponentRenderNode,
+        parentNodes: parentNodes || [],
+        disabled,
         key: node.id,
         editType,
       })}
@@ -220,16 +335,40 @@ const RenderComponent: React.FC<RenderComponentProps> = ({
 
 export function renderNode(
   node: ComponentRenderNode,
-  editType: 'prod' | 'edit' = 'prod'
+  editType: 'prod' | 'edit' = 'prod',
+  {
+    disabled,
+    parentNodes,
+  }: {
+    parentNodes?: ParentComponentRenderNode[]
+    disabled?: boolean
+  } = {}
 ) {
-  return <RenderComponent key={node.id} node={node} editType={editType} />
+  return (
+    <RenderComponent
+      disabled={disabled}
+      key={node.id}
+      node={node}
+      parentNodes={parentNodes}
+      editType={editType}
+    />
+  )
 }
 
 export function renderNodes(
   nodes: ComponentRenderNode[],
-  editType: 'prod' | 'edit' = 'prod'
+  editType: 'prod' | 'edit' = 'prod',
+  {
+    disabled,
+    parentNodes,
+  }: {
+    parentNodes?: ParentComponentRenderNode[]
+    disabled?: boolean
+  } = {}
 ) {
-  return nodes.map((node) => renderNode(node, editType))
+  return nodes.map((node) =>
+    renderNode(node, editType, { disabled, parentNodes })
+  )
 }
 
 export function parserActions(
@@ -266,4 +405,8 @@ export function propItemName(name: string) {
 
 export function styleItemName(name: string) {
   return ['style', name]
+}
+
+export function advancedItemName(type: string, name: string) {
+  return ['advanced', type, name]
 }

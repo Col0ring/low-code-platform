@@ -57,10 +57,10 @@ function getComponentNodeMap(
     if (node.children) {
       Object.assign(
         componentNodesMap,
-        getComponentNodeMap(
-          node.children,
-          isArray ? [...parentNodes, node as ParentComponentRenderNode] : []
-        )
+        getComponentNodeMap(node.children, [
+          ...parentNodes,
+          node as ParentComponentRenderNode,
+        ])
       )
     }
   })
@@ -427,7 +427,7 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
             }
             // if type is update
           } else if (options.type === 'update') {
-            const { node, props, actions, style, children } = options
+            const { node, props, actions, style, children, advanced } = options
             const immerNode = immerComponentNodesMap[node.id]
             if (props) {
               immerNode.props = props
@@ -437,6 +437,9 @@ export const { useEditorContext, withEditorProvider } = createMethodsContext(
             }
             if (actions) {
               immerNode.actions = actions
+            }
+            if (advanced) {
+              immerNode.advanced = advanced
             }
             if (children && isParentComponentRenderNode(immerNode)) {
               immerNode.children = children

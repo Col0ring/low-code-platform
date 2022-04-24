@@ -67,7 +67,10 @@ export const EditorPreviewContextProvider: React.FC<
       .filter((item) => item.type === 'remote')
       .map((item) => ({
         ...item,
-        fetchData: safeJsonParser((item as RemoteDataSource).fetch.data, {}),
+        fetchData: safeJsonParser(
+          (item as RemoteDataSource).fetch.data,
+          (item as RemoteDataSource).fetch.data
+        ),
       })) as (RemoteDataSource & {
       fetchData: {
         params?: Record<string, any>

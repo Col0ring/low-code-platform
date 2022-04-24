@@ -13,6 +13,7 @@ import {
   copyNode,
   createNewNode,
   getComponentNode,
+  renderNode,
   transformNode,
 } from './node-components'
 import { safeJsonParser, stopPropagation } from '@/utils'
@@ -125,10 +126,10 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   hasAction: hasActionProp = true,
 }) => {
   const { dataSources } = useEditorPreviewContext()
-  const transformedNode = useMemo(
-    () => transformNode(dataSources, node),
-    [dataSources, node]
-  )
+  const transformedNode = useMemo(() => {
+    return node
+    // return transformNode(dataSources, node)
+  }, [dataSources, node])
 
   const [
     {
@@ -175,7 +176,11 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
     () => disabledProp || node === moveNode,
     [disabledProp, moveNode, node]
   )
-  const isActionNode = useMemo(() => actionNode === node, [actionNode, node])
+  const isActionNode = useMemo(
+    () => actionNode?.id === node.id,
+    [actionNode, node]
+  )
+
   const classes = useClassName(
     [
       'relative border-2px border -m-2px',
@@ -384,12 +389,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
         <div className="absolute w-full h-full left-0 top-0 z-1" />
       )}
 
-      {React.createElement(getComponentNode(node.name).component, {
-        node: transformedNode as ParentComponentRenderNode,
-        disabled,
-        parentNodes: parentNodes,
-        editType: 'edit',
-      })}
+      {renderNode(node, 'edit', { disabled, parentNodes })}
     </Draggable>
   )
 }
