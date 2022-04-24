@@ -90,7 +90,9 @@ const initialState: () => EditorState = () => {
   const page: PageRenderNode = {
     ...createNewNode(Page.nodeName),
     children: [],
-    js: '',
+    js: `/*
+  所有方法都需要通过 export 的方式向外导出才能使用
+*/`,
     dataSources: {},
     modals: [],
   }

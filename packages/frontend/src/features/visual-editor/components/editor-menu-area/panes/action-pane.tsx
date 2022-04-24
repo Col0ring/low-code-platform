@@ -38,7 +38,7 @@ const ActionPane: React.FC = () => {
   }, [dataSources, page.dataSources])
 
   return (
-    <div className="w-420px h-full">
+    <div className="w-420px h-full flex flex-col">
       <div className="flex justify-end m-2">
         <Button
           type="primary"
@@ -60,6 +60,7 @@ const ActionPane: React.FC = () => {
         </Button>
       </div>
       <MonacoEditor
+        className="flex-1"
         scrollBeyondLastLine={false}
         formatOnSave
         onSave={() => {

@@ -56,7 +56,10 @@ export const EditorPreviewContextProvider: React.FC<
 > = ({ children, page: pageProp }) => {
   const [{ page: contextPage }] = useEditorContext(false) || [{}, {}]
   const page = pageProp || (contextPage as PageRenderNode)
-  const [hasCompiled, setHasCompiled] = useState(false)
+  const [hasCompiled, setHasCompiled] = useSetState({
+    dataSources: false,
+    js: false,
+  })
   const [load, setLoad] = useState(false)
   const [params] = useSearchParams()
 
@@ -130,6 +133,7 @@ export const EditorPreviewContextProvider: React.FC<
     compileDataSources(page.dataSources)
       .then((res) => {
         setDataSources((prev) => ({ ...res, urlParams: prev.urlParams }), true)
+
         Object.assign(dataSourcesRef.current, res)
         Promise.all(
           pageRemoteDataSources.map((remote) =>
@@ -194,11 +198,17 @@ export const EditorPreviewContextProvider: React.FC<
       .catch(() => {
         setDataSources({})
       })
+      .finally(() => {
+        setHasCompiled({
+          dataSources: true,
+        })
+      })
   }, [
     page.dataSources,
     pageRemoteDataSources,
     reloadRemoteDataSources,
     setDataSources,
+    setHasCompiled,
   ])
   useEffect(() => {
     Object.assign(dataSourcesRef.current, dataSources)
@@ -215,15 +225,19 @@ export const EditorPreviewContextProvider: React.FC<
       reloadRemoteDataSources,
     })
       .then((res) => {
-        setHasCompiled(true)
         setJsAction(res || {})
       })
       .catch(() => {
         setJsAction({})
       })
-  }, [page.js, reloadRemoteDataSources, setDataSources])
+      .finally(() => {
+        setHasCompiled({
+          js: true,
+        })
+      })
+  }, [page.js, setHasCompiled, reloadRemoteDataSources, setDataSources])
   useEffect(() => {
-    if (hasCompiled) {
+    if (hasCompiled.dataSources && hasCompiled.js) {
       setLoad(true)
     }
   }, [hasCompiled])

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Tree } from 'antd'
+import { Tooltip, Tree } from 'antd'
 import { useEditorContext } from '../../../provider'
 import { DataNode as OriginDataNode } from 'antd/lib/tree'
 import {
@@ -9,7 +9,11 @@ import {
 import { getComponentNode } from '../../node-components'
 import { DraggingData } from '@/features/visual-editor/constants'
 import Screen, { ScreenProps } from '../../node-components/layout/screen'
-
+import SvgIcon from '@/components/svg-icon'
+import ConditionSvg from '../../../assets/condition.svg?raw'
+import CycleSvg from '../../../assets/cycle.svg?raw'
+import { isBindVariable } from '../../variable-binding'
+import { safeJsonParser } from '@/utils'
 interface DataNode extends OriginDataNode {
   name: string
   node: ComponentRenderNode
@@ -92,6 +96,28 @@ const OutlineTreePane: React.FC = () => {
     <div className="outline-tree-pane">
       <Tree
         className="draggable-tree"
+        titleRender={(treeNode) => {
+          return (
+            <div className="inline-flex items-center">
+              <span>{treeNode.title || treeNode.name}</span>
+              {(isBindVariable(treeNode.node.advanced.condition.isRender) ||
+                !treeNode.node.advanced.condition.isRender.value) && (
+                <Tooltip title="条件">
+                  <SvgIcon className="text-red-600 ml-1" raw={ConditionSvg} />
+                </Tooltip>
+              )}
+              {(isBindVariable(treeNode.node.advanced.cycle?.data) ||
+                safeJsonParser(
+                  treeNode.node.advanced.cycle?.data?.value || '[]',
+                  []
+                ).length !== 0) && (
+                <Tooltip title="循环">
+                  <SvgIcon className="text-green-600 ml-1" raw={CycleSvg} />
+                </Tooltip>
+              )}
+            </div>
+          )
+        }}
         allowDrop={({ dropNode, dropPosition }) => {
           const { draggable, name } = dropNode as unknown as DataNode
           // dropPosition === 0  代表放入 dropNode 内部 1 代表相同等级，-1 最顶层的第一个

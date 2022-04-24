@@ -45,7 +45,9 @@ const VisualEditor: React.FC<VisualEditorProps> = (props) => {
         newScreen.props.title = '屏幕1'
         const newPage: PageRenderNode = {
           ...createNewNode(page.name),
-          js: '',
+          js: `/*
+  所有方法都需要通过 export 的方式向外导出才能使用
+*/`,
           dataSources: {},
           children: [newScreen],
           modals: [],
