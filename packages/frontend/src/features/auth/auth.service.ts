@@ -33,7 +33,7 @@ export const authApi = createServiceApi({
       {
         password: string
         code: string
-        phone: string
+        email: string
       }
     >({
       query(data) {
@@ -71,39 +71,33 @@ export const authApi = createServiceApi({
         return !error ? ['Auth'] : []
       },
     }),
-    // TODO
     getAuthCode: builder.mutation<
       {
         authCode: string
       },
       string
     >({
-      queryFn: () => ({
-        data: {
-          authCode: 'xxxx',
+      query: (email) => ({
+        url: '/auth/getAuthCode',
+        method: 'post',
+        body: {
+          email,
+        },
+        meta: {
+          notThrowError: true,
         },
       }),
-      async onQueryStarted(_, { queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled
-          void message.success({
-            content: `验证码为 ${data.authCode}（忽略大小写）`,
-          })
-        } catch (error) {
-          // do nothing
-        }
-      },
     }),
     login: builder.mutation<
       TokenPayload,
-      { phone: string; passwordOrCode: string; type: 'password' | 'code' }
+      { email: string; passwordOrCode: string; type: 'password' | 'code' }
     >({
-      query({ phone, passwordOrCode, type }) {
+      query({ email, passwordOrCode, type }) {
         return {
           url: `/auth/login?type=${type}`,
           method: 'post',
           body: {
-            phone,
+            email,
             passwordOrCode,
           },
         }

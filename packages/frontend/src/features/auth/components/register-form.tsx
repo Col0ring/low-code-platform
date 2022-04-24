@@ -32,11 +32,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
       className="pt-7"
       onFinish={onFinish}
     >
-      <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
+      <Form.Item name="email" label="邮 箱" rules={[emailValidator()]}>
         <Input
-          prefix={<PhoneOutlined />}
-          placeholder="Phone"
-          autoComplete="phone"
+          prefix={<MailOutlined />}
+          placeholder="Email"
+          autoComplete="email"
         />
       </Form.Item>
 
@@ -54,11 +54,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
       <Form.Item name="avatar" label="头像">
         <ImageUploader />
       </Form.Item>
-      <Form.Item name="email" label="邮 箱" rules={[emailValidator()]}>
+      <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
         <Input
-          prefix={<MailOutlined />}
-          placeholder="Email"
-          autoComplete="email"
+          prefix={<PhoneOutlined />}
+          placeholder="Phone"
+          autoComplete="phone"
         />
       </Form.Item>
       <Form.Item name="password" label="密 码" rules={[emptyValidator('密码')]}>

@@ -1,16 +1,16 @@
 import React from 'react'
 import { Form, Button, Input, FormProps } from 'antd'
-import { UserOutlined, LockOutlined } from '@ant-design/icons'
-import { emptyValidator, phoneValidator } from '@/utils/validators'
+import { LockOutlined, MailOutlined } from '@ant-design/icons'
+import { emailValidator, emptyValidator } from '@/utils/validators'
 export interface PasswordFormProps {
-  onLogin: (phone: string, password: string) => void
+  onLogin: (email: string, password: string) => void
   loading: boolean
 }
 
 const PasswordForm: React.FC<PasswordFormProps> = ({ onLogin, loading }) => {
   const onFinish: FormProps['onFinish'] = (values) => {
-    const { phone, password } = values
-    onLogin(phone, password)
+    const { email, password } = values
+    onLogin(email, password)
   }
   return (
     <Form
@@ -19,16 +19,16 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ onLogin, loading }) => {
         span: 5,
       }}
       initialValues={{
-        phone: '13696035481',
+        email: '1561999073@qq.com',
         password: '1',
       }}
       onFinish={onFinish}
       className="pt-7"
     >
-      <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
+      <Form.Item name="email" label="邮箱" rules={[emailValidator()]}>
         <Input
-          prefix={<UserOutlined />}
-          placeholder="Phone"
+          prefix={<MailOutlined />}
+          placeholder="Email"
           autoComplete="on"
         />
       </Form.Item>

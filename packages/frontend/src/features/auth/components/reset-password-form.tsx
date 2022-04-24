@@ -1,17 +1,17 @@
 import React from 'react'
 import { Form, FormProps, Button, Input, Row, Col } from 'antd'
-import { StarOutlined, LockOutlined, PhoneOutlined } from '@ant-design/icons'
+import { StarOutlined, LockOutlined, MailOutlined } from '@ant-design/icons'
 
 import {
+  emailValidator,
   emptyValidator,
   normalValidator,
-  phoneValidator,
 } from '@/utils/validators'
 import AuthCodeButton from './auth-code-button'
 
 export interface ResetPasswordFormProps {
   onResetPassword: (values: any) => void
-  onAuthCodeButtonClick: (phone: string) => void
+  onAuthCodeButtonClick: (email: string) => void
   loading: boolean
 }
 
@@ -28,8 +28,8 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
   }
   const onAuthCodeButtonClick = async () => {
     try {
-      await form.validateFields(['phone'])
-      onAuthCodeButtonClickProp(form.getFieldValue('phone'))
+      await form.validateFields(['email'])
+      onAuthCodeButtonClickProp(form.getFieldValue('email'))
     } catch (error) {
       return Promise.reject()
     }
@@ -43,11 +43,11 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
       className="pt-7"
       onFinish={onFinish}
     >
-      <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
+      <Form.Item name="email" label="邮箱" rules={[emailValidator()]}>
         <Input
-          prefix={<PhoneOutlined />}
-          placeholder="Phone"
-          autoComplete="phone"
+          prefix={<MailOutlined />}
+          placeholder="Email"
+          autoComplete="email"
         />
       </Form.Item>
       <Form.Item label="验证码">
@@ -57,8 +57,8 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
               noStyle
               name="code"
               rules={[
-                normalValidator('请输入4位验证码', {
-                  len: 4,
+                normalValidator('请输入6位验证码', {
+                  len: 6,
                 }),
               ]}
             >

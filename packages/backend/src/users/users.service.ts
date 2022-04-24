@@ -36,10 +36,10 @@ export class UsersService {
     })
   }
 
-  findOneByPhoneWithPassword(phone: string) {
+  findOneByEmailWithPassword(email: string) {
     return this.usersRepository.findOne({
       where: {
-        phone,
+        email,
       },
       select: getExcludeSelect(this.usersRepository),
     })
@@ -50,10 +50,10 @@ export class UsersService {
       ...partialEntity,
     })
   }
-  updateOneByPhone(phone: string, partialEntity: Partial<UserEntity>) {
+  updateOneByEmail(email: string, partialEntity: Partial<UserEntity>) {
     return this.usersRepository.update(
       {
-        phone,
+        email,
       },
       {
         ...partialEntity,

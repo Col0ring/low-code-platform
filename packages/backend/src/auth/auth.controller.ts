@@ -1,15 +1,14 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
 import { User } from './decorators/user.decorator'
 import { AuthService } from './auth.service'
-import { Role } from './constants'
 import { Auth } from './decorators'
 import { RegisterDto } from './dto/register.dto'
-import { JwtAuthGuard } from './jwt-auth.guard'
 import { LocalAuthGuard } from './local-auth.guard'
 import { RefreshTokenJwtAuthGuard } from './refresh-token-jwt-auth.guard'
 import { JwtUser, LocalUser, RefreshTokenJwtUser } from './type'
 import { ResetPasswordDto } from './dto/reset-password.dto'
 import { UserUpdateDto } from './dto/user-update.dto'
+import { GetCodeDto } from './dto/get-code.dto'
 
 @Controller('auth')
 export class AuthController {
@@ -37,13 +36,21 @@ export class AuthController {
     return this.authService.login(user)
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Post('/getAuthCode')
+  async getUserList(@Body() body: GetCodeDto) {
+    await this.authService.setAuthCode(body.email)
+    return {
+      message: 'ok',
+    }
+  }
+
+  @Auth()
   @Post('/logout')
   async logout(@User() user: JwtUser) {
     await this.authService.logout(user.id)
   }
 
-  @Auth(Role.User, Role.Admin)
+  @Auth()
   @Get('/getUserInfo')
   getUserInfo(@User() user: JwtUser) {
     return this.authService.getUserInfo(user.id)
@@ -53,12 +60,5 @@ export class AuthController {
   @Post('/refreshToken')
   refreshTokens(@User() user: RefreshTokenJwtUser) {
     return this.authService.refreshTokens(user.id, user.refreshToken)
-  }
-
-  @Get('/getUserList')
-  getUserList() {
-    return {
-      data: 'list',
-    }
   }
 }

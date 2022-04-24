@@ -13,6 +13,9 @@ import { RegisterDto } from './dto/register.dto'
 import { Role } from './constants'
 import { ResetPasswordDto } from './dto/reset-password.dto'
 import { UserUpdateDto } from './dto/user-update.dto'
+import { CommonRedisService } from '../database/redis.service'
+import { generateAuthCode } from './utils'
+import { EmailService } from '../email/email.service'
 
 const fakeRoles = [Role.Admin, Role.User]
 @Injectable()
@@ -21,7 +24,9 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     @Inject(authConfig.KEY)
-    private readonly authConfigService: AuthConfig
+    private readonly authConfigService: AuthConfig,
+    private readonly commonRedisService: CommonRedisService,
+    private readonly emailService: EmailService
   ) {}
 
   private generateTokens(payload: TokenPayload): Tokens {
@@ -37,8 +42,36 @@ export class AuthService {
     }
   }
 
-  async validateUser(phone: string, password: string) {
-    const user = await this.usersService.findOneByPhoneWithPassword(phone)
+  async setAuthCode(email: string) {
+    const code = generateAuthCode(6)
+    await this.commonRedisService.set('email_' + email, code, 60 * 5)
+    await this.emailService.sendMail(email, code)
+    return code
+  }
+
+  deleteAuthCode(email: string) {
+    return this.commonRedisService.del('email_' + email)
+  }
+
+  private getAuthCode(email: string) {
+    return this.commonRedisService.get('email_' + email)
+  }
+
+  async validateUserByCode(email: string, code: string) {
+    const userCode = await this.getAuthCode(email)
+    if (code === userCode) {
+      const user = await this.usersService.findOneByEmailWithPassword(email)
+      if (user) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...result } = user
+        return result
+      }
+    }
+    return null
+  }
+
+  async validateUser(email: string, password: string) {
+    const user = await this.usersService.findOneByEmailWithPassword(email)
     if (user) {
       const { password: userPassword, ...result } = user
       if (bcrypt.compareSync(password, userPassword)) {
@@ -64,10 +97,14 @@ export class AuthService {
     return tokens
   }
   async resetPassword(dto: ResetPasswordDto) {
-    await this.usersService.updateOneByPhone(dto.phone, {
-      password: dto.password,
-      refreshToken: null,
-    })
+    const userCode = await this.getAuthCode(dto.email)
+    if (dto.code === userCode) {
+      return await this.usersService.updateOneByEmail(dto.email, {
+        password: dto.password,
+        refreshToken: null,
+      })
+    }
+    throw new BadRequestException('auth code is wrong')
   }
   async updateUser(id: number, dto: UserUpdateDto) {
     await this.usersService.updateOneById(id, dto)

@@ -1,12 +1,12 @@
 import React from 'react'
 import { Form, FormProps, Button, Input, Col, Row } from 'antd'
 import { StarOutlined } from '@ant-design/icons'
-import { phoneValidator, normalValidator } from '@/utils/validators'
+import { normalValidator, emailValidator } from '@/utils/validators'
 import AuthCodeButton from './auth-code-button'
 
 export interface CodeFormProps {
-  onLogin: (phone: string, code: string) => void
-  onAuthCodeButtonClick: (phone: string) => void
+  onLogin: (email: string, code: string) => void
+  onAuthCodeButtonClick: (email: string) => void
   loading: boolean
 }
 
@@ -18,15 +18,15 @@ const CodeForm: React.FC<CodeFormProps> = ({
   const [form] = Form.useForm()
   const onAuthCodeButtonClick = async () => {
     try {
-      await form.validateFields(['phone'])
-      onAuthCodeButtonClickProp(form.getFieldValue('phone'))
+      await form.validateFields(['email'])
+      onAuthCodeButtonClickProp(form.getFieldValue('email'))
     } catch (error) {
       return Promise.reject()
     }
   }
   const onFinish: FormProps['onFinish'] = (values) => {
-    const { phone, code } = values
-    onLogin(phone, code)
+    const { email, code } = values
+    onLogin(email, code)
   }
 
   return (
@@ -34,7 +34,7 @@ const CodeForm: React.FC<CodeFormProps> = ({
       size="large"
       form={form}
       initialValues={{
-        phone: '13696035481',
+        email: '1561999073@qq.com',
       }}
       labelCol={{
         span: 5,
@@ -42,10 +42,10 @@ const CodeForm: React.FC<CodeFormProps> = ({
       onFinish={onFinish}
       className="pt-7"
     >
-      <Form.Item name="phone" label="手机号" rules={[phoneValidator()]}>
+      <Form.Item name="email" label="邮箱" rules={[emailValidator()]}>
         <Input
           prefix={<span className="text-gray-400">+86</span>}
-          placeholder="Phone"
+          placeholder="Email"
           autoComplete="on"
         />
       </Form.Item>
@@ -56,8 +56,8 @@ const CodeForm: React.FC<CodeFormProps> = ({
               noStyle
               name="code"
               rules={[
-                normalValidator('请输入4位验证码', {
-                  len: 4,
+                normalValidator('请输入6位验证码', {
+                  len: 6,
                 }),
               ]}
             >

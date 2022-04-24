@@ -5,7 +5,7 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
-import { databaseConfig } from './database/database.config'
+import { databaseConfig, redisConfig } from './database/database.config'
 import { authConfig } from './auth/auth.config'
 import { __DEV__ } from './constants'
 import { DatabaseModule } from './database/database.module'
@@ -15,6 +15,7 @@ import { AppsModule } from './apps/apps.module'
 import { PagesModule } from './pages/pages.module'
 import { TemplatesModule } from './templates/templates.module'
 import { CommonModule } from './common/common.module'
+import { emailConfig } from './email/email.config'
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { CommonModule } from './common/common.module'
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: __DEV__ ? '.dev.env' : '.prod.env',
-      load: [databaseConfig, authConfig],
+      load: [databaseConfig, redisConfig, authConfig, emailConfig],
     }),
     DatabaseModule,
   ],

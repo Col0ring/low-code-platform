@@ -15,8 +15,8 @@ const ForgetPasswordPage: React.FC = () => {
   const [resetPassword, { isLoading, isSuccess }] = useResetPasswordMutation()
 
   const onAuthCodeButtonClick: ResetPasswordFormProps['onAuthCodeButtonClick'] =
-    (phone) => {
-      void getAuthCode(phone)
+    (email) => {
+      void getAuthCode(email)
     }
 
   return (

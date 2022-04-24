@@ -13,24 +13,28 @@ export class LocalStrategy extends PassportStrategy(
 ) {
   constructor(private readonly authService: AuthService) {
     super({
-      usernameField: 'phone',
+      usernameField: 'email',
       passwordField: 'passwordOrCode',
       passReqToCallback: true,
     })
   }
 
-  async validate(req: Request, phone: string, passwordOrCode: string) {
+  async validate(req: Request, email: string, passwordOrCode: string) {
     const type = req.query.type as 'password' | 'code'
     let user: null | Omit<UserEntity, 'password'>
     if (type === 'code') {
-      // TODO
-      user = await this.authService.validateUser(phone, '1')
+      user = await this.authService.validateUserByCode(email, passwordOrCode)
+      if (!user) {
+        throw new BadRequestException('auth code is wrong')
+      }
+      await this.authService.deleteAuthCode(email)
     } else {
-      user = await this.authService.validateUser(phone, passwordOrCode)
+      user = await this.authService.validateUser(email, passwordOrCode)
+      if (!user) {
+        throw new BadRequestException('phone or password is wrong')
+      }
     }
-    if (!user) {
-      throw new BadRequestException('phone or password is wrong')
-    }
+
     return user
   }
 }

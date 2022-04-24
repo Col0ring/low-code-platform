@@ -13,17 +13,17 @@ const Login: React.FC = () => {
   const [searchParams] = useSearchParams({
     redirect: '',
   })
-  const onPasswordLogin: PasswordFormProps['onLogin'] = (phone, password) => {
-    void login({ phone, passwordOrCode: password, type: 'password' })
+  const onPasswordLogin: PasswordFormProps['onLogin'] = (email, password) => {
+    void login({ email, passwordOrCode: password, type: 'password' })
   }
-  const onCodeLogin: CodeFormProps['onLogin'] = (phone, code) => {
-    void login({ phone, passwordOrCode: code, type: 'code' })
+  const onCodeLogin: CodeFormProps['onLogin'] = (email, code) => {
+    void login({ email, passwordOrCode: code, type: 'code' })
   }
 
   const onAuthCodeButtonClick: CodeFormProps['onAuthCodeButtonClick'] = (
-    phone
+    email
   ) => {
-    void getAuthCode(phone)
+    void getAuthCode(email)
   }
 
   return (
