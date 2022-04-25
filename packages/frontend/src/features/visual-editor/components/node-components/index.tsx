@@ -28,6 +28,7 @@ import Alert from './feedback/alert'
 import { compileNormalValue, getBindingValue } from '../../utils'
 import { isBindVariable } from '../variable-binding'
 import Video from './basic/video'
+import Input from './form/input'
 
 function getComponentConfig(Component: NodeComponent<any>) {
   return {
@@ -82,6 +83,14 @@ export const componentsLibrary: ComponentsGroup[] = [
       },
       {
         ...getComponentConfig(Video),
+      },
+    ],
+  },
+  {
+    group: '表单',
+    components: [
+      {
+        ...getComponentConfig(Input),
       },
     ],
   },

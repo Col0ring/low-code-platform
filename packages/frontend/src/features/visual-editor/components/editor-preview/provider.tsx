@@ -138,6 +138,7 @@ export const EditorPreviewContextProvider: React.FC<
         Promise.all(
           pageRemoteDataSources.map((remote) =>
             compileExports(remote.hooks, {
+              navigate,
               state: dataSourcesRef.current,
               setState: setDataSources,
               reloadRemoteDataSources,
@@ -204,6 +205,7 @@ export const EditorPreviewContextProvider: React.FC<
         })
       })
   }, [
+    navigate,
     page.dataSources,
     pageRemoteDataSources,
     reloadRemoteDataSources,
@@ -223,6 +225,7 @@ export const EditorPreviewContextProvider: React.FC<
       state: dataSourcesRef.current,
       setState: setDataSources,
       reloadRemoteDataSources,
+      navigate,
     })
       .then((res) => {
         setJsAction(res || {})
@@ -235,7 +238,13 @@ export const EditorPreviewContextProvider: React.FC<
           js: true,
         })
       })
-  }, [page.js, setHasCompiled, reloadRemoteDataSources, setDataSources])
+  }, [
+    page.js,
+    setHasCompiled,
+    reloadRemoteDataSources,
+    setDataSources,
+    navigate,
+  ])
   useEffect(() => {
     if (hasCompiled.dataSources && hasCompiled.js) {
       setLoad(true)

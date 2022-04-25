@@ -26,12 +26,35 @@ const ActionPane: React.FC = () => {
       .join('\n')} }`
     monaco.languages.typescript.javascriptDefaults.setExtraLibs([
       {
-        content: `type ObjectKeysPartial<T> = T extends (...args: any[]) => any ? T : Partial<T>;
+        content: `
+        interface Path {
+            pathname: string;
+            search: string;
+            hash: string;
+        }
+        type To = string | Partial<Path>;
+        interface NavigateFunction {
+          (to: To, options?: NavigateOptions): void;
+          (delta: number): void;
+         }
+        interface NavigateOptions {
+            replace?: boolean;
+            state?: any;
+        }
+        type ObjectKeysPartial<T> = T extends (...args: any[]) => any ? T : Partial<T>;
         type FunctionReturnPartial<T> = T extends (...args: infer P) => infer R ? (...args: P) => ObjectKeysPartial<R>: T;
         declare const lc: {
           state: ${type},
           setState: (state: ((prevState: ${type}) => ObjectKeysPartial<${type}>) | ObjectKeysPartial<FunctionReturnPartial<${type}>>, replace?: boolean | undefined) => void,
-          reloadRemoteDataSources: (...names: ${remoteType}[]) => void
+          reloadRemoteDataSources: (...names: ${remoteType}[]) => void,
+          $message: {
+            info(content: string): () => void;
+            success(content: string): () =>void;
+            error(content: string): () => void;
+            warning(content: string): () => void;
+            loading(content: string, duration: number): () => void;
+          },
+          $navigate: NavigateFunction
         }`,
       },
     ])

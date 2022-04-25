@@ -1,14 +1,20 @@
 /* eslint-disable @typescript-eslint/no-implied-eval */
 import { transform } from '@babel/standalone'
+import { message } from 'antd'
+import { NavigateFunction } from 'react-router'
 import { isWrapperValue } from './components/variable-binding'
 import { BindingValue, DataSources } from './type'
 export function compileExports(
   code: string,
   // utils
-  lc: {
+  {
+    navigate,
+    ...props
+  }: {
     state: Record<string, any>
     setState: (state: Record<string, any>) => void
     reloadRemoteDataSources: (...args: string[]) => void
+    navigate: NavigateFunction
   }
 ) {
   return new Promise<Record<string, any>>((resolve, reject) => {
@@ -23,7 +29,7 @@ export function compileExports(
         'exports',
         'lc',
         `${transformCode}\nreturn exports`
-      )({}, lc)
+      )({}, { ...props, $message: message, $navigate: navigate })
       resolve(exports)
     } catch (error) {
       reject(error)
