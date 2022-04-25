@@ -1,6 +1,6 @@
 import React from 'react'
 import { Form, FormProps, Button, Input, Col, Row } from 'antd'
-import { StarOutlined } from '@ant-design/icons'
+import { MailOutlined, StarOutlined } from '@ant-design/icons'
 import { normalValidator, emailValidator } from '@/utils/validators'
 import AuthCodeButton from './auth-code-button'
 
@@ -44,7 +44,7 @@ const CodeForm: React.FC<CodeFormProps> = ({
     >
       <Form.Item name="email" label="邮箱" rules={[emailValidator()]}>
         <Input
-          prefix={<span className="text-gray-400">+86</span>}
+          prefix={<MailOutlined />}
           placeholder="Email"
           autoComplete="on"
         />

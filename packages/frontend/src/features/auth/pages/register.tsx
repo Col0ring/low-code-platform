@@ -1,8 +1,8 @@
 import React from 'react'
 import { useSearchParams, Navigate, Link } from 'react-router-dom'
 import { Tabs } from 'antd'
-import { useRegisterMutation } from '../auth.service'
-import RegisterForm from '../components/register-form'
+import { useGetAuthCodeMutation, useRegisterMutation } from '../auth.service'
+import RegisterForm, { RegisterFormProps } from '../components/register-form'
 import { Path } from '@/router/constants'
 
 const RegisterPage: React.FC = () => {
@@ -10,12 +10,23 @@ const RegisterPage: React.FC = () => {
     redirect: '',
   })
   const [register, { isSuccess, isLoading }] = useRegisterMutation()
+  const [getAuthCode] = useGetAuthCodeMutation()
+
+  const onAuthCodeButtonClick: RegisterFormProps['onAuthCodeButtonClick'] = (
+    email
+  ) => {
+    void getAuthCode(email)
+  }
 
   return (
     <>
       <Tabs centered activeKey="register" animated={false} size="large">
         <Tabs.TabPane tab="注册" key="register">
-          <RegisterForm loading={isLoading} onRegister={register} />
+          <RegisterForm
+            loading={isLoading}
+            onRegister={register}
+            onAuthCodeButtonClick={onAuthCodeButtonClick}
+          />
         </Tabs.TabPane>
       </Tabs>
       <div className="flex justify-end pb-4">

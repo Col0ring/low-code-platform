@@ -1,31 +1,50 @@
 import React from 'react'
-import { Form, FormProps, Button, Input } from 'antd'
+import { Form, FormProps, Button, Input, Row, Col } from 'antd'
 import {
   UserOutlined,
   LockOutlined,
   PhoneOutlined,
   MailOutlined,
+  StarOutlined,
 } from '@ant-design/icons'
 import {
   emailValidator,
   emptyValidator,
+  normalValidator,
   phoneValidator,
 } from '@/utils/validators'
 import ImageUploader from '@/features/upload/components/image-uploader'
+import AuthCodeButton from './auth-code-button'
 
 export interface RegisterFormProps {
   onRegister: (values: any) => void
+  onAuthCodeButtonClick: (email: string) => void
   loading: boolean
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({
+  onRegister,
+  loading,
+  onAuthCodeButtonClick: onAuthCodeButtonClickProp,
+}) => {
+  const [form] = Form.useForm()
+
   const onFinish: FormProps['onFinish'] = (values) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { rePassword, ...rest } = values
     onRegister(rest)
   }
+  const onAuthCodeButtonClick = async () => {
+    try {
+      await form.validateFields(['email'])
+      onAuthCodeButtonClickProp(form.getFieldValue('email'))
+    } catch (error) {
+      return Promise.reject()
+    }
+  }
   return (
     <Form
+      form={form}
       labelCol={{
         span: 5,
       }}
@@ -87,6 +106,32 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onRegister, loading }) => {
           placeholder="Password"
           autoComplete="re-password"
         />
+      </Form.Item>
+      <Form.Item label="验证码">
+        <Row align="middle" justify="space-between">
+          <Col span={12}>
+            <Form.Item
+              noStyle
+              name="code"
+              rules={[
+                normalValidator('请输入6位验证码', {
+                  len: 6,
+                }),
+              ]}
+            >
+              <Input
+                prefix={<StarOutlined />}
+                placeholder="AuthCode"
+                autoComplete="off"
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12} className="flex justify-end">
+            <div className="w-9/10 px-1">
+              <AuthCodeButton onAuthCodeButtonClick={onAuthCodeButtonClick} />
+            </div>
+          </Col>
+        </Row>
       </Form.Item>
       <Form.Item>
         <Button block type="primary" htmlType="submit" loading={loading}>

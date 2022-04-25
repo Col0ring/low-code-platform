@@ -13,11 +13,13 @@ import {
   Tabs as AntdTabs,
   Input,
   message,
+  Switch,
 } from 'antd'
 import AddAction from '../../add-action/inidex'
 import { useEditorContext } from '@/features/visual-editor/provider'
 import Layout from './layout'
 import { DeleteRowOutlined } from '@ant-design/icons'
+import VariableBinding from '../../variable-binding'
 
 const layoutName = Layout.nodeName
 
@@ -27,16 +29,19 @@ interface addTabButtonProps {
     tabs: { title: string }[]
   }
   onChange?: (value: any) => void
+  disabled?: boolean
 }
 
 const AddTabButton: React.FC<addTabButtonProps> = ({
   value = {} as NonNullable<addTabButtonProps['value']>,
   onChange = noop,
+  disabled,
 }) => {
-  const { tabs = [], activeKey } = value
+  const { tabs = [{ title: '标签项' }], activeKey = '0' } = value
   return (
-    <>
+    <div>
       <Radio.Group
+        disabled={disabled}
         className="w-full"
         value={activeKey}
         onChange={(e) => {
@@ -51,6 +56,7 @@ const AddTabButton: React.FC<addTabButtonProps> = ({
             >
               <Radio className="w-full" value={`${index}`}>
                 <Input
+                  disabled={disabled}
                   value={title}
                   onChange={(e) => {
                     onChange({
@@ -65,6 +71,7 @@ const AddTabButton: React.FC<addTabButtonProps> = ({
                 />
               </Radio>
               <Button
+                disabled={disabled}
                 type="text"
                 danger
                 onClick={() => {
@@ -89,6 +96,7 @@ const AddTabButton: React.FC<addTabButtonProps> = ({
         })}
       </Radio.Group>
       <Button
+        disabled={disabled}
         type="primary"
         block
         onClick={() => {
@@ -100,7 +108,7 @@ const AddTabButton: React.FC<addTabButtonProps> = ({
       >
         添加一项
       </Button>
-    </>
+    </div>
   )
 }
 
@@ -110,6 +118,7 @@ export interface TabsProps {
     activeKey: string
     tabs: { title: string }[]
   }
+  interControllable?: boolean
 }
 
 const Tabs: NodeComponent<TabsProps> = ({
@@ -119,7 +128,7 @@ const Tabs: NodeComponent<TabsProps> = ({
   editType,
 }) => {
   const { children, props, actions: actionsProp, style } = node
-  const { value, ...tabsProps } = props
+  const { value, interControllable, ...tabsProps } = props
 
   const [active, setActive] = useState(value.activeKey)
   const { actions } = useEditorPreviewContext()
@@ -165,7 +174,7 @@ const Tabs: NodeComponent<TabsProps> = ({
       {...events}
       style={style}
       activeKey={active}
-      onChange={setActive}
+      onChange={interControllable ? setActive : undefined}
     >
       {value.tabs.map(({ title }, index) => {
         const child = children[index]
@@ -195,14 +204,27 @@ const TabsPropsForm: typeof Tabs['PropsForm'] = () => {
     <Collapse defaultActiveKey={['props', 'actions']} bordered={false}>
       <Collapse.Panel header="属性" key="props">
         <Form.Item name={propItemName('value')}>
-          <AddTabButton />
+          <VariableBinding>
+            <AddTabButton />
+          </VariableBinding>
+        </Form.Item>
+        <Form.Item
+          label="内部可控"
+          name={propItemName('interControllable')}
+          valuePropName="checked"
+        >
+          <VariableBinding valuePropName="checked">
+            <Switch />
+          </VariableBinding>
         </Form.Item>
         <Form.Item label="尺寸" name={propItemName('size')}>
-          <Select>
-            <Select.Option value="large">大</Select.Option>
-            <Select.Option value="small">小</Select.Option>
-            <Select.Option value="default">默认</Select.Option>
-          </Select>
+          <VariableBinding>
+            <Select>
+              <Select.Option value="large">大</Select.Option>
+              <Select.Option value="small">小</Select.Option>
+              <Select.Option value="default">默认</Select.Option>
+            </Select>
+          </VariableBinding>
         </Form.Item>
       </Collapse.Panel>
       <Collapse.Panel header="动作设置" key="actions">
@@ -222,6 +244,7 @@ Tabs.getInitialProps = () => ({
     tabs: [{ title: '标签项' }, { title: '标签项' }],
     activeKey: '0',
   },
+  interControllable: true,
 })
 Tabs.getInitialStyle = () => ({ display: 'block' })
 Tabs.getInitialChildren = () => []

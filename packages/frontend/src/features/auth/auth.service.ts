@@ -9,7 +9,14 @@ export const authApi = createServiceApi({
   endpoints: (builder) => ({
     register: builder.mutation<
       TokenPayload,
-      { phone: string; username: string; password: string }
+      {
+        email: string
+        code: string
+        phone: string
+        avatar?: string
+        username: string
+        password: string
+      }
     >({
       query(data) {
         return {

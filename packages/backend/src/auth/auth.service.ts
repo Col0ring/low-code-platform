@@ -110,7 +110,11 @@ export class AuthService {
     await this.usersService.updateOneById(id, dto)
   }
 
-  async register(dto: RegisterDto) {
+  async register({ code, ...dto }: RegisterDto) {
+    const userCode = await this.getAuthCode(dto.email)
+    if (code !== userCode) {
+      throw new BadRequestException('auth code is wrong')
+    }
     try {
       const user = await this.usersService.insertUser(dto)
       const tokens = this.generateTokens({
@@ -122,7 +126,7 @@ export class AuthService {
       })
       return tokens
     } catch (error) {
-      throw new BadRequestException('the phone has been registered')
+      throw new BadRequestException('the email has been registered')
     }
   }
 

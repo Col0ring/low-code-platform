@@ -5,7 +5,7 @@ export class ResetPasswordDto {
   code: string
 
   @IsEmail({
-    message: 'Please input correct phone',
+    message: 'Please input correct email',
   })
   @IsNotEmpty()
   email: string

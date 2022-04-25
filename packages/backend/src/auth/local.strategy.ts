@@ -31,7 +31,7 @@ export class LocalStrategy extends PassportStrategy(
     } else {
       user = await this.authService.validateUser(email, passwordOrCode)
       if (!user) {
-        throw new BadRequestException('phone or password is wrong')
+        throw new BadRequestException('email or password is wrong')
       }
     }
 
