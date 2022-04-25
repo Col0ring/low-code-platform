@@ -14,7 +14,8 @@ import { parserActions, propItemName } from '..'
 import { useEditorPreviewContext } from '../../editor-preview/provider'
 import AddAction from '../../add-action/inidex'
 import VariableBinding from '../../variable-binding'
-
+import SvgIcon from '@/components/svg-icon'
+import ButtonSvg from '../../../assets/components/button.svg?raw'
 const buttonTypes = ['primary', 'default', 'dashed', 'link', 'text'] as const
 
 export interface ButtonProps extends AntdButtonProps {
@@ -109,4 +110,5 @@ Button.getInitialProps = () => ({
 Button.nodeName = 'button'
 Button.title = '按钮'
 Button.getId = () => getId('button')
+Button.icon = <SvgIcon raw={ButtonSvg} />
 export default Button

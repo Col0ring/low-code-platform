@@ -1,0 +1,21 @@
+<svg
+  t="1650895527267"
+  class="icon"
+  viewBox="0 0 1024 1024"
+  version="1.1"
+  xmlns="http://www.w3.org/2000/svg"
+  p-id="18362"
+  width="1em"
+  height="1em"
+>
+  <path
+    d="M828.8 195.2H195.2v633.6h633.6V195.2z m-32 601.6H227.2V227.2h569.6v569.6z"
+    fill="currentColor"
+    p-id="18363"
+  ></path>
+  <path
+    d="M492.8 294.4h-192v192h192v-192z m-16 176h-160v-160h160v160zM302.4 624H720v16H302.4zM302.4 542.4H720v16H302.4zM302.4 705.6H720v16H302.4zM552 380.8h169.6v16H552zM552 299.2h169.6v16H552zM552 460.8h169.6v16H552z"
+    fill="currentColor"
+    p-id="18364"
+  ></path>
+</svg>

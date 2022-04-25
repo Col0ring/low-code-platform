@@ -50,6 +50,7 @@ export class AppsController {
   @Get('/build/:appId')
   async buildApp(
     @Param('appId', ParseIntPipe) appId: number,
+    @Query('publicPath') publicPath: string,
     @Response() res: ExpressResponse
   ) {
     const app = await this.appsService.one(appId)
@@ -62,6 +63,7 @@ export class AppsController {
             path: page.path,
             content: page.content,
           })),
+        publicPath,
       })
       res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition')
       res.setHeader('Content-Type', 'application/octet-stream')

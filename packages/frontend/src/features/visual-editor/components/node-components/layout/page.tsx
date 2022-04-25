@@ -12,6 +12,8 @@ import { Collapse, Form } from 'antd'
 import AddAction from '../../add-action/inidex'
 import { useEditorPreviewContext } from '../../editor-preview/provider'
 import { useSearchParams } from 'react-router-dom'
+import SvgIcon from '@/components/svg-icon'
+import PageIcon from '../../../assets/components/page.svg?raw'
 
 const Page: NodeComponent = ({ node, editType }) => {
   const { children, actions: actionsProp, style } = node
@@ -96,5 +98,6 @@ Page.getInitialChildren = () => []
 Page.getId = () => getId('page')
 Page.nodeName = 'page'
 Page.title = '页面'
+Page.icon = <SvgIcon raw={PageIcon} />
 
 export default Page

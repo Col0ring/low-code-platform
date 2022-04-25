@@ -11,11 +11,13 @@ import TerserWebpackPlugin from 'terser-webpack-plugin'
 export interface WebpackConfigOptions {
   title: string
   pages: { content: string; path: string }[]
+  publicPath: string
 }
 
 export function getWebpackConfig({
   pages,
   title,
+  publicPath,
 }: WebpackConfigOptions): webpack.Configuration {
   return {
     mode: 'production',
@@ -23,7 +25,7 @@ export function getWebpackConfig({
     output: {
       filename: `js/[name].js`,
       path: path.resolve(__dirname, '../../templates/dist'),
-      publicPath: './',
+      publicPath,
     },
     optimization: {
       minimize: false,

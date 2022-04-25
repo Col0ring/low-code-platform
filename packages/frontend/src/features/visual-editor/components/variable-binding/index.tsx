@@ -39,25 +39,27 @@ const VariableBinding: React.FC<VariableBindingProps> = ({
     return (
       <>
         <div className="flex justify-between items-center">
-          {React.cloneElement(children, {
-            ...props,
-            disabled: isBinding,
-            [valuePropName]: isBinding
-              ? undefined
-              : isWrapper
-              ? props[valuePropName].value
-              : props[valuePropName],
-            [trigger]: (e: any) => {
-              if (isBinding) {
-                return
-              }
-              props[trigger]({
-                __BINDING__: true,
-                type: 'normal',
-                value: e?.target?.value ?? e,
-              })
-            },
-          })}
+          <div className="flex-1">
+            {React.cloneElement(children, {
+              ...props,
+              disabled: isBinding,
+              [valuePropName]: isBinding
+                ? undefined
+                : isWrapper
+                ? props[valuePropName].value
+                : props[valuePropName],
+              [trigger]: (e: any) => {
+                if (isBinding) {
+                  return
+                }
+                props[trigger]({
+                  __BINDING__: true,
+                  type: 'normal',
+                  value: e?.target?.value ?? e,
+                })
+              },
+            })}
+          </div>
           <Tooltip title="绑定变量">
             <Button
               onClick={() => setVisible(true)}

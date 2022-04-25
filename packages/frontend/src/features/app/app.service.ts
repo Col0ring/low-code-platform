@@ -39,10 +39,10 @@ export const appApi = createServiceApi({
     }),
     buildApp: builder.query<
       { contentDisposition: string; url: string },
-      number
+      { appId: number; publicPath: string }
     >({
-      query: (appId) => ({
-        url: `/apps/build/${appId}`,
+      query: ({ appId, publicPath }) => ({
+        url: `/apps/build/${appId}?publicPath=${publicPath}`,
         responseHandler: async (res) => {
           return {
             contentDisposition: res.headers.get('content-disposition'),

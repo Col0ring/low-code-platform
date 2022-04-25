@@ -8,6 +8,8 @@ import { useEditorContext } from '@/features/visual-editor/provider'
 import Layout from './layout'
 import { useEditorPreviewContext } from '../../editor-preview/provider'
 import AddAction from '../../add-action/inidex'
+import SvgIcon from '@/components/svg-icon'
+import LayoutContainerIcon from '../../../assets/components/layout-container.svg?raw'
 
 const layoutName = Layout.nodeName
 
@@ -132,5 +134,7 @@ LayoutContainer.getInitialChildren = () => [
   createNewNode(layoutName),
   createNewNode(layoutName),
 ]
+LayoutContainer.icon = <SvgIcon raw={LayoutContainerIcon} />
 LayoutContainer.getId = () => getId('layout-container')
+
 export default LayoutContainer

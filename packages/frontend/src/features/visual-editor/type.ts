@@ -168,6 +168,7 @@ export type NodeComponent<T extends object = {}> = React.FC<
   getId: () => string
   nodeName: string
   title: string
+  icon: React.ReactNode
   getInitialChildren?: () => ComponentRenderNode[]
   childActionDisabled?: boolean
   getInitialStyle?: () => React.CSSProperties

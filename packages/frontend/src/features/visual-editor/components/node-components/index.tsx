@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react'
-import { FileTextOutlined, ContainerOutlined } from '@ant-design/icons'
+import { FileTextOutlined } from '@ant-design/icons'
 import {
   Actions,
   BindingValue,
   ComponentNode,
   ComponentRenderNode,
   ComponentsGroup,
+  NodeComponent,
   ParentComponentRenderNode,
 } from '../../type'
 import Text from './basic/text'
@@ -26,50 +27,41 @@ import Tabs from './layout/tabs'
 import Alert from './feedback/alert'
 import { compileNormalValue, getBindingValue } from '../../utils'
 import { isBindVariable } from '../variable-binding'
+import Video from './basic/video'
+
+function getComponentConfig(Component: NodeComponent<any>) {
+  return {
+    name: Component.nodeName,
+    title: Component.title,
+    icon: Component.icon,
+    component: Component,
+  }
+}
 
 export const componentsLibrary: ComponentsGroup[] = [
   {
     group: '布局',
     components: [
       {
-        name: Page.nodeName,
-        title: Page.title,
+        ...getComponentConfig(Page),
         hideInMenu: true,
-        component: Page,
-        icon: <ContainerOutlined />,
       },
       {
-        name: Screen.nodeName,
-        title: Screen.title,
+        ...getComponentConfig(Screen),
         hideInMenu: true,
-        component: Screen,
-        icon: <ContainerOutlined />,
       },
       {
-        name: Container.nodeName,
-        title: Container.title,
-        component: Container,
-        icon: <ContainerOutlined />,
+        ...getComponentConfig(Container),
       },
       {
-        // 不会显示在 menu 菜单中
-        name: Layout.nodeName,
-        title: Layout.title,
+        ...getComponentConfig(Layout),
         hideInMenu: true,
-        component: Layout,
-        icon: <ContainerOutlined />,
       },
       {
-        name: LayoutContainer.nodeName,
-        title: LayoutContainer.title,
-        component: LayoutContainer,
-        icon: <ContainerOutlined />,
+        ...getComponentConfig(LayoutContainer),
       },
       {
-        name: Tabs.nodeName,
-        title: Tabs.title,
-        component: Tabs,
-        icon: <ContainerOutlined />,
+        ...getComponentConfig(Tabs),
       },
     ],
   },
@@ -77,28 +69,19 @@ export const componentsLibrary: ComponentsGroup[] = [
     group: '基础',
     components: [
       {
-        name: Text.nodeName,
-        title: Text.title,
-        component: Text,
-        icon: <FileTextOutlined />,
+        ...getComponentConfig(Text),
       },
       {
-        name: Button.nodeName,
-        title: Button.title,
-        component: Button,
-        icon: <FileTextOutlined />,
+        ...getComponentConfig(Button),
       },
       {
-        name: Image.nodeName,
-        title: Image.title,
-        component: Image,
-        icon: <FileTextOutlined />,
+        ...getComponentConfig(Image),
       },
       {
-        name: Link.nodeName,
-        title: Link.title,
-        component: Link,
-        icon: <FileTextOutlined />,
+        ...getComponentConfig(Link),
+      },
+      {
+        ...getComponentConfig(Video),
       },
     ],
   },

@@ -1,4 +1,5 @@
 import { getId } from '@/utils'
+import { LinkOutlined } from '@ant-design/icons'
 import { Collapse, Form, Input, Switch } from 'antd'
 import React, { useMemo } from 'react'
 import { NavLink } from 'react-router-dom'
@@ -81,4 +82,5 @@ Link.getInitialProps = () => ({
   openInNewWindow: false,
 })
 Link.getId = () => getId('link')
+Link.icon = <LinkOutlined />
 export default Link

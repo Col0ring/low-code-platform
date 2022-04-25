@@ -7,6 +7,8 @@ import NodeContainer from '../../node-container'
 import { parserActions, propItemName, renderNodes } from '..'
 import AddAction from '../../add-action/inidex'
 import { useEditorPreviewContext } from '../../editor-preview/provider'
+import SvgIcon from '@/components/svg-icon'
+import ScreenIcon from '../../../assets/components/screen.svg?raw'
 
 export interface ScreenProps {
   title: string
@@ -100,5 +102,5 @@ Screen.getInitialStyle = () => ({
   minWidth: '375px',
   minHeight: '650px',
 })
-
+Screen.icon = <SvgIcon raw={ScreenIcon} />
 export default Screen

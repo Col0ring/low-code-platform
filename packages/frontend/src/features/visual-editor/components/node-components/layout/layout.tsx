@@ -7,6 +7,7 @@ import { parserActions, renderNodes } from '..'
 import { useEditorPreviewContext } from '../../editor-preview/provider'
 import { Collapse, Form } from 'antd'
 import AddAction from '../../add-action/inidex'
+import { LayoutOutlined } from '@ant-design/icons'
 
 const Layout: NodeComponent = ({ node, parentNodes, disabled, editType }) => {
   const { children, actions: actionsProp, style } = node
@@ -60,7 +61,7 @@ Layout.title = '布局'
 Layout.getInitialProps = () => ({})
 Layout.getInitialStyle = () => ({ display: 'block' })
 Layout.getInitialChildren = () => []
-
+Layout.icon = <LayoutOutlined />
 Layout.getId = () => getId('layout')
 
 export default Layout

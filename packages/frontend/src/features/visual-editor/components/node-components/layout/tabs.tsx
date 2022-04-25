@@ -20,6 +20,8 @@ import { useEditorContext } from '@/features/visual-editor/provider'
 import Layout from './layout'
 import { DeleteRowOutlined } from '@ant-design/icons'
 import VariableBinding from '../../variable-binding'
+import SvgIcon from '@/components/svg-icon'
+import TabsIcon from '../../../assets/components/tabs.svg?raw'
 
 const layoutName = Layout.nodeName
 
@@ -249,5 +251,5 @@ Tabs.getInitialProps = () => ({
 Tabs.getInitialStyle = () => ({ display: 'block' })
 Tabs.getInitialChildren = () => []
 Tabs.getId = () => getId('tabs')
-
+Tabs.icon = <SvgIcon raw={TabsIcon} />
 export default Tabs

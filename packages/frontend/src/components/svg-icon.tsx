@@ -12,7 +12,7 @@ export interface SvgIconProps
 const SvgIcon: React.FC<SvgIconProps> = ({ raw, className, ...props }) => {
   const classes = useMemo(
     () =>
-      classnames(className, 'ant-icon inline-flex item-center justify-center', {
+      classnames(className, 'anticon', {
         'cursor-pointer': !!props.onClick,
       }),
     [className, props.onClick]

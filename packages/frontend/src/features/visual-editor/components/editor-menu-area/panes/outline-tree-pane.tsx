@@ -14,6 +14,7 @@ import ConditionSvg from '../../../assets/condition.svg?raw'
 import CycleSvg from '../../../assets/cycle.svg?raw'
 import { isBindVariable } from '../../variable-binding'
 import { safeJsonParser } from '@/utils'
+import { DeleteOutlined } from '@ant-design/icons'
 interface DataNode extends OriginDataNode {
   name: string
   node: ComponentRenderNode
@@ -98,22 +99,42 @@ const OutlineTreePane: React.FC = () => {
         className="draggable-tree"
         titleRender={(treeNode) => {
           return (
-            <div className="inline-flex items-center">
-              <span>{treeNode.title || treeNode.name}</span>
-              {(isBindVariable(treeNode.node.advanced.condition.isRender) ||
-                !treeNode.node.advanced.condition.isRender.value) && (
-                <Tooltip title="条件">
-                  <SvgIcon className="text-red-600 ml-1" raw={ConditionSvg} />
-                </Tooltip>
-              )}
-              {(isBindVariable(treeNode.node.advanced.cycle?.data) ||
-                safeJsonParser(
-                  treeNode.node.advanced.cycle?.data?.value || '[]',
-                  []
-                ).length !== 0) && (
-                <Tooltip title="循环">
-                  <SvgIcon className="text-green-600 ml-1" raw={CycleSvg} />
-                </Tooltip>
+            <div className="flex items-center justify-between w-full">
+              <span className="inline-flex items-center">
+                <span>{getComponentNode(treeNode.name).icon}</span>
+                <span className="ml-1">{treeNode.title || treeNode.name}</span>
+                {(isBindVariable(treeNode.node.advanced.condition.isRender) ||
+                  !treeNode.node.advanced.condition.isRender.value) && (
+                  <Tooltip title="条件">
+                    <SvgIcon className="text-red-600 ml-1" raw={ConditionSvg} />
+                  </Tooltip>
+                )}
+                {(isBindVariable(treeNode.node.advanced.cycle?.data) ||
+                  safeJsonParser(
+                    treeNode.node.advanced.cycle?.data?.value || '[]',
+                    []
+                  ).length !== 0) && (
+                  <Tooltip title="循环">
+                    <SvgIcon className="text-green-600 ml-1" raw={CycleSvg} />
+                  </Tooltip>
+                )}
+              </span>
+              {treeNode.draggable && (
+                <span
+                  className="text-red-700"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    updateComponentNode({
+                      type: 'delete',
+                      node: treeNode.node,
+                      parentNode:
+                        treeNode.parentNode as ParentComponentRenderNode,
+                      index: treeNode.nodeIndex,
+                    })
+                  }}
+                >
+                  <DeleteOutlined />
+                </span>
               )}
             </div>
           )
@@ -139,7 +160,6 @@ const OutlineTreePane: React.FC = () => {
         blockNode
         showIcon
         selectedKeys={menuSelectedKeys}
-        icon={({ name }: DataNode) => getComponentNode(name).icon}
         onSelect={(_, { node }) => {
           if (!menuSelectedKeys.includes(node.key)) {
             setActionNode((node as unknown as DataNode).node)

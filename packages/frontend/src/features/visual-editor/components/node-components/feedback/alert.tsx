@@ -1,4 +1,5 @@
 import { getId } from '@/utils'
+import { AlertOutlined } from '@ant-design/icons'
 import {
   Collapse,
   Form,
@@ -81,4 +82,5 @@ Alert.getInitialProps = () => ({
   closable: false,
 })
 Alert.getId = () => getId('alert')
+Alert.icon = <AlertOutlined />
 export default Alert

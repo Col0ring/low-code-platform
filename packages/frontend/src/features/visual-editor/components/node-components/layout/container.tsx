@@ -7,6 +7,7 @@ import { parserActions, renderNodes } from '..'
 import { Collapse, Form } from 'antd'
 import AddAction from '../../add-action/inidex'
 import { useEditorPreviewContext } from '../../editor-preview/provider'
+import { ContainerOutlined } from '@ant-design/icons'
 
 const Container: NodeComponent = ({
   node,
@@ -68,5 +69,5 @@ Container.getInitialStyle = () => ({ display: 'block' })
 Container.getInitialProps = () => ({})
 Container.getInitialChildren = () => []
 Container.getId = () => getId('container')
-
+Container.icon = <ContainerOutlined />
 export default Container

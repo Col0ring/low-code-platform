@@ -13,9 +13,10 @@ import {
   StopOutlined,
   CopyOutlined,
   EyeOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons'
 import { Button, Form, Input, message, Space, Tooltip } from 'antd'
-import React, { useMemo, useEffect } from 'react'
+import React, { useMemo, useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router'
 import { useLazyBuildAppQuery, useUpdateAppMutation } from '../../app.service'
 
@@ -35,6 +36,7 @@ const AppPublishPage: React.FC = () => {
   const app = useOutletContext<App>()
   const [reqUpdateApp, { isLoading }] = useUpdateAppMutation()
   const [reqBuildApp, { isFetching }] = useLazyBuildAppQuery()
+  const [publicPath, setPublishPath] = useState('./')
   const [reqCreateTemplate] = useCreateTemplateMutation()
   const [state, copyToClipboard] = useCopyToClipboard()
   const [createTemplateForm] = Form.useForm()
@@ -104,11 +106,25 @@ const AppPublishPage: React.FC = () => {
         <div className="bg-white p-4 rounded-md mt-4">
           <h3 className="font-bold text-base">生成本地打包应用</h3>
           <div className="mt-4">
+            <Input
+              value={publicPath}
+              onChange={(e) => setPublishPath(e.target.value)}
+              placeholder="请输入公共路径"
+              prefix={
+                <Tooltip title="公共路径，默认是 ./，代表相对路径，可修改为 / 变为服务端路径">
+                  <QuestionCircleOutlined />
+                </Tooltip>
+              }
+              className="w-400px mr-2"
+            />
             <Button
               loading={isFetching}
               type="primary"
               onClick={async () => {
-                const { data } = await reqBuildApp(app.id)
+                const { data } = await reqBuildApp({
+                  appId: app.id,
+                  publicPath,
+                })
                 if (data) {
                   let filename = 'dist.zip'
                   const ctx: string = data.contentDisposition

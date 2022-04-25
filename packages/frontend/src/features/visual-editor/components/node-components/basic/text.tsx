@@ -1,4 +1,5 @@
 import { getId } from '@/utils'
+import { FileTextOutlined } from '@ant-design/icons'
 import { Collapse, Form, Input } from 'antd'
 import React, { useMemo } from 'react'
 import { parserActions, propItemName } from '..'
@@ -50,4 +51,5 @@ Text.getInitialProps = () => ({
   content: '文本',
 })
 Text.getId = () => getId('text')
+Text.icon = <FileTextOutlined />
 export default Text

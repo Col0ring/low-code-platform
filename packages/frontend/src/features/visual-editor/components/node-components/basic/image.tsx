@@ -1,4 +1,5 @@
 import { getId } from '@/utils'
+import { FileImageOutlined } from '@ant-design/icons'
 import {
   Collapse,
   Form,
@@ -82,4 +83,5 @@ Image.getInitialProps = () => ({
   src: '',
 })
 Image.getId = () => getId('image')
+Image.icon = <FileImageOutlined />
 export default Image
