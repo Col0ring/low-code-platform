@@ -4,6 +4,7 @@ import {
   AppstoreOutlined,
   HomeOutlined,
   UserOutlined,
+  BuildOutlined,
   GiftOutlined,
 } from '@ant-design/icons'
 import { Path } from '@/router/constants'
@@ -17,11 +18,14 @@ const DropdownOverlay: React.FC = () => {
           <Link to={Path.Dashboard}>首页</Link>
         </span>
       </Menu.Item>
-      <Menu.Item key={Path.AppCenter} icon={<UserOutlined />}>
+      <Menu.Item key={Path.AppCenter} icon={<BuildOutlined />}>
         <Link to={Path.AppCenter}>我的应用</Link>
       </Menu.Item>
       <Menu.Item key={Path.TemplatesCenter} icon={<GiftOutlined />}>
-        <Link to={Path.TemplatesCenter}>模 板中心</Link>
+        <Link to={Path.TemplatesCenter}>模板中心</Link>
+      </Menu.Item>
+      <Menu.Item key={Path.UserCenter} icon={<UserOutlined />}>
+        <Link to={Path.UserCenter}>个人中心</Link>
       </Menu.Item>
     </Menu>
   )

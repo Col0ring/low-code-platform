@@ -21,6 +21,7 @@ import { DraggingData } from '../constants'
 import { DragArea, Draggable } from './dragging'
 import { StrictOmit } from 'types-kit'
 import { useEditorPreviewContext } from './editor-preview/provider'
+import BlockModal from './block-modal'
 
 export interface NodeContainerProps
   extends StrictOmit<NodeComponentProps, 'node'> {
@@ -125,6 +126,7 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
   index,
   hasAction: hasActionProp = true,
 }) => {
+  const [blockModalVisible, setBlockModalVisible] = useState(false)
   const { dataSources } = useEditorPreviewContext()
   const transformedNode = useMemo(() => {
     return node
@@ -222,6 +224,15 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
             moveNodeIndex: dragData.index,
             parentNode,
             nodeIndex: placement === 'top' ? index : index + 1,
+          })
+        } else if (dragData.type === 'add-block') {
+          const newNode = copyNode(dragData.node)
+          finishDragging({ actionNode: newNode })
+          updateComponentNode({
+            type: 'add',
+            parentNode,
+            index: placement === 'top' ? index : index + 1,
+            newNode,
           })
         }
       }
@@ -350,9 +361,9 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
               className="bg-blue-500 px-1 ml-1 rounded-sm"
               onClick={stopPropagation}
             >
-              {/* <Tooltip title={<span className="text-xs">保存为区块</span>}>
-                <SaveOutlined />
-              </Tooltip> */}
+              <Tooltip title={<span className="text-xs">保存为区块</span>}>
+                <SaveOutlined onClick={() => setBlockModalVisible(true)} />
+              </Tooltip>
               <Tooltip title={<span className="text-xs">复制</span>}>
                 <CopyOutlined
                   className="mx-1"
@@ -390,6 +401,11 @@ const NodeContainer: React.FC<NodeContainerProps> = ({
       )}
 
       {renderNode(node, 'edit', { disabled, parentNodes })}
+      <BlockModal
+        node={node}
+        visible={blockModalVisible}
+        setVisible={setBlockModalVisible}
+      />
     </Draggable>
   )
 }

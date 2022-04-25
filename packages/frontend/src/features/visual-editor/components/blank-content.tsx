@@ -5,7 +5,7 @@ import { DragArea } from './dragging'
 import { safeJsonParser } from '@/utils'
 import { DraggingData } from '../constants'
 import { DragData, ParentComponentRenderNode } from '../type'
-import { createNewNode } from './node-components'
+import { copyNode, createNewNode } from './node-components'
 import { useEditorContext } from '../provider'
 
 export interface BlankContent {
@@ -66,6 +66,15 @@ const BlankContent: React.FC<BlankContent> = ({ node, disabled }) => {
                 moveNodeIndex: dragData.index,
                 parentNode: node,
                 nodeIndex: node.children.length,
+              })
+            } else if (dragData.type === 'add-block') {
+              const newNode = copyNode(dragData.node)
+              finishDragging({ actionNode: newNode })
+              updateComponentNode({
+                type: 'add',
+                parentNode: node,
+                index: node.children.length,
+                newNode,
               })
             }
           }

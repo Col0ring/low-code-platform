@@ -16,10 +16,12 @@ import { PagesModule } from './pages/pages.module'
 import { TemplatesModule } from './templates/templates.module'
 import { CommonModule } from './common/common.module'
 import { emailConfig } from './email/email.config'
+import { BlocksModules } from './blocks/blocks.module'
 
 @Module({
   imports: [
     AuthModule,
+    BlocksModules,
     UsersModule,
     PagesModule,
     AppsModule,

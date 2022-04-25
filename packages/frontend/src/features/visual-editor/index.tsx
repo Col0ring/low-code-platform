@@ -23,11 +23,25 @@ export interface VisualEditorProps {
   className?: string
   onChange?: (data: PageRenderNode) => void
   onSave?: EditorPropsContextState['onSave']
-  onPreview?: (data: PageRenderNode) => void
+  onBlockAdd?: EditorPropsContextState['onBlockAdd']
+  onBlockUpdate?: EditorPropsContextState['onBlockUpdate']
+  onBlockDelete?: EditorPropsContextState['onBlockDelete']
+  onBlockSearch?: EditorPropsContextState['onBlockSearch']
+  blocks?: EditorPropsContextState['blocks']
   actions: React.RefObject<VisualEditorActions>
 }
 const VisualEditor: React.FC<VisualEditorProps> = (props) => {
-  const { className, onChange, onSave = noop, actions } = props
+  const {
+    className,
+    onChange,
+    onSave = noop,
+    onBlockAdd = noop,
+    onBlockUpdate = noop,
+    onBlockDelete = noop,
+    blocks = [],
+    onBlockSearch = () => Promise.resolve([]),
+    actions,
+  } = props
   const classes = useClassName([className, 'visual-editor-container'], [])
   const [{ page }, { updateComponentNode, setCurrentScreen }] =
     useEditorContext()
@@ -63,7 +77,17 @@ const VisualEditor: React.FC<VisualEditorProps> = (props) => {
     [isInit, page.name, setCurrentScreen, updateComponentNode]
   )
 
-  const memoEditorValue = useMemo(() => ({ onSave }), [onSave])
+  const memoEditorValue = useMemo(
+    () => ({
+      blocks,
+      onSave,
+      onBlockAdd,
+      onBlockUpdate,
+      onBlockDelete,
+      onBlockSearch,
+    }),
+    [blocks, onBlockAdd, onBlockDelete, onBlockSearch, onBlockUpdate, onSave]
+  )
 
   useUpdateEffect(() => {
     onChange?.(page)

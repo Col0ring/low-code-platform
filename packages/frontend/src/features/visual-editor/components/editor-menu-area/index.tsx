@@ -5,6 +5,7 @@ import {
   HistoryOutlined,
   DatabaseOutlined,
   BugOutlined,
+  BlockOutlined,
 } from '@ant-design/icons'
 import MenuPaneItem, { MenuPaneItemProps } from './menu-pane-item'
 import MenuContent from './menu-content'
@@ -13,6 +14,7 @@ import OutlineTreePane from './panes/outline-tree-pane'
 import OperationHistoryPane from './panes/operation-history-pane'
 import DataSourcePane from './panes/data-source-pane'
 import ActionPane from './panes/action-pane'
+import BlockPane from './panes/block-pane'
 
 const panes: {
   icon: React.ReactNode
@@ -29,6 +31,11 @@ const panes: {
     icon: <AppstoreOutlined />,
     name: '组件库',
     content: <ComponentsLibraryPane />,
+  },
+  {
+    icon: <BlockOutlined />,
+    name: '区块',
+    content: <BlockPane />,
   },
   {
     icon: <DatabaseOutlined />,

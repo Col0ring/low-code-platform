@@ -106,6 +106,10 @@ export type DragData =
       type: 'move'
       index: number
     }
+  | {
+      type: 'add-block'
+      node: ComponentRenderNode
+    }
 
 export type UpdateComponentNodeOptions = {
   addSnapshot?: boolean

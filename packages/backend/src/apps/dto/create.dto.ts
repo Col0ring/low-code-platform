@@ -2,7 +2,7 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 export class AppCreateDto {
   @IsNotEmpty({
-    message: "content can't be empty",
+    message: "name can't be empty",
   })
   @IsString({
     message: 'Please input correct name',

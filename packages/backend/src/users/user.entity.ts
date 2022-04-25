@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
 import bcrypt from 'bcrypt'
 import { AppEntity } from '../apps/app.entity'
+import { BlockEntity } from '../blocks/block.entity'
 @Entity({
   name: 'user',
 })
@@ -43,6 +44,11 @@ export class UserEntity {
     onDelete: 'CASCADE',
   })
   apps: AppEntity[]
+
+  @OneToMany(() => BlockEntity, (block) => block.user, {
+    onDelete: 'CASCADE',
+  })
+  blocks: AppEntity[]
 
   @Column({
     default: null,

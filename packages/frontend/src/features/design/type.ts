@@ -4,3 +4,9 @@ export interface ComponentNode {
   type: 'container' | 'display'
   id: number
 }
+
+export interface Block {
+  id: number
+  name: string
+  content: string
+}
