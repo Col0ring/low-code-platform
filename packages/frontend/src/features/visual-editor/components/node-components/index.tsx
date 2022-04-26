@@ -29,6 +29,7 @@ import { compileNormalValue, getBindingValue } from '../../utils'
 import { isBindVariable } from '../variable-binding'
 import Video from './basic/video'
 import Input from './form/input'
+import Card from './layout/card'
 
 function getComponentConfig(Component: NodeComponent<any>) {
   return {
@@ -60,6 +61,9 @@ export const componentsLibrary: ComponentsGroup[] = [
       },
       {
         ...getComponentConfig(LayoutContainer),
+      },
+      {
+        ...getComponentConfig(Card),
       },
       {
         ...getComponentConfig(Tabs),

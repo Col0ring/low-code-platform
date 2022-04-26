@@ -10,6 +10,7 @@ import { useEditorPreviewContext } from '../../editor-preview/provider'
 import AddAction from '../../add-action/inidex'
 import SvgIcon from '@/components/svg-icon'
 import LayoutContainerIcon from '../../../assets/components/layout-container.svg?raw'
+import VariableBinding from '../../variable-binding'
 
 const layoutName = Layout.nodeName
 
@@ -107,10 +108,14 @@ const LayoutContainerPropsForm: typeof LayoutContainer['PropsForm'] = () => {
     <Collapse defaultActiveKey={['props', 'actions']} bordered={false}>
       <Collapse.Panel header="动作设置" key="props">
         <Form.Item label="栅格比例" name={propItemName('spans')}>
-          <Input />
+          <VariableBinding>
+            <Input />
+          </VariableBinding>
         </Form.Item>
         <Form.Item label="栅格间隔" name={propItemName('gutter')}>
-          <Input />
+          <VariableBinding>
+            <Input />
+          </VariableBinding>
         </Form.Item>
       </Collapse.Panel>
       <Collapse.Panel header="动作设置" key="actions">

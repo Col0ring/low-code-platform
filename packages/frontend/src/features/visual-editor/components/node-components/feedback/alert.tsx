@@ -38,34 +38,42 @@ const AlertPropsForm: typeof Alert['PropsForm'] = () => {
           </VariableBinding>
         </Form.Item>
         <Form.Item label="辅助内容" name={propItemName('description')}>
-          <Input />
+          <VariableBinding>
+            <Input />
+          </VariableBinding>
         </Form.Item>
         <Form.Item label="提示类型" name={propItemName('type')}>
-          <Select>
-            <Select.Option value="success">成功</Select.Option>
-            <Select.Option value="info">信息</Select.Option>
-            <Select.Option value="warning">警告</Select.Option>
-            <Select.Option value="error">失败</Select.Option>
-          </Select>
+          <VariableBinding>
+            <Select>
+              <Select.Option value="success">成功</Select.Option>
+              <Select.Option value="info">信息</Select.Option>
+              <Select.Option value="warning">警告</Select.Option>
+              <Select.Option value="error">失败</Select.Option>
+            </Select>
+          </VariableBinding>
         </Form.Item>
         <Form.Item
           label="显示图标"
           name={propItemName('showIcon')}
           valuePropName="checked"
         >
-          <Switch />
+          <VariableBinding valuePropName="checked">
+            <Switch />
+          </VariableBinding>
         </Form.Item>
         <Form.Item
           label="是否可关闭"
           name={propItemName('closable')}
           valuePropName="checked"
         >
-          <Switch />
+          <VariableBinding valuePropName="checked">
+            <Switch />
+          </VariableBinding>
         </Form.Item>
       </Collapse.Panel>
       <Collapse.Panel header="动作设置" key="actions">
         <Form.Item name="actions">
-          <AddAction menus={[{ event: 'onClick', title: '点击文本' }]} />
+          <AddAction menus={[{ event: 'onClick', title: '点击警告提示' }]} />
         </Form.Item>
       </Collapse.Panel>
     </Collapse>

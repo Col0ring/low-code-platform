@@ -7,6 +7,7 @@ import { parserActions, propItemName } from '..'
 import { NodeComponent } from '../../../type'
 import AddAction from '../../add-action/inidex'
 import { useEditorPreviewContext } from '../../editor-preview/provider'
+import VariableBinding from '../../variable-binding'
 
 export interface LinkProps {
   content: string
@@ -29,6 +30,12 @@ const Link: NodeComponent<LinkProps> = ({ node, editType }) => {
   // eslint-disable-next-line react/no-children-prop
   return React.createElement(openInNewWindow ? 'a' : NavLink, {
     [openInNewWindow ? ('href' as 'to') : 'to']: href,
+    onClick(e) {
+      if (editType === 'edit') {
+        e.preventDefault()
+      }
+      events.onClick?.(e)
+    },
     target: openInNewTab ? '_blank' : '_self',
     style,
     children: content,
@@ -41,24 +48,32 @@ const LinkPropsForm: typeof Link['PropsForm'] = () => {
     <Collapse defaultActiveKey={['props', 'actions']} bordered={false}>
       <Collapse.Panel header="属性" key="props">
         <Form.Item label="内容" name={propItemName('content')}>
-          <Input />
+          <VariableBinding>
+            <Input />
+          </VariableBinding>
         </Form.Item>
         <Form.Item label="链接地址" name={propItemName('href')}>
-          <Input />
+          <VariableBinding>
+            <Input />
+          </VariableBinding>
         </Form.Item>
         <Form.Item
           label="新开页面"
           name={propItemName('openInNewTab')}
           valuePropName="checked"
         >
-          <Switch />
+          <VariableBinding valuePropName="checked">
+            <Switch />
+          </VariableBinding>
         </Form.Item>
         <Form.Item
           label="外部链接"
           name={propItemName('openInNewWindow')}
           valuePropName="checked"
         >
-          <Switch />
+          <VariableBinding valuePropName="checked">
+            <Switch />
+          </VariableBinding>
         </Form.Item>
       </Collapse.Panel>
       <Collapse.Panel header="动作设置" key="actions">

@@ -6,6 +6,7 @@ import { parserActions, propItemName } from '..'
 import { NodeComponent } from '../../../type'
 import AddAction from '../../add-action/inidex'
 import { useEditorPreviewContext } from '../../editor-preview/provider'
+import VariableBinding from '../../variable-binding'
 
 export interface TextProps {
   content: string
@@ -30,7 +31,9 @@ const TextPropsForm: typeof Text['PropsForm'] = () => {
     <Collapse defaultActiveKey={['props', 'actions']} bordered={false}>
       <Collapse.Panel header="属性" key="props">
         <Form.Item label="内容" name={propItemName('content')}>
-          <Input />
+          <VariableBinding>
+            <Input />
+          </VariableBinding>
         </Form.Item>
       </Collapse.Panel>
       <Collapse.Panel header="动作设置" key="actions">
