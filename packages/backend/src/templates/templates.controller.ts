@@ -5,11 +5,14 @@ import {
   Get,
   Post,
   Body,
+  Param,
+  Put,
 } from '@nestjs/common'
 import { JwtUser } from '../auth/type'
 import { Auth, User } from '../auth/decorators'
 import { TemplatesService } from './templates.service'
 import { TemplateCreateDto } from './dto/create.dto'
+import { TemplateUpdateDto } from './dto/update.dto'
 
 @Controller('templates')
 @Auth()
@@ -56,5 +59,12 @@ export class TemplatesController {
     @User() user: JwtUser
   ) {
     return this.templatesService.create(user.id, templatesCreateDto)
+  }
+  @Put('update/:templateId')
+  async update(
+    @Param('templateId', ParseIntPipe) templateId: number,
+    @Body() templatesUpdateDto: TemplateUpdateDto
+  ) {
+    return this.templatesService.update(templateId, templatesUpdateDto)
   }
 }

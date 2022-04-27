@@ -7,6 +7,7 @@ import { TemplateEntity } from './template.entity'
 import { TemplateCreateDto } from './dto/create.dto'
 import { AppStatus, TemplateStatus } from '../apps/constants'
 import { PageEntity } from '../pages/page.entity'
+import { TemplateUpdateDto } from './dto/update.dto'
 
 @Injectable()
 export class TemplatesService {
@@ -78,18 +79,18 @@ export class TemplatesService {
     return this.templatesRepository.save(template)
   }
 
-  // async update(appId: number, appUpdateDto: AppUpdateDto) {
-  //   return this.appsRepository.update(appId, appUpdateDto)
-  // }
-  // async delete(appId: number) {
-  //   return this.appsRepository.delete(appId)
-  // }
-  // async one(appId: number) {
-  //   return this.appsRepository.findOne({
-  //     where: {
-  //       id: appId,
-  //     },
-  //     relations: ['pages'],
-  //   })
-  // }
+  async update(templateId: number, templateUpdateDto: TemplateUpdateDto) {
+    return this.templatesRepository.update(templateId, templateUpdateDto)
+  }
+  async delete(appId: number) {
+    return this.appsRepository.delete(appId)
+  }
+  async one(appId: number) {
+    return this.appsRepository.findOne({
+      where: {
+        id: appId,
+      },
+      relations: ['pages'],
+    })
+  }
 }

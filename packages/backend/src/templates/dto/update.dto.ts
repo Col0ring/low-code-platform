@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator'
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
-export class TemplateCreateDto {
+export class TemplateUpdateDto {
   @IsNotEmpty({
     message: "content can't be empty",
   })
@@ -20,12 +20,4 @@ export class TemplateCreateDto {
   })
   @IsOptional()
   desc: string
-
-  @IsNumber(undefined, {
-    message: 'Please input correct appId',
-  })
-  @IsNotEmpty({
-    message: "appId can't be empty",
-  })
-  appId: number
 }

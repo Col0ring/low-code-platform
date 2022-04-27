@@ -21,6 +21,21 @@ export const mainApi = createServiceApi({
       },
       invalidatesTags: (result) => (result ? ['Template'] : []),
     }),
+    updateTemplate: builder.mutation<
+      void,
+      StrictOmit<App, 'id'> & {
+        templateId: number
+      }
+    >({
+      query: ({ templateId, ...values }) => {
+        return {
+          url: `/templates/update/${templateId}`,
+          method: 'put',
+          body: values,
+        }
+      },
+      invalidatesTags: (result) => (result ? ['Template'] : []),
+    }),
     getTemplateList: builder.query<
       {
         data: Template[]
@@ -63,5 +78,6 @@ export const mainApi = createServiceApi({
 export const {
   useGetTemplateListQuery,
   useCreateTemplateMutation,
+  useUpdateTemplateMutation,
   useGetMyTemplateListQuery,
 } = mainApi
