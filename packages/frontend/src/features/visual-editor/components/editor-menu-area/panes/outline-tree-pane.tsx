@@ -64,7 +64,10 @@ function generateData(
             draggable: getComponentNode(name).component.childActionDisabled
               ? false
               : true,
-            disabled: !!(currentScreen && currentScreen.id !== id),
+            disabled:
+              typeof disabled === 'undefined'
+                ? !!(currentScreen && currentScreen.id !== id)
+                : disabled,
           }),
     }
   })

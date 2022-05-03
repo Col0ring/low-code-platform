@@ -122,38 +122,7 @@ const VariableBinding: React.FC<VariableBindingProps> = ({
             </div>
           }
         >
-          <Select
-            className="w-full"
-            size="middle"
-            showSearch
-            allowClear
-            value=""
-            onSelect={(val: string) => {
-              form.setFieldsValue({
-                expr:
-                  ((form.getFieldValue('expr') as string) || '') +
-                  ` state.${val}`,
-              })
-            }}
-            placeholder="选择数据源快速绑定"
-            filterOption={(input, option) =>
-              option
-                ? `${option.value}`
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                : false
-            }
-          >
-            {dataSourcesArr.map((key) => {
-              return (
-                <Select.Option value={key} key={key}>
-                  {key}
-                </Select.Option>
-              )
-            })}
-          </Select>
           <Form
-            className="mt-2"
             layout="vertical"
             form={form}
             preserve={false}
@@ -162,7 +131,40 @@ const VariableBinding: React.FC<VariableBindingProps> = ({
               expr: isBinding ? props[valuePropName].value : '',
             }}
           >
+            <Form.Item>
+              <Select
+                className="w-full"
+                size="middle"
+                showSearch
+                allowClear
+                value=""
+                onSelect={(val: string) => {
+                  form.setFieldsValue({
+                    expr:
+                      ((form.getFieldValue('expr') as string) || '') +
+                      ` state.${val}`,
+                  })
+                }}
+                placeholder="选择数据源快速绑定"
+                filterOption={(input, option) =>
+                  option
+                    ? `${option.value}`
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    : false
+                }
+              >
+                {dataSourcesArr.map((key) => {
+                  return (
+                    <Select.Option value={key} key={key}>
+                      {key}
+                    </Select.Option>
+                  )
+                })}
+              </Select>
+            </Form.Item>
             <Form.Item
+              className="mt-2"
               label="变量表达式"
               name="expr"
               tooltip="可以输入任意 JS 表达式，返回值会作为值绑定"

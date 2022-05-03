@@ -319,7 +319,16 @@ const RenderComponent: React.FC<RenderComponentProps> = ({
   return (
     <>
       {React.createElement(getComponentNode(node.name).component, {
-        node: transformNode(dataSources, node) as ParentComponentRenderNode,
+        node: transformNode(dataSources, node, {
+          item: {
+            name: cycleData.item,
+            value: undefined,
+          },
+          index: {
+            name: cycleData.index,
+            value: undefined,
+          },
+        }) as ParentComponentRenderNode,
         parentNodes: parentNodes || [],
         disabled,
         key: node.id,

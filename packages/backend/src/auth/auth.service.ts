@@ -17,7 +17,7 @@ import { CommonRedisService } from '../database/redis.service'
 import { generateAuthCode } from './utils'
 import { EmailService } from '../email/email.service'
 
-const fakeRoles = [Role.Admin, Role.User]
+const DefaultRoles = [Role.User]
 @Injectable()
 export class AuthService {
   constructor(
@@ -89,7 +89,7 @@ export class AuthService {
     }
     const tokens = this.generateTokens({
       sub: user.id,
-      roles: fakeRoles,
+      roles: DefaultRoles,
     })
     await this.usersService.updateOneById(id, {
       refreshToken: tokens.refreshToken,
@@ -119,7 +119,7 @@ export class AuthService {
       const user = await this.usersService.insertUser(dto)
       const tokens = this.generateTokens({
         sub: user.id,
-        roles: fakeRoles,
+        roles: DefaultRoles,
       })
       await this.usersService.updateOneById(user.id, {
         refreshToken: tokens.refreshToken,
@@ -133,7 +133,7 @@ export class AuthService {
   async login(user: LocalUser) {
     const tokens = this.generateTokens({
       sub: user.id,
-      roles: fakeRoles,
+      roles: DefaultRoles,
     })
     await this.usersService.updateOneById(user.id, {
       refreshToken: tokens.refreshToken,
@@ -151,7 +151,7 @@ export class AuthService {
   async getUserInfo(id: number) {
     return {
       ...(await this.usersService.findOneById(id)),
-      roles: fakeRoles,
+      roles: DefaultRoles,
     }
   }
 }

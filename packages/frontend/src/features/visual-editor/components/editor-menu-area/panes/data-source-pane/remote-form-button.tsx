@@ -6,7 +6,10 @@ import { emptyValidator } from '@/utils/validators'
 import { EditOutlined } from '@ant-design/icons'
 import { Form, Input, message, Radio, Switch } from 'antd'
 import React, { useState } from 'react'
-import VariableBinding from '../../../variable-binding'
+import VariableBinding, {
+  isBindVariable,
+  isWrapperValue,
+} from '../../../variable-binding'
 export type RemoteFormButtonProps =
   | {
       type: 'add'
@@ -62,10 +65,10 @@ export const beforeFetch = (config) => {
 /*
   发送请求后
 */
-export const afterFetch = (data, error) => {
-  // data 为获取的数据，error 为 fetch 失败后的错误，data 与 error 有且只有一个有值，另一个值为 null
+export const afterFetch = (res, error) => {
+  // res 为返回的结果，error 为 fetch 失败后的错误，data 与 error 有且只有一个有值，另一个值为 null
   // 必须要返回值
-  return data;
+  return res.data;
 };`,
                 }
           }
@@ -104,9 +107,24 @@ export const afterFetch = (data, error) => {
           <Form.Item
             label="请求地址"
             name={['fetch', 'url']}
-            rules={[emptyValidator('请求地址')]}
+            rules={[
+              emptyValidator('请求地址', {
+                transform(v) {
+                  if (isWrapperValue(v)) {
+                    if (isBindVariable(v)) {
+                      return 'success'
+                    } else {
+                      return v.value
+                    }
+                  }
+                  return v
+                },
+              }),
+            ]}
           >
-            <Input />
+            <VariableBinding>
+              <Input />
+            </VariableBinding>
           </Form.Item>
           <Form.Item
             label="请求方法"
@@ -114,25 +132,39 @@ export const afterFetch = (data, error) => {
             rules={[
               emptyValidator('请求方法', {
                 message: '请选择请求方法',
+                transform(v) {
+                  if (isWrapperValue(v)) {
+                    if (isBindVariable(v)) {
+                      return 'success'
+                    } else {
+                      return v.value
+                    }
+                  }
+                  return v
+                },
               }),
             ]}
           >
-            <Radio.Group>
-              <Radio.Button value="GET">GET</Radio.Button>
-              <Radio.Button value="POST">POST</Radio.Button>
-              <Radio.Button value="PUT">PUT</Radio.Button>
-              <Radio.Button value="DELETE">DELETE</Radio.Button>
-            </Radio.Group>
+            <VariableBinding>
+              <Radio.Group>
+                <Radio.Button value="GET">GET</Radio.Button>
+                <Radio.Button value="POST">POST</Radio.Button>
+                <Radio.Button value="PUT">PUT</Radio.Button>
+                <Radio.Button value="DELETE">DELETE</Radio.Button>
+              </Radio.Group>
+            </VariableBinding>
           </Form.Item>
           <Form.Item label="请求参数" name={['fetch', 'data']}>
-            <MonacoEditor
-              className="h-200px border"
-              language="json"
-              scrollBeyondLastLine={false}
-              minimap={{
-                enabled: false,
-              }}
-            />
+            <VariableBinding>
+              <MonacoEditor
+                className="h-200px border"
+                language="json"
+                scrollBeyondLastLine={false}
+                minimap={{
+                  enabled: false,
+                }}
+              />
+            </VariableBinding>
           </Form.Item>
           <Form.Item label="数据处理" name="hooks">
             <MonacoEditor

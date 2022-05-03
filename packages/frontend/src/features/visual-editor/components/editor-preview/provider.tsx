@@ -62,7 +62,6 @@ export const EditorPreviewContextProvider: React.FC<
   })
   const [load, setLoad] = useState(false)
   const [params] = useSearchParams()
-
   const navigate = useNavigate()
   const [jsAction, setJsAction] = useState({})
   const pageRemoteDataSources = useMemo(() => {
