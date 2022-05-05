@@ -1,6 +1,6 @@
 import { DeleteOutlined } from '@ant-design/icons'
-import { Modal, Space, Tooltip } from 'antd'
-import React, { useState } from 'react'
+import { Modal, Space } from 'antd'
+import React from 'react'
 import { useEditorContext } from '@/features/visual-editor/provider'
 import VariableFormButton from './variable-form-button'
 import RemoteFormButton from './remote-form-button'
@@ -33,7 +33,6 @@ const PanelItemHeader: React.FC<PageHoverItemProps> = ({
   hideAction,
 }) => {
   const [{ page }, { updatePageData }] = useEditorContext()
-  const [tooltipVisible, setTooltipVisible] = useState(false)
   return (
     <div className="flex justify-between w-full">
       <Space className="font-bold">
@@ -42,48 +41,39 @@ const PanelItemHeader: React.FC<PageHoverItemProps> = ({
       </Space>
       {!hideAction && (
         <Space>
-          <Tooltip
-            visible={tooltipVisible}
-            title="编辑"
-            onVisibleChange={setTooltipVisible}
+          <div
+            onClick={(e) => {
+              e.stopPropagation()
+            }}
           >
-            <div
-              onClick={(e) => {
-                e.stopPropagation()
-                setTooltipVisible(false)
-              }}
-            >
-              {type === 'var' && (
-                <VariableFormButton
-                  type="edit"
-                  initialValues={page.dataSources[name] as VarDataSource}
-                />
-              )}
-              {type === 'remote' && (
-                <RemoteFormButton
-                  type="edit"
-                  initialValues={page.dataSources[name] as RemoteDataSource}
-                />
-              )}
-            </div>
-          </Tooltip>
-          <Tooltip title="删除">
-            <DeleteOutlined
-              onClick={(e) => {
-                e.stopPropagation()
-                Modal.confirm({
-                  title: `确认删除数据源 ${name} 吗？`,
-                  onOk() {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const { [name]: _name, ...dataSources } = page.dataSources
-                    updatePageData({
-                      dataSources: dataSources,
-                    })
-                  },
-                })
-              }}
-            />
-          </Tooltip>
+            {type === 'var' && (
+              <VariableFormButton
+                type="edit"
+                initialValues={page.dataSources[name] as VarDataSource}
+              />
+            )}
+            {type === 'remote' && (
+              <RemoteFormButton
+                type="edit"
+                initialValues={page.dataSources[name] as RemoteDataSource}
+              />
+            )}
+          </div>
+          <DeleteOutlined
+            onClick={(e) => {
+              e.stopPropagation()
+              Modal.confirm({
+                title: `确认删除数据源 ${name} 吗？`,
+                onOk() {
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                  const { [name]: _name, ...dataSources } = page.dataSources
+                  updatePageData({
+                    dataSources: dataSources,
+                  })
+                },
+              })
+            }}
+          />
         </Space>
       )}
     </div>

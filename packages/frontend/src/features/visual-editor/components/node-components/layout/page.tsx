@@ -80,7 +80,7 @@ const PagePropsForm: typeof Page['PropsForm'] = () => {
         <Form.Item name="actions">
           <AddAction
             menus={[
-              { event: 'onClick', title: '点击按钮' },
+              { event: 'onClick', title: '点击页面' },
               { event: 'onMounted', title: '初次加载' },
             ]}
           />

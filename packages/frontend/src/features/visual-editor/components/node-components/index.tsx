@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react'
-import { FileTextOutlined } from '@ant-design/icons'
 import {
   Actions,
   BindingValue,
@@ -30,6 +29,7 @@ import { isBindVariable } from '../variable-binding'
 import Video from './basic/video'
 import Input from './form/input'
 import Card from './layout/card'
+import Loading from './feedback/loading'
 
 function getComponentConfig(Component: NodeComponent<any>) {
   return {
@@ -102,10 +102,10 @@ export const componentsLibrary: ComponentsGroup[] = [
     group: '反馈',
     components: [
       {
-        name: Alert.nodeName,
-        title: Alert.title,
-        component: Alert,
-        icon: <FileTextOutlined />,
+        ...getComponentConfig(Alert),
+      },
+      {
+        ...getComponentConfig(Loading),
       },
     ],
   },

@@ -55,7 +55,7 @@ const ContainerPropsForm: typeof Container['PropsForm'] = () => {
     <Collapse defaultActiveKey={['actions']} bordered={false}>
       <Collapse.Panel header="动作设置" key="actions">
         <Form.Item name="actions">
-          <AddAction menus={[{ event: 'onClick', title: '点击按钮' }]} />
+          <AddAction menus={[{ event: 'onClick', title: '点击容器' }]} />
         </Form.Item>
       </Collapse.Panel>
     </Collapse>

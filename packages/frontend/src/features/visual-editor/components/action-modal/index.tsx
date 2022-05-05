@@ -155,7 +155,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
                     <Switch />
                   </Form.Item>
                 </Tabs.TabPane>
-                <Tabs.TabPane key="openModal" tab="打开弹窗">
+                {/* <Tabs.TabPane key="openModal" tab="打开弹窗">
                   <Form.Item
                     name={['internal', 'openModal', 'modalId']}
                     label="目标"
@@ -163,14 +163,14 @@ const ActionModal: React.FC<ActionModalProps> = ({
                     <Select />
                   </Form.Item>
                 </Tabs.TabPane>
-                <Tabs.TabPane key="closeModal" tab="打开弹窗">
+                <Tabs.TabPane key="closeModal" tab="关闭弹窗">
                   <Form.Item
                     label="目标"
                     name={['internal', 'closeModal', 'modalId']}
                   >
                     <Select />
                   </Form.Item>
-                </Tabs.TabPane>
+                </Tabs.TabPane> */}
               </Tabs>
             </Tabs.TabPane>
             <Tabs.TabPane key="js" tab="页面 JS">

@@ -231,7 +231,7 @@ const TabsPropsForm: typeof Tabs['PropsForm'] = () => {
       </Collapse.Panel>
       <Collapse.Panel header="动作设置" key="actions">
         <Form.Item name="actions">
-          <AddAction menus={[{ event: 'onClick', title: '点击按钮' }]} />
+          <AddAction menus={[{ event: 'onClick', title: '点击选项卡' }]} />
         </Form.Item>
       </Collapse.Panel>
     </Collapse>
