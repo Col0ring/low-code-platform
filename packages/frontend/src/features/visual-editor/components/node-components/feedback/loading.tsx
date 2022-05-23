@@ -37,12 +37,12 @@ const Loading: NodeComponent<LoadingProps> = ({
     () => [...parentNodes, node],
     [parentNodes, node]
   )
-  if (editType === 'prod') {
-    return <>{renderNodes(children)}</>
-  }
+
   return (
     <Spin style={style} {...events} {...props}>
-      {children.length === 0 ? (
+      {editType === 'prod' ? (
+        renderNodes(children)
+      ) : children.length === 0 ? (
         <BlankContent disabled={disabled} node={node} />
       ) : (
         children.map((child, index) => {

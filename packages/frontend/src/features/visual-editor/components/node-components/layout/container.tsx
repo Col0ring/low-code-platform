@@ -26,12 +26,12 @@ const Container: NodeComponent = ({
     () => [...parentNodes, node],
     [parentNodes, node]
   )
-  if (editType === 'prod') {
-    return <>{renderNodes(children)}</>
-  }
+
   return (
     <div style={style} {...events}>
-      {children.length === 0 ? (
+      {editType === 'prod' ? (
+        renderNodes(children)
+      ) : children.length === 0 ? (
         <BlankContent disabled={disabled} node={node} />
       ) : (
         children.map((child, index) => {

@@ -9,24 +9,35 @@ import {
   Select,
 } from 'antd'
 import React, { useMemo } from 'react'
-import { parserActions, propItemName } from '..'
+import { parserActions, propItemName, renderNodes } from '..'
 import { NodeComponent } from '../../../type'
 import AddAction from '../../add-action/inidex'
 import { useEditorPreviewContext } from '../../editor-preview/provider'
 import VariableBinding from '../../variable-binding'
 import SvgIcon from '@/components/svg-icon'
 import CardIcon from '../../../assets/components/card.svg?raw'
+import BlankContent from '../../blank-content'
+import NodeContainer from '../../node-container'
 export interface CardProps extends AntdCardProps {
   inner?: boolean
 }
 
-const Card: NodeComponent<CardProps> = ({ node, editType }) => {
-  const { props, style, actions: actionsProp } = node
+const Card: NodeComponent<CardProps> = ({
+  node,
+  editType,
+  disabled,
+  parentNodes,
+}) => {
+  const { props, children, style, actions: actionsProp } = node
   const { inner, ...antdProps } = props
   const { actions } = useEditorPreviewContext()
   const events = useMemo(
     () => parserActions(actionsProp || {}, actions, editType),
     [actions, actionsProp, editType]
+  )
+  const childParentNodes = useMemo(
+    () => [...parentNodes, node],
+    [parentNodes, node]
   )
   return (
     <AntdCard
@@ -34,7 +45,25 @@ const Card: NodeComponent<CardProps> = ({ node, editType }) => {
       style={style}
       {...antdProps}
       {...events}
-    />
+    >
+      {editType === 'prod' ? (
+        renderNodes(children)
+      ) : children.length === 0 ? (
+        <BlankContent disabled={disabled} node={node} />
+      ) : (
+        children.map((child, index) => {
+          return (
+            <NodeContainer
+              disabled={disabled}
+              index={index}
+              key={child.id}
+              node={child}
+              parentNodes={childParentNodes}
+            />
+          )
+        })
+      )}
+    </AntdCard>
   )
 }
 
@@ -94,6 +123,7 @@ const CardPropsForm: typeof Card['PropsForm'] = () => {
 Card.PropsForm = CardPropsForm
 Card.nodeName = 'card'
 Card.title = '卡片'
+Card.getInitialChildren = () => []
 Card.getInitialStyle = () => ({})
 Card.getInitialProps = () => ({
   title: '卡片标题',

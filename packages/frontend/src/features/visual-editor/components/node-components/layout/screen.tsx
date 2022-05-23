@@ -32,12 +32,12 @@ const Screen: NodeComponent<ScreenProps> = ({
     () => [...parentNodes, node],
     [parentNodes, node]
   )
-  if (editType === 'prod') {
-    return <>{renderNodes(children)}</>
-  }
+
   return (
     <div className="node-screen" style={style} {...events}>
-      {children.length === 0 ? (
+      {editType === 'prod' ? (
+        renderNodes(children)
+      ) : children.length === 0 ? (
         <div
           className="flex flex-col"
           style={{

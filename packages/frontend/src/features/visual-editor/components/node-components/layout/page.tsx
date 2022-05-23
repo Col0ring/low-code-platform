@@ -52,23 +52,21 @@ const Page: NodeComponent = ({ node, editType }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  if (editType === 'prod') {
-    return renderNode(screen || children[0])
-  }
-
   return (
     <div className="node-page" style={style} {...events}>
-      {children.map((child, index) => {
-        return currentScreen?.id === child.id ? (
-          <NodeContainer
-            index={index}
-            parentNodes={[node]}
-            key={child.id}
-            node={child}
-            hasAction={false}
-          />
-        ) : null
-      })}
+      {editType === 'prod'
+        ? renderNode(screen || children[0])
+        : children.map((child, index) => {
+            return currentScreen?.id === child.id ? (
+              <NodeContainer
+                index={index}
+                parentNodes={[node]}
+                key={child.id}
+                node={child}
+                hasAction={false}
+              />
+            ) : null
+          })}
     </div>
   )
 }
