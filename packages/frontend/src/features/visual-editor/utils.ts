@@ -51,6 +51,7 @@ export function compileDataSources(dataSources: DataSources) {
       })
       resolve(new Function(`${transformCode}\n return dataSources`)())
     } catch (error) {
+      console.log(error)
       reject(error)
     }
   })

@@ -59,7 +59,7 @@ const StyleTab: React.FC<StyleTabProps> = () => {
         </Form.Item>
         <Form.Item
           name={styleItemName('verticalAlign')}
-          label="文本水平对齐方式"
+          label="文本垂直对齐方式"
         >
           <Select>
             <Select.Option value="baseline">baseline</Select.Option>

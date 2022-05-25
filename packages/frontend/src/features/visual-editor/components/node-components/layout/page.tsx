@@ -17,9 +17,10 @@ import PageIcon from '../../../assets/components/page.svg?raw'
 
 const Page: NodeComponent = ({ node, editType }) => {
   const { children, actions: actionsProp, style } = node
+
   const [params] = useSearchParams()
   const { actions } = useEditorPreviewContext()
-  const events = useMemo(
+  const { onMounted, ...events } = useMemo(
     () => parserActions(actionsProp || {}, actions, editType),
     [actions, actionsProp, editType]
   )
@@ -48,7 +49,7 @@ const Page: NodeComponent = ({ node, editType }) => {
   }, [children])
 
   useEffect(() => {
-    events.onMounted?.(undefined, paramsToObject(params.entries()))
+    onMounted?.(undefined, paramsToObject(params.entries()))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

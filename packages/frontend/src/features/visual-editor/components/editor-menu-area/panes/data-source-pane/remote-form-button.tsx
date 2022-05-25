@@ -23,7 +23,6 @@ const RemoteFormButton: React.FC<RemoteFormButtonProps> = (props) => {
   const [{ page }, { updatePageData }] = useEditorContext()
   const [form] = Form.useForm()
   const [editData, setEditData] = useState<DataSources | null>(null)
-
   return (
     <ModalButton
       modalProps={{

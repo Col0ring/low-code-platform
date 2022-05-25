@@ -23,11 +23,14 @@ export function ensureArray<T>(value: T): EnsureArray<T> {
   return (Array.isArray(value) ? value : [value]) as EnsureArray<T>
 }
 
-export function safeJsonParser<T>(str: string, defaultValue: T): T {
+export function safeJsonParser<T>(str: any, defaultValue: T): T {
   try {
+    if (typeof str === 'object') {
+      return str
+    }
     return JSON.parse(str)
   } catch (error) {
-    console.log(error)
+    console.log(str, error)
     return defaultValue
   }
 }

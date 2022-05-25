@@ -56,6 +56,7 @@ export const EditorPreviewContextProvider: React.FC<
 > = ({ children, page: pageProp }) => {
   const [{ page: contextPage }] = useEditorContext(false) || [{}, {}]
   const page = pageProp || (contextPage as PageRenderNode)
+
   const [hasCompiled, setHasCompiled] = useSetState({
     dataSources: false,
     js: false,
@@ -90,6 +91,7 @@ export const EditorPreviewContextProvider: React.FC<
       urlParams: paramsToObject(params.entries()),
     })
   )
+
   const dataSourcesRef = useRef<Record<string, any>>({})
   const remoteFetchFnsRef = useRef<Record<string, () => void>>({})
   const memoEditorPreviewContextValue = useMemo<EditorPreviewContextValue>(
@@ -132,7 +134,6 @@ export const EditorPreviewContextProvider: React.FC<
     compileDataSources(page.dataSources)
       .then((res) => {
         setDataSources((prev) => ({ ...res, urlParams: prev.urlParams }), true)
-
         Object.assign(dataSourcesRef.current, res)
         Promise.all(
           pageRemoteDataSources.map((remote) =>
@@ -249,6 +250,7 @@ export const EditorPreviewContextProvider: React.FC<
       setLoad(true)
     }
   }, [hasCompiled])
+
   return (
     <EditorPreviewContext.Provider value={memoEditorPreviewContextValue}>
       {load && children}

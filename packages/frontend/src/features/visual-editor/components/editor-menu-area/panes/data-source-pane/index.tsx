@@ -5,6 +5,7 @@ import PanelItemHeader from './panel-item-header'
 import { useEditorContext } from '@/features/visual-editor/provider'
 import { RemoteDataSource, VarDataSource } from '@/features/visual-editor/type'
 import RemoteFormButton from './remote-form-button'
+import { isBindVariable, isWrapperValue } from '../../../variable-binding'
 
 const DataSourcePane: React.FC = () => {
   const [{ page }] = useEditorContext()
@@ -129,19 +130,31 @@ const DataSourcePane: React.FC = () => {
                     <div className="mt-2">
                       <Space>
                         <span className="text-gray-500">请求路径</span>
-                        {item.fetch.url}
+                        {isBindVariable(item.fetch.url)
+                          ? '绑定变量'
+                          : isWrapperValue(item.fetch.url)
+                          ? item.fetch.url.value
+                          : item.fetch.url}
                       </Space>
                     </div>
                     <div className="mt-2">
                       <Space>
                         <span className="text-gray-500">请求方法</span>
-                        {item.fetch.method}
+                        {isBindVariable(item.fetch.method)
+                          ? '绑定变量'
+                          : isWrapperValue(item.fetch.method)
+                          ? item.fetch.method.value
+                          : item.fetch.method}
                       </Space>
                     </div>
                     <div className="mt-2">
                       <Space>
                         <span className="text-gray-500">请求参数</span>
-                        {item.fetch.data}
+                        {isBindVariable(item.fetch.data)
+                          ? '绑定变量'
+                          : isWrapperValue(item.fetch.data)
+                          ? item.fetch.data.value
+                          : item.fetch.data}
                       </Space>
                     </div>
                     <div className="mt-2">
